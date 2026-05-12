@@ -1,0 +1,50 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  url?: string;
+  slug: string;
+}
+
+const { title, description, tags, url, slug } = Astro.props;
+---
+
+<article class="project-card">
+  <h3>
+    <a href={`${import.meta.env.BASE_URL}projects/${slug}/`}>{title}</a>
+  </h3>
+  <p>{description}</p>
+  {tags.length > 0 && (
+    <ul class="tags">
+      {tags.map((tag) => (
+        <li class="tag">{tag}</li>
+      ))}
+    </ul>
+  )}
+</article>
+
+<style>
+  .project-card {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  .project-card h3 a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .tags {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .tag {
+    font-size: 0.85rem;
+    padding: 0.1rem 0.5rem;
+    background: #f0f0f0;
+    border-radius: 2px;
+  }
+</style>

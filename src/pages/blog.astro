@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { NOTE_RSS_URL } from "../consts";
+import Parser from "rss-parser";
+
+let feedItems: { title: string; link: string; pubDate: string }[] = [];
+
+if (NOTE_RSS_URL) {
+  try {
+    const parser = new Parser();
+    const feed = await parser.parseURL(NOTE_RSS_URL);
+    feedItems = (feed.items ?? []).map((item) => ({
+      title: item.title ?? "",
+      link: item.link ?? "",
+      pubDate: item.pubDate ?? "",
+    }));
+  } catch (e) {
+    console.error("Failed to fetch RSS feed:", e);
+  }
+}
+---
+
+<BaseLayout title="Blog" description="Blog posts from note">
+  <section>
+    <h1>Blog</h1>
+    {NOTE_RSS_URL === "" && (
+      <p>Set <code>NOTE_RSS_URL</code> in <code>src/consts.ts</code> to display blog posts.</p>
+    )}
+    {feedItems.length > 0 ? (
+      <ul class="blog-list">
+        {feedItems.map((item) => (
+          <li>
+            <a href={item.link} target="_blank" rel="noopener noreferrer">
+              {item.title}
+            </a>
+            {item.pubDate && (
+              <time>{new Date(item.pubDate).toLocaleDateString("ja-JP")}</time>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : NOTE_RSS_URL !== "" && (
+      <p>No posts found.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .blog-list {
+    list-style: none;
+  }
+  .blog-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .blog-list time {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    color: #666;
+  }
+</style>
