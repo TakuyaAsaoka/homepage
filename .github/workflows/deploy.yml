@@ -1,10 +1,8 @@
 name: Deploy to GitHub Pages
 
 on:
-  # テンプレートでは自動デプロイを無効化。
-  # テンプレートから新規作成後、以下のコメントを解除してください。
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
