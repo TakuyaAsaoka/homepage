@@ -10,5 +10,5 @@ export const SOCIAL_LINKS = {
   youtube: "",
 };
 
-// noteのRSS URL
-export const NOTE_RSS_URL = "https://note.com/limber_iguana638/rss";
+// noteのRSS URL（空文字でRSSフィード無効化）
+export const NOTE_RSS_URL: string = "https://note.com/limber_iguana638/rss";

@@ -9,7 +9,7 @@ const projects = defineCollection({
     description: z.string(),
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
     pubDate: z.coerce.date(),
     draft: z.boolean().default(false),
   }),
