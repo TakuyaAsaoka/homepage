@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="ページが見つかりません" description="お探しのページは存在しません" noindex>
+  <section class="not-found">
+    <h1>404</h1>
+    <p>お探しのページは見つかりませんでした。</p>
+    <a href={`${import.meta.env.BASE_URL}`}>ホームに戻る</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+
+  .not-found h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .not-found p {
+    margin-bottom: 2rem;
+    color: #666;
+  }
+
+  .not-found a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+</style>
