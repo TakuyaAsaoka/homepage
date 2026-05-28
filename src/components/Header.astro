@@ -16,7 +16,15 @@ const currentPath = Astro.url.pathname;
 <header class="header">
   <nav class="nav">
     <a href={base} class="nav-title">{SITE_TITLE}</a>
-    <ul class="nav-links">
+    <button
+      class="menu-toggle"
+      aria-expanded="false"
+      aria-controls="nav-links"
+      aria-label="メニュー"
+    >
+      <span class="menu-icon" aria-hidden="true"></span>
+    </button>
+    <ul id="nav-links" class="nav-links">
       {navItems.map((item) => (
         <li>
           <a
@@ -31,10 +39,25 @@ const currentPath = Astro.url.pathname;
   </nav>
 </header>
 
+<script>
+  const toggle = document.querySelector(".menu-toggle");
+  const nav = document.querySelector(".header");
+
+  if (toggle && nav) {
+    nav.classList.add("js-enabled");
+
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+    });
+  }
+</script>
+
 <style>
   .header {
     padding: 1rem;
   }
+
   .nav {
     max-width: 800px;
     margin: 0 auto;
@@ -44,22 +67,94 @@ const currentPath = Astro.url.pathname;
     flex-wrap: wrap;
     gap: 1rem;
   }
+
   .nav-title {
     font-weight: bold;
     text-decoration: none;
     color: inherit;
   }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .menu-icon,
+  .menu-icon::before,
+  .menu-icon::after {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    transition: transform 0.3s;
+  }
+
+  .menu-icon {
+    position: relative;
+  }
+
+  .menu-icon::before,
+  .menu-icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+  }
+
+  .menu-icon::before {
+    top: -7px;
+  }
+
+  .menu-icon::after {
+    top: 7px;
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon {
+    background: transparent;
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle[aria-expanded="true"] .menu-icon::after {
+    top: 0;
+    transform: rotate(-45deg);
+  }
+
   .nav-links {
     display: flex;
     list-style: none;
     gap: 1rem;
     flex-wrap: wrap;
   }
+
   .nav-link {
     text-decoration: none;
     color: inherit;
   }
+
   .nav-link.active {
     text-decoration: underline;
+  }
+
+  @media (max-width: 767px) {
+    .js-enabled .menu-toggle {
+      display: block;
+    }
+
+    .js-enabled .nav-links {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .js-enabled .menu-toggle[aria-expanded="true"] ~ .nav-links {
+      display: flex;
+    }
   }
 </style>
