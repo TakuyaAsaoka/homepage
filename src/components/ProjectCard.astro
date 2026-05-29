@@ -1,4 +1,6 @@
 ---
+import TagList from "./TagList.astro";
+
 interface Props {
   title: string;
   description: string;
@@ -15,13 +17,7 @@ const { title, description, tags, slug } = Astro.props;
     <a href={`${import.meta.env.BASE_URL}projects/${slug}/`}>{title}</a>
   </h3>
   <p>{description}</p>
-  {tags.length > 0 && (
-    <ul class="tags">
-      {tags.map((tag) => (
-        <li class="tag">{tag}</li>
-      ))}
-    </ul>
-  )}
+  <TagList tags={tags} />
 </article>
 
 <style>
@@ -35,16 +31,7 @@ const { title, description, tags, slug } = Astro.props;
     text-decoration: none;
     color: inherit;
   }
-  .tags {
-    display: flex;
-    list-style: none;
-    gap: 0.5rem;
+  .project-card :global(.tags) {
     margin-top: 0.5rem;
-  }
-  .tag {
-    font-size: 0.85rem;
-    padding: 0.1rem 0.5rem;
-    background: #f0f0f0;
-    border-radius: 2px;
   }
 </style>
