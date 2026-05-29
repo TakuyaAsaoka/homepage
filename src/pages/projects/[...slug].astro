@@ -20,7 +20,9 @@ const { Content } = await render(project);
 <BaseLayout title={project.data.title} description={project.data.description}>
   <article>
     <h1>{project.data.title}</h1>
-    <time>{project.data.pubDate.toLocaleDateString("ja-JP")}</time>
+    <time datetime={project.data.pubDate.toISOString()}>
+      {project.data.pubDate.toLocaleDateString("ja-JP")}
+    </time>
     <TagList tags={project.data.tags} />
     {project.data.url && (
       <p><a href={project.data.url} target="_blank" rel="noopener noreferrer">View Project</a></p>

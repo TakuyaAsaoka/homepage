@@ -34,7 +34,9 @@ if (NOTE_RSS_URL) {
               {item.title}
             </a>
             {item.pubDate && (
-              <time>{new Date(item.pubDate).toLocaleDateString("ja-JP")}</time>
+              <time datetime={new Date(item.pubDate).toISOString()}>
+                {new Date(item.pubDate).toLocaleDateString("ja-JP")}
+              </time>
             )}
           </li>
         ))}
