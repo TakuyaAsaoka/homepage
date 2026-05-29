@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import TagList from "../../components/TagList.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -20,13 +21,7 @@ const { Content } = await render(project);
   <article>
     <h1>{project.data.title}</h1>
     <time>{project.data.pubDate.toLocaleDateString("ja-JP")}</time>
-    {project.data.tags.length > 0 && (
-      <ul class="tags">
-        {project.data.tags.map((tag: string) => (
-          <li class="tag">{tag}</li>
-        ))}
-      </ul>
-    )}
+    <TagList tags={project.data.tags} />
     {project.data.url && (
       <p><a href={project.data.url} target="_blank" rel="noopener noreferrer">View Project</a></p>
     )}
@@ -41,17 +36,8 @@ const { Content } = await render(project);
     color: #666;
     font-size: 0.9rem;
   }
-  .tags {
-    display: flex;
-    list-style: none;
-    gap: 0.5rem;
+  article :global(.tags) {
     margin: 0.5rem 0;
-  }
-  .tag {
-    font-size: 0.85rem;
-    padding: 0.1rem 0.5rem;
-    background: #f0f0f0;
-    border-radius: 2px;
   }
   .content {
     margin-top: 2rem;
