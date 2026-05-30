@@ -2,6 +2,7 @@
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { SITE_LANG } from "../consts";
 import "../styles/global.css";
 
 interface Props {
@@ -15,7 +16,7 @@ const { title, description, image, noindex } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ja">
+<html lang={SITE_LANG}>
   <head>
     <BaseHead title={title} description={description} image={image} noindex={noindex} />
   </head>
