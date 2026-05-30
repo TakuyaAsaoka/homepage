@@ -14,8 +14,10 @@ if (NOTE_RSS_URL) {
       link: item.link ?? "",
       pubDate: item.pubDate ?? "",
     }));
-  } catch (e) {
-    console.error("Failed to fetch RSS feed:", e);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("RSSフィード取得エラー:", error.message);
+    }
   }
 }
 ---
