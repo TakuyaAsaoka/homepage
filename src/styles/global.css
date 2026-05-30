@@ -1,5 +1,22 @@
 :root {
   --content-max-width: 800px;
+  --color-bg: #ffffff;
+  --color-text: #333333;
+  --color-border: #e0e0e0;
+  --color-tag-bg: #f0f0f0;
+  --color-muted: #666666;
+  --color-link: #0066cc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1a1a1a;
+    --color-text: #e0e0e0;
+    --color-border: #333333;
+    --color-tag-bg: #2a2a2a;
+    --color-muted: #999999;
+    --color-link: #5599ff;
+  }
 }
 
 *,
@@ -19,6 +36,8 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 main {
