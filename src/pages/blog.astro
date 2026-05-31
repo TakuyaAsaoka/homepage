@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { NOTE_RSS_URL } from "../consts";
+import { NOTE_RSS_URL, SITE_LOCALE } from "../consts";
 import Parser from "rss-parser";
 
 let feedItems: { title: string; link: string; pubDate: string }[] = [];
@@ -37,7 +37,7 @@ if (NOTE_RSS_URL) {
             </a>
             {item.pubDate && (
               <time datetime={new Date(item.pubDate).toISOString()}>
-                {new Date(item.pubDate).toLocaleDateString("ja-JP")}
+                {new Date(item.pubDate).toLocaleDateString(SITE_LOCALE)}
               </time>
             )}
           </li>

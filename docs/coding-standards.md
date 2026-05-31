@@ -291,11 +291,25 @@ const { Content } = await render(project);
 ```typescript
 // ✅ トップレベル関数
 export function formatDate(date: Date): string {
-  return date.toLocaleDateString("ja-JP");
+  return date.toLocaleDateString(SITE_LOCALE);
 }
 
 // ✅ コールバックはアロー関数
 const published = projects.filter((p) => !p.data.draft);
+```
+
+### 日付フォーマットのロケール
+
+- 日付表示には `consts.ts` の `SITE_LOCALE` を使用する
+- `"ja-JP"` 等のロケール文字列を直接ハードコードしない
+
+```typescript
+// ✅ 定数を使用
+import { SITE_LOCALE } from "../consts";
+date.toLocaleDateString(SITE_LOCALE);
+
+// ❌ ハードコード
+date.toLocaleDateString("ja-JP");
 ```
 
 ### 関数の長さ
