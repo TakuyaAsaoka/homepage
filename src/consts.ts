@@ -2,6 +2,7 @@ export const SITE_TITLE = "ASAOKA Homepage";
 export const SITE_DESCRIPTION = "アサオカのホームページ";
 export const SITE_URL = "https://TakuyaAsaoka.github.io";
 export const SITE_LANG = "ja";
+export const SITE_LOCALE = "ja-JP";
 
 // SNSリンク（使わないものは空文字にする）
 export const SOCIAL_LINKS = {
