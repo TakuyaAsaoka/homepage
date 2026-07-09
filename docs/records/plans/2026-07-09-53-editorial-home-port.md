@@ -127,6 +127,7 @@ git commit -m "feat: #53 Google Fonts（明朝・ゴシック）を読み込む"
 
 ```css
 :root {
+  color-scheme: light dark; /* ネイティブUI（フォーム/スクロールバー）をテーマ追従 */
   --content-max-width: 800px;
   --color-bg: #ffffff;
   --color-text: #333333;
@@ -205,12 +206,6 @@ h3 {
   letter-spacing: 0.12em;
   line-height: 1.4;
 }
-```
-
-`color-scheme` をネイティブUI追従にするため、上記 `:root` の先頭（`--content-max-width` の前）に次を追加する。
-
-```css
-  color-scheme: light dark;
 ```
 
 full-bleed ヒーローの横スクロールを防ぐため、`img { ... }` ルールの直後に追加する。
