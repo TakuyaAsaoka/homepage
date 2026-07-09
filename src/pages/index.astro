@@ -1,11 +1,59 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { SITE_DESCRIPTION } from "../consts";
+import SeasonalHero from "../components/SeasonalHero.astro";
+import { SITE_DESCRIPTION, SOCIAL_LINKS, EMAIL, SITE_AUTHOR } from "../consts";
+
+// スキルセクションに表示する技術タグ
+const skills = [
+  "TypeScript",
+  "React",
+  "Node.js",
+  "AWS",
+  "Kubernetes",
+  "Terraform",
+  "Grafana",
+  "Prometheus",
+];
 ---
 
 <BaseLayout title="Home" description={SITE_DESCRIPTION}>
-  <section>
-    <h1>Welcome</h1>
-    <p>This is a personal homepage template built with Astro.</p>
+  <div class="home-hero">
+    <SeasonalHero season="auto" height="70vh">
+      <div class="hero-content">
+        <p class="hero-role">SOFTWARE ENGINEER / SRE</p>
+        <h1 class="hero-name">{SITE_AUTHOR}</h1>
+        <span class="hero-rule" aria-hidden="true"></span>
+        <p class="hero-copy">つくることと、動かし続けること。</p>
+      </div>
+    </SeasonalHero>
+  </div>
+
+  <section class="home-section">
+    <h2 class="section-heading" data-reveal>
+      <span class="section-num">壱</span>
+      <span class="section-title">技術</span>
+      <span class="section-label" aria-hidden="true">SKILLS</span>
+    </h2>
+    <ul class="skill-list" role="list" data-reveal="delayed">
+      {skills.map((skill) => <li>{skill}</li>)}
+    </ul>
+  </section>
+
+  <section class="home-section">
+    <h2 class="section-heading" data-reveal>
+      <span class="section-num">弐</span>
+      <span class="section-title">連絡先</span>
+      <span class="section-label" aria-hidden="true">CONTACT</span>
+    </h2>
+    <ul class="contact-list" role="list" data-reveal="delayed">
+      <li>
+        <span class="contact-label">GITHUB</span>
+        <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer">github.com/TakuyaAsaoka</a>
+      </li>
+      <li>
+        <span class="contact-label">EMAIL</span>
+        <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+      </li>
+    </ul>
   </section>
 </BaseLayout>
