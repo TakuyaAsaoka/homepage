@@ -822,11 +822,14 @@ git commit -m "feat: #53 季節ヒーロー背景（init/teardown・ダーク粒
 ```astro
     <ClientRouter />
     <script is:inline>
-      // 訪問時の月から season を判定し、季節連動の起点となる data-season を html に設定する。
+      // html に季節連動の data-season と、js / reduced-motion フラグを付与する。
+      // ClientRouter の遷移では <html> の属性・クラスが遷移先ドキュメント（フラグ未設定）で
+      // 置換されるため、初回ペイント前の実行に加え astro:after-swap でも再適用する。
       // マッピング: 12〜2月=winter / 3〜5月=spring / 6〜8月=summer / 9〜11月=autumn
-      {
+      function applyDocumentFlags() {
+        const de = document.documentElement;
         const month = new Date().getMonth() + 1;
-        document.documentElement.dataset.season =
+        de.dataset.season =
           month <= 2 || month === 12
             ? "winter"
             : month <= 5
@@ -834,19 +837,18 @@ git commit -m "feat: #53 季節ヒーロー背景（init/teardown・ダーク粒
               : month <= 8
                 ? "summer"
                 : "autumn";
-      }
-      // JS有効フラグと reduced-motion フラグを初回ペイント前に付与する（FOUC防止）。
-      {
-        const de = document.documentElement;
         de.classList.add("js");
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           de.classList.add("reduced-motion");
         }
       }
+      applyDocumentFlags();
+      // 遷移後（DOM swap 直後・描画前）に再適用し、data-season / js フラグを維持する。
+      document.addEventListener("astro:after-swap", applyDocumentFlags);
     </script>
 ```
 
-> **補足**: `html` 要素は ClientRouter の遷移で置換されないため、`data-season` / `js` / `reduced-motion` は遷移をまたいで保持される。`is:inline` の再実行は不要。
+> **補足（実機検証で判明）**: ClientRouter は遷移時に `<html>` の属性・クラスを遷移先ドキュメント（フラグ未設定）で**置換する**。`is:inline` は初回のみ実行されるため、フラグ付与を関数化して初回実行に加え **`astro:after-swap` で再適用**しないと、遷移後に `data-season` / `js` が失われる（季節アクセントが春に固定・reveal の初期隠しCSSが無効化）。下記コードはその修正版。
 
 - [ ] **Step 2: reveal のバインドを body 末尾に追加**
 
