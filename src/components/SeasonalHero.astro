@@ -78,6 +78,8 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
     autumn: ["#e0904f", "#e6ac52", "#cc6c3a", "#ecc274"],
     winter: ["#ffffff", "#eef4fa", "#dbe6f0", "#c9d8e8"],
   };
+  // 季節アクセント（日輪・夏の波紋の色）。global.css の --season-accent と同値。
+  // 色を変える際は両方の更新が必要（JS は style 直書き、CSS は文字装飾用で別管理）。
   const ACCENT_LIGHT: Record<string, string> = {
     spring: "#e48ca0",
     summer: "#3a9daa",
@@ -185,7 +187,8 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
     };
   }
 
-  // 複数インスタンスに対応するため rAF ハンドルを配列で保持
+  // rAF ハンドルをインスタンスごとに1スロットで保持する。
+  // frame では push せずスロットを再代入するため、配列は長時間再生でも肥大しない。
   let rafIds: number[] = [];
 
   function initSeasonalHero(): void {
@@ -227,18 +230,20 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
           ? setupRipples(layer, density, ACCENT.summer)
           : setupFalling(layer, season, density, PARTICLE_COLORS[season]);
 
+      const slot = rafIds.length; // このインスタンス専用のスロット
+      rafIds.push(0);
       const t0 = performance.now();
       const frame = (now: number) => {
         const t = ((now - t0) / 1000) * speed;
         disc.style.transform = `scale(${1 + 0.015 * Math.sin((2 * Math.PI * t) / 12)})`;
         tick(t);
-        rafIds.push(requestAnimationFrame(frame));
+        rafIds[slot] = requestAnimationFrame(frame); // 再代入（毎フレーム増やさない）
       };
       if (reduced) {
         tick(3);
         disc.style.transform = "scale(1)";
       } else {
-        rafIds.push(requestAnimationFrame(frame));
+        rafIds[slot] = requestAnimationFrame(frame);
       }
     }
   }
