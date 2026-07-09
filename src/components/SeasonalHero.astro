@@ -1,0 +1,262 @@
+---
+// SeasonalHero.astro — 四季のヒーロー背景アニメーション（依存なし・素のJS）
+// season="auto" は訪問時の月で季節を自動判定（html[data-season] があればそれを優先）。
+// 子要素はそのまま前面にスロット表示される（見出しなど）。
+interface Props {
+  season?: "spring" | "summer" | "autumn" | "winter" | "auto";
+  density?: number;
+  speed?: number;
+  height?: string;
+}
+const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.props;
+---
+
+<div
+  data-seasonal-hero
+  data-season={season}
+  data-density={density}
+  data-speed={speed}
+  style={`position: relative; overflow: hidden; height: ${height};`}
+>
+  <div data-sh-layer style="position: absolute; inset: 0; pointer-events: none;"></div>
+  <div style="position: relative; z-index: 1; height: 100%;">
+    <slot />
+  </div>
+</div>
+
+<style>
+  [data-seasonal-hero] {
+    background: linear-gradient(160deg, #fdf7f8 0%, #fbecf0 55%, #f8e3ea 100%);
+  }
+  [data-seasonal-hero][data-season="summer"] {
+    background: linear-gradient(160deg, #f4fafb 0%, #e7f3f5 55%, #dcedf0 100%);
+  }
+  [data-seasonal-hero][data-season="autumn"] {
+    background: linear-gradient(160deg, #fcf6ec 0%, #f8ecd9 55%, #f4e2c8 100%);
+  }
+  [data-seasonal-hero][data-season="winter"] {
+    background: linear-gradient(160deg, #f7f9fb 0%, #edf2f7 55%, #e4ebf2 100%);
+  }
+  @media (prefers-color-scheme: dark) {
+    [data-seasonal-hero] {
+      background: linear-gradient(160deg, #211d23 0%, #2c222b 100%);
+    }
+    [data-seasonal-hero][data-season="summer"] {
+      background: linear-gradient(160deg, #17222a 0%, #153039 100%);
+    }
+    [data-seasonal-hero][data-season="autumn"] {
+      background: linear-gradient(160deg, #241e19 0%, #2e2218 100%);
+    }
+    [data-seasonal-hero][data-season="winter"] {
+      background: linear-gradient(160deg, #1b202a 0%, #212c3a 100%);
+    }
+  }
+</style>
+
+<script>
+  function mulberry32(a: number) {
+    return function () {
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const pick = <T,>(rnd: () => number, arr: T[]): T =>
+    arr[Math.floor(rnd() * arr.length) % arr.length];
+
+  // 落下粒子色（春/秋/冬）。夏は波紋のため ACCENT.summer を使う別経路。
+  const PARTICLE_COLORS_LIGHT: Record<string, string[]> = {
+    spring: ["#f2b7c6", "#eda0b4", "#f7cdd8", "#e48ca0"],
+    autumn: ["#cf6a2e", "#d99a3b", "#b4522a", "#e0b25c"],
+    winter: ["#ffffff", "#f2f6fa", "#dfe8f0", "#cfdce8"],
+  };
+  // ダーク背景（藍墨）でも沈まない、やや明度を上げた粒子色
+  const PARTICLE_COLORS_DARK: Record<string, string[]> = {
+    spring: ["#f6c3d0", "#efabbd", "#fad6df", "#ea9db0"],
+    autumn: ["#e0904f", "#e6ac52", "#cc6c3a", "#ecc274"],
+    winter: ["#ffffff", "#eef4fa", "#dbe6f0", "#c9d8e8"],
+  };
+  // 季節アクセント（日輪・夏の波紋の色）。global.css の --season-accent と同値。
+  // 色を変える際は両方の更新が必要（JS は style 直書き、CSS は文字装飾用で別管理）。
+  const ACCENT_LIGHT: Record<string, string> = {
+    spring: "#e48ca0",
+    summer: "#3a9daa",
+    autumn: "#cf6a2e",
+    winter: "#87a3bc",
+  };
+  const ACCENT_DARK: Record<string, string> = {
+    spring: "#e79aae",
+    summer: "#5cbdca",
+    autumn: "#e0904f",
+    winter: "#a3bdd4",
+  };
+
+  const SEASONS = ["spring", "summer", "autumn", "winter"];
+  // 月→季節: 12〜2月=winter / 3〜5月=spring / 6〜8月=summer / 9〜11月=autumn
+  // （BaseLayout のインラインスクリプトと同一マッピングであること）
+  function currentSeason(): string {
+    const m = new Date().getMonth() + 1;
+    return m <= 2 || m === 12 ? "winter" : m <= 5 ? "spring" : m <= 8 ? "summer" : "autumn";
+  }
+
+  function setupFalling(
+    layer: HTMLElement,
+    season: string,
+    density: number,
+    colors: string[],
+  ) {
+    const winter = season === "winter";
+    const count = Math.max(4, Math.round((winter ? 46 : 26) * density));
+    const rnd = mulberry32(season === "spring" ? 11 : season === "autumn" ? 22 : 33);
+    const parts = Array.from({ length: count }, (_, i) => {
+      const p = {
+        x0: rnd() * 104 - 2,
+        cyc: pick(rnd, winter ? [12, 12, 6] : [6, 12, 12, 4]),
+        phase: rnd(),
+        size: winter ? 4 + rnd() * 9 : 12 + rnd() * 16,
+        swayAmp: winter ? 1 + rnd() * 2 : 2 + rnd() * 5,
+        swayPer: pick(rnd, [3, 4, 6]),
+        swayPhi: rnd() * Math.PI * 2,
+        rotPer: pick(rnd, [3, 4, 6, 12]) * (rnd() > 0.5 ? 1 : -1),
+        rot0: rnd() * 360,
+        depth: rnd(),
+        el: document.createElement("div"),
+      };
+      const s = p.size * (0.6 + p.depth * 0.6);
+      const st = p.el.style;
+      st.position = "absolute";
+      st.width = s + "px";
+      st.height = s * (winter ? 1 : season === "spring" ? 0.85 : 0.95) + "px";
+      st.background = colors[i % colors.length];
+      st.borderRadius = winter ? "50%" : season === "spring" ? "150% 20% 150% 20%" : "0 100% 0 100%";
+      st.opacity = String(0.35 + p.depth * 0.5);
+      if (p.depth < 0.35) st.filter = "blur(1.5px)";
+      st.willChange = "transform";
+      layer.appendChild(p.el);
+      return p;
+    });
+    return (t: number) => {
+      const W = layer.clientWidth,
+        H = layer.clientHeight;
+      for (const p of parts) {
+        const prog = (t / p.cyc + p.phase) % 1;
+        const y = ((-8 + prog * 116) / 100) * H;
+        const x = ((p.x0 + p.swayAmp * Math.sin((2 * Math.PI * t) / p.swayPer + p.swayPhi)) / 100) * W;
+        const rot = winter ? 0 : p.rot0 + (360 * t) / p.rotPer;
+        p.el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
+      }
+    };
+  }
+
+  function setupRipples(layer: HTMLElement, density: number, color: string) {
+    const n = Math.max(2, Math.round(5 * density));
+    const rnd = mulberry32(44);
+    const spots = Array.from({ length: n }, () => ({
+      x: 0.08 + rnd() * 0.84,
+      y: 0.2 + rnd() * 0.6,
+      per: pick(rnd, [4, 6, 6, 12]),
+      off: rnd(),
+      max: 90 + rnd() * 150,
+      els: [0, 0.5].map(() => {
+        const el = document.createElement("div");
+        const st = el.style;
+        st.position = "absolute";
+        st.borderRadius = "50%";
+        st.border = `1.5px solid ${color}`;
+        st.willChange = "transform";
+        layer.appendChild(el);
+        return el;
+      }),
+    }));
+    return (t: number) => {
+      const W = layer.clientWidth,
+        H = layer.clientHeight;
+      for (const s of spots) {
+        s.els.forEach((el, j) => {
+          const local = (t / s.per + s.off + j * 0.5) % 1;
+          const r = local * s.max;
+          el.style.left = s.x * W - r + "px";
+          el.style.top = s.y * H - r * 0.42 + "px";
+          el.style.width = r * 2 + "px";
+          el.style.height = r * 0.84 + "px";
+          el.style.opacity = String((1 - local) * 0.45);
+        });
+      }
+    };
+  }
+
+  // rAF ハンドルをインスタンスごとに1スロットで保持する。
+  // frame では push せずスロットを再代入するため、配列は長時間再生でも肥大しない。
+  let rafIds: number[] = [];
+
+  function initSeasonalHero(): void {
+    teardownSeasonalHero(); // 遷移後の再初期化・多重ループを防ぐ
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const PARTICLE_COLORS = isDark ? PARTICLE_COLORS_DARK : PARTICLE_COLORS_LIGHT;
+    const ACCENT = isDark ? ACCENT_DARK : ACCENT_LIGHT;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    for (const root of document.querySelectorAll<HTMLElement>("[data-seasonal-hero]")) {
+      const layer = root.querySelector<HTMLElement>("[data-sh-layer]");
+      if (!layer) continue;
+
+      let season = root.dataset.season || "spring";
+      if (season === "auto") {
+        const htmlSeason = document.documentElement.dataset.season;
+        season = htmlSeason && SEASONS.includes(htmlSeason) ? htmlSeason : currentSeason();
+        root.dataset.season = season; // 背景CSSの参照を確定
+      }
+      const density = parseFloat(root.dataset.density || "1");
+      const speed = parseFloat(root.dataset.speed || "1");
+
+      // 日輪（ゆっくり呼吸する円）
+      const disc = document.createElement("div");
+      const ds = disc.style;
+      ds.position = "absolute";
+      ds.right = "12%";
+      ds.top = "50%";
+      ds.width = "340px";
+      ds.height = "340px";
+      ds.marginTop = "-170px";
+      ds.borderRadius = "50%";
+      ds.background = ACCENT[season];
+      ds.opacity = "0.14";
+      layer.appendChild(disc);
+
+      const tick =
+        season === "summer"
+          ? setupRipples(layer, density, ACCENT.summer)
+          : setupFalling(layer, season, density, PARTICLE_COLORS[season]);
+
+      const slot = rafIds.length; // このインスタンス専用のスロット
+      rafIds.push(0);
+      const t0 = performance.now();
+      const frame = (now: number) => {
+        const t = ((now - t0) / 1000) * speed;
+        disc.style.transform = `scale(${1 + 0.015 * Math.sin((2 * Math.PI * t) / 12)})`;
+        tick(t);
+        rafIds[slot] = requestAnimationFrame(frame); // 再代入（毎フレーム増やさない）
+      };
+      if (reduced) {
+        tick(3);
+        disc.style.transform = "scale(1)";
+      } else {
+        rafIds[slot] = requestAnimationFrame(frame);
+      }
+    }
+  }
+
+  function teardownSeasonalHero(): void {
+    for (const id of rafIds) cancelAnimationFrame(id);
+    rafIds = [];
+    // 生成した粒子・日輪を除去（再初期化時の二重生成を防ぐ）
+    for (const layer of document.querySelectorAll<HTMLElement>("[data-sh-layer]")) {
+      layer.replaceChildren();
+    }
+  }
+
+  document.addEventListener("astro:page-load", initSeasonalHero);
+  document.addEventListener("astro:before-swap", teardownSeasonalHero);
+</script>
