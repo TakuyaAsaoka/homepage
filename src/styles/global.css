@@ -101,3 +101,185 @@ html,
 body {
   overflow-x: clip;
 }
+
+/* ===== Homeページ: エディトリアルリンク（Home スコープ・墨色文字＋季節下線） ===== */
+.home-section a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--season-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* ===== Homeページ: ヒーロー ===== */
+.home-hero {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  margin-top: -1rem; /* main の上パディングを打ち消しヘッダー直下に密着 */
+}
+.hero-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  text-align: left;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  color: var(--color-text);
+}
+.hero-role {
+  font-family: var(--font-serif);
+  font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+  letter-spacing: 0.35em;
+  color: var(--season-accent);
+  margin-bottom: 1rem;
+}
+.hero-name {
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  letter-spacing: 0.12em;
+  line-height: 1.25;
+}
+.hero-rule {
+  width: 0;
+  height: 1px;
+  background: var(--color-text);
+  margin: 1.25rem 0;
+}
+.hero-copy {
+  font-family: var(--font-serif);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  letter-spacing: 0.22em;
+}
+
+/* ===== Homeページ: ヒーロー入場アニメーション（純CSS・JS無効でも再生） ===== */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hero-grow-rule {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--hero-rule-width);
+  }
+}
+.hero-role {
+  opacity: 0;
+  animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
+}
+.hero-name {
+  opacity: 0;
+  animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
+}
+.hero-rule {
+  animation: hero-grow-rule 0.6s var(--anim-ease) 0.7s forwards;
+}
+.hero-copy {
+  opacity: 0;
+  animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.95s forwards;
+}
+
+/* reduced-motion: ヒーロー入場を無効化し最終状態で静止 */
+@media (prefers-reduced-motion: reduce) {
+  .hero-role,
+  .hero-name,
+  .hero-copy {
+    opacity: 1;
+    animation: none;
+  }
+  .hero-rule {
+    width: var(--hero-rule-width);
+    animation: none;
+  }
+}
+
+/* ===== Homeページ: セクション共通 ===== */
+.home-section {
+  margin-block: 4rem;
+}
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  margin-bottom: 1.5rem;
+}
+.section-num {
+  font-size: 0.9em;
+  color: var(--season-accent);
+}
+.section-title {
+  letter-spacing: 0.25em;
+}
+.section-label {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-muted);
+}
+
+/* ===== Homeページ: スキル（・区切りの文字組み） ===== */
+.skill-list {
+  list-style: none;
+  color: var(--color-text-soft);
+  line-height: 2.4;
+  letter-spacing: 0.06em;
+}
+.skill-list li {
+  display: inline;
+}
+.skill-list li + li::before {
+  content: "・";
+  color: var(--season-accent);
+  margin: 0 0.5em;
+}
+
+/* ===== Homeページ: Contact ===== */
+.contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.contact-label {
+  display: inline-block;
+  width: 5em;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--color-muted);
+}
+
+/* ===== Homeページ: スクロール登場（data-reveal） =====
+   初期の隠し状態は「JS有効かつ reduced-motion でない」ときのみ適用。
+   → JS無効時は html.js が付かず隠れない。reduced-motion 時はセレクタが外れ最初から可視。 */
+html.js:not(.reduced-motion) [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--anim-duration) var(--anim-ease),
+    transform var(--anim-duration) var(--anim-ease);
+}
+html.js:not(.reduced-motion) [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* 2段階登場: 中身側（delayed）に遅延を与え、見出し→中身の順にする */
+html.js:not(.reduced-motion) [data-reveal="delayed"] {
+  transition-delay: 0.23s;
+}
+
+/* reduced-motion: 二重の担保（JSのクラス付与失敗時も隠れたままにしない） */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
