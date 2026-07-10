@@ -1,5 +1,6 @@
 ---
 import TagList from "./TagList.astro";
+import { BASE_PATH } from "../consts";
 
 interface Props {
   title: string;
@@ -14,7 +15,7 @@ const { title, description, tags, slug } = Astro.props;
 
 <article class="project-card">
   <h3>
-    <a href={`${import.meta.env.BASE_URL}projects/${slug}/`}>{title}</a>
+    <a href={`${BASE_PATH}projects/${slug}/`}>{title}</a>
   </h3>
   <p>{description}</p>
   <TagList tags={tags} />

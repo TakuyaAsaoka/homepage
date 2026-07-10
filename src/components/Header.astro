@@ -1,21 +1,23 @@
 ---
-import { SITE_TITLE } from "../consts";
-
-const base = import.meta.env.BASE_URL;
+import { SITE_TITLE, BASE_PATH } from "../consts";
 
 const navItems = [
-  { label: "Home", href: `${base}` },
-  { label: "About", href: `${base}about/` },
-  { label: "Blog", href: `${base}blog/` },
-  { label: "Projects", href: `${base}projects/` },
+  { label: "Home", href: BASE_PATH },
+  { label: "About", href: `${BASE_PATH}about/` },
+  { label: "Blog", href: `${BASE_PATH}blog/` },
+  { label: "Projects", href: `${BASE_PATH}projects/` },
 ];
 
-const currentPath = Astro.url.pathname;
+// active 判定は末尾スラッシュの有無に依存しないよう正規化して比較する
+function normalizePath(path: string): string {
+  return path.replace(/\/$/, "");
+}
+const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <header class="header">
   <nav class="nav">
-    <a href={base} class="nav-title">{SITE_TITLE}</a>
+    <a href={BASE_PATH} class="nav-title">{SITE_TITLE}</a>
     <button
       class="menu-toggle"
       aria-expanded="false"
@@ -29,7 +31,7 @@ const currentPath = Astro.url.pathname;
         <li>
           <a
             href={item.href}
-            class:list={["nav-link", { active: currentPath === item.href }]}
+            class:list={["nav-link", { active: currentPath === normalizePath(item.href) }]}
           >
             {item.label}
           </a>

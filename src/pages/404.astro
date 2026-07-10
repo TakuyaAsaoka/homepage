@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { BASE_PATH } from "../consts";
 ---
 
 <BaseLayout title="ページが見つかりません" description="お探しのページは存在しません" noindex>
   <section class="not-found">
     <h1>404</h1>
     <p>お探しのページは見つかりませんでした。</p>
-    <a href={`${import.meta.env.BASE_URL}`}>ホームに戻る</a>
+    <a href={BASE_PATH}>ホームに戻る</a>
   </section>
 </BaseLayout>
 
