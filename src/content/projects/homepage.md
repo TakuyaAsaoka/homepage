@@ -14,4 +14,4 @@ draft: false
 - **アクセシビリティ** — ダークモード・JS無効・prefers-reduced-motion に対応し、文字色はWCAG AAを担保
 - **コンテンツ管理** — Markdown + Content Collections、記事一覧はnoteのRSSから取得
 
-デザインからCI/CDまでをひとりで面倒を見る、「つくることと、動かし続けること。」の実践の場でもあります。
+デザインからCI/CDまでひとりで面倒を見る、「つくることと、動かし続けること。」の実践の場でもあります。
