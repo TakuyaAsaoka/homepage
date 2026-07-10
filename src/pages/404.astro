@@ -5,25 +5,22 @@ import { BASE_PATH } from "../consts";
 
 <BaseLayout title="ページが見つかりません" description="お探しのページは存在しません" noindex>
   <section class="not-found">
-    <h1>404</h1>
+    <h1 class="section-heading page-heading">
+      <span class="section-title">404</span>
+      <span class="section-label" aria-hidden="true">NOT FOUND</span>
+    </h1>
     <p>お探しのページは見つかりませんでした。</p>
-    <a href={BASE_PATH}>ホームに戻る</a>
+    <p class="back">
+      <a href={BASE_PATH}>ホームに戻る<span class="arrow" aria-hidden="true">→</span></a>
+    </p>
   </section>
 </BaseLayout>
 
 <style>
-  .not-found {
-    text-align: center;
-    padding: 4rem 1rem;
-  }
-
-  .not-found h1 {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-
   .not-found p {
-    margin-bottom: 2rem;
     color: var(--color-muted);
+  }
+  .not-found .back {
+    margin-top: 2rem;
   }
 </style>

@@ -10,6 +10,8 @@ export const SITE_DESCRIPTION = "アサオカのホームページ";
 export const SITE_URL = "https://TakuyaAsaoka.github.io";
 export const SITE_LANG = "ja";
 export const SITE_LOCALE = "ja-JP";
+// OGP（SNS/チャット共有）のデフォルト画像。ページ個別指定が無いときのフォールバック
+export const DEFAULT_OG_IMAGE = `${BASE_PATH}images/og.png`;
 
 // SNSリンク（使わないものは空文字にする）
 export const SOCIAL_LINKS = {
