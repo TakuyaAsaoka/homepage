@@ -306,7 +306,7 @@ a:hover .arrow {
   color: var(--color-text-soft);
 }
 
-/* セクション末尾の「すべて見る」導線（制作等で共用） */
+/* セクション末尾の「すべて見る」導線（現状は制作のみ・汎用命名） */
 .section-more {
   display: inline-block;
   margin-top: 1.5rem;

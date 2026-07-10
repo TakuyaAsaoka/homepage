@@ -49,7 +49,7 @@ const recentProjects = (await getCollection("projects"))
     {recentProjects.length > 0 ? (
       <ul class="works-list" role="list" data-reveal="delayed">
         {recentProjects.map((project) => (
-          <li class="works-item">
+          <li>
             <a class="works-link" href={`${BASE_PATH}projects/${project.id}/`}>
               <span class="works-title">{project.data.title}</span>
               <span class="works-desc">{project.data.description}</span>
