@@ -26,11 +26,13 @@ const recentProjects = (await getCollection("projects"))
 <BaseLayout title="Home" description={SITE_DESCRIPTION}>
   <div class="home-hero">
     <SeasonalHero season="auto" height="70vh">
-      <div class="hero-content">
-        <p class="hero-role">SOFTWARE ENGINEER / SRE</p>
-        <h1 class="hero-name">{SITE_AUTHOR}</h1>
-        <span class="hero-rule" aria-hidden="true"></span>
-        <p class="hero-copy">つくることと、動かし続けること。</p>
+      <div class="hero-inner">
+        <div class="hero-content">
+          <p class="hero-role">SOFTWARE ENGINEER / SRE</p>
+          <h1 class="hero-name">{SITE_AUTHOR}</h1>
+          <span class="hero-rule" aria-hidden="true"></span>
+          <p class="hero-copy">つくることと、動かし続けること。</p>
+        </div>
       </div>
     </SeasonalHero>
   </div>

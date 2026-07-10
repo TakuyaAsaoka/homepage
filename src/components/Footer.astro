@@ -11,6 +11,7 @@ const activeLinks = [
 
 <footer class="footer">
   <div class="footer-inner">
+    <p class="copyright">&copy; {new Date().getFullYear()} {COPYRIGHT_HOLDER}</p>
     {activeLinks.length > 0 && (
       <ul class="social-links">
         {activeLinks.map((item) => (
@@ -22,27 +23,31 @@ const activeLinks = [
         ))}
       </ul>
     )}
-    <p class="copyright">&copy; {new Date().getFullYear()} {COPYRIGHT_HOLDER}</p>
   </div>
 </footer>
 
 <style>
+  /* 本文と同じコンテナ・左揃えの文法に合わせ、©とリンクを両端配置する */
   .footer {
-    margin-top: 4rem;
-    padding: 2rem 1rem;
+    margin-top: 5rem;
+    padding: 2rem 0;
     border-top: 1px solid var(--color-border);
-    text-align: center;
   }
+  /* main / hero-inner と同一構造（max-width＋内側padding）にして左端ラインを揃える */
   .footer-inner {
     max-width: var(--content-max-width);
     margin: 0 auto;
+    padding-inline: var(--content-pad);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
   }
   .social-links {
     display: flex;
-    justify-content: center;
     list-style: none;
     gap: 1.5rem;
-    margin-bottom: 1rem;
   }
   .social-links a {
     font-size: 0.85rem;

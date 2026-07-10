@@ -59,12 +59,14 @@ const currentPath = normalizePath(Astro.url.pathname);
 
 <style>
   .header {
-    padding: 1rem;
+    padding: 1.1rem 0;
   }
 
+  /* main / hero-inner と同一構造（max-width＋内側padding）にして左端ラインを揃える */
   .nav {
     max-width: var(--content-max-width);
     margin: 0 auto;
+    padding-inline: var(--content-pad);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -134,7 +136,7 @@ const currentPath = normalizePath(Astro.url.pathname);
   .nav-links {
     display: flex;
     list-style: none;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
   }
 

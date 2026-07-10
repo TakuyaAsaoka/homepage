@@ -1,6 +1,9 @@
 :root {
   color-scheme: light dark; /* ネイティブUI（フォーム/スクロールバー）をテーマ追従 */
   --content-max-width: 800px;
+  /* コンテンツの左右パディング。Header / main / ヒーロー内テキスト / Footer で共用し、
+     全ページの左端ラインを一直線に揃える */
+  --content-pad: clamp(1.25rem, 5vw, 2rem);
   --color-bg: #ffffff;
   --color-text: #333333;
   --color-text-soft: #4a5560; /* 補助本文（skill-list 等）。既存に無いため新規 */
@@ -97,7 +100,7 @@ main {
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem var(--content-pad);
 }
 
 img {
@@ -130,6 +133,14 @@ a:hover {
   margin-inline: calc(50% - 50vw);
   margin-top: -1rem; /* main の上パディングを打ち消しヘッダー直下に密着 */
 }
+/* ヒーロー内テキストを本文と同じコンテナに載せ、左端ラインを全ページで揃える
+   （背景・季節演出は full-bleed のまま） */
+.hero-inner {
+  height: 100%;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--content-pad);
+}
 .hero-content {
   height: 100%;
   display: flex;
@@ -137,7 +148,7 @@ a:hover {
   justify-content: flex-end;
   align-items: flex-start;
   text-align: left;
-  padding: clamp(1.5rem, 5vw, 3.5rem);
+  padding-block: 0 clamp(2rem, 6vh, 3.25rem);
   color: var(--color-text);
 }
 .hero-role {
@@ -215,13 +226,17 @@ a:hover {
 
 /* ===== セクション見出し（全ページ共通・明朝＋英字ラベル） ===== */
 .home-section {
-  margin-block: 4rem;
+  margin-block: 5rem;
 }
 .section-heading {
   display: flex;
   align-items: baseline;
   gap: 0.9em;
   margin-bottom: 1.5rem;
+}
+/* 見出しスケール: 下層h1 1.65rem ＞ Home h2 1.35rem ＞ 下層h2 1.15rem の階層 */
+h2.section-heading {
+  font-size: 1.35rem;
 }
 .section-num {
   font-size: 0.9em;
@@ -245,7 +260,7 @@ a:hover {
 
 /* ===== Homeページ: ヒーロー直下の橋渡し（Aboutへの導線） ===== */
 .home-intro {
-  margin-block: 3rem 4rem;
+  margin-block: 3.5rem 5rem;
   font-family: var(--font-serif);
   font-size: clamp(0.95rem, 2vw, 1.1rem);
   line-height: 2;
@@ -301,6 +316,10 @@ a:hover .arrow {
   text-decoration-color: var(--season-accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
+}
+/* 罫線を上下対称に閉じる（各項目の上罫線＋最終項目の下罫線） */
+.works-list li:last-child .works-link {
+  border-bottom: 1px solid var(--color-border);
 }
 .works-empty {
   color: var(--color-text-soft);
