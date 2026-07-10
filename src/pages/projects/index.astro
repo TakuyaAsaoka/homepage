@@ -8,9 +8,12 @@ const projects = (await getCollection("projects"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Projects" description="My projects">
+<BaseLayout title="Projects" description="アサオカの制作物一覧">
   <section>
-    <h1>Projects</h1>
+    <h1 class="section-heading page-heading">
+      <span class="section-title">制作</span>
+      <span class="section-label" aria-hidden="true">PROJECTS</span>
+    </h1>
     {projects.length > 0 ? (
       projects.map((project) => (
         <ProjectCard
@@ -22,7 +25,7 @@ const projects = (await getCollection("projects"))
         />
       ))
     ) : (
-      <p>No projects yet.</p>
+      <p>公開できる制作物を準備中です。</p>
     )}
   </section>
 </BaseLayout>

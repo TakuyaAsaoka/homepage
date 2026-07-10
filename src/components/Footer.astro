@@ -1,29 +1,36 @@
 ---
-import { SOCIAL_LINKS } from "../consts";
+import { SOCIAL_LINKS, COPYRIGHT_HOLDER } from "../consts";
 
-const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
+// 表示順のSNSリンク定義（プロパティ参照なので SOCIAL_LINKS のキー変更に型で追従する）
+const activeLinks = [
+  { label: "GitHub", url: SOCIAL_LINKS.github },
+  { label: "X", url: SOCIAL_LINKS.twitter },
+  { label: "YouTube", url: SOCIAL_LINKS.youtube },
+].filter((item) => item.url);
 ---
 
 <footer class="footer">
   <div class="footer-inner">
     {activeLinks.length > 0 && (
       <ul class="social-links">
-        {activeLinks.map(([name, url]) => (
+        {activeLinks.map((item) => (
           <li>
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              {name}
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              {item.label}
             </a>
           </li>
         ))}
       </ul>
     )}
-    <p>&copy; {new Date().getFullYear()} All rights reserved.</p>
+    <p class="copyright">&copy; {new Date().getFullYear()} {COPYRIGHT_HOLDER}</p>
   </div>
 </footer>
 
 <style>
   .footer {
+    margin-top: 4rem;
     padding: 2rem 1rem;
+    border-top: 1px solid var(--color-border);
     text-align: center;
   }
   .footer-inner {
@@ -34,7 +41,16 @@ const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
     display: flex;
     justify-content: center;
     list-style: none;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-bottom: 1rem;
+  }
+  .social-links a {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+  .copyright {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
   }
 </style>

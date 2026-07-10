@@ -73,7 +73,9 @@ const currentPath = normalizePath(Astro.url.pathname);
   }
 
   .nav-title {
-    font-weight: bold;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-decoration: none;
     color: inherit;
   }
@@ -137,12 +139,24 @@ const currentPath = normalizePath(Astro.url.pathname);
   }
 
   .nav-link {
+    display: inline-block;
+    padding: 0.25rem 0;
     text-decoration: none;
     color: inherit;
   }
 
+  .nav-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--season-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+
   .nav-link.active {
     text-decoration: underline;
+    text-decoration-color: var(--season-accent-text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
   }
 
   @media (max-width: 767px) {
