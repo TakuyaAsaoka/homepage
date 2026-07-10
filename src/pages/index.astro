@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SeasonalHero from "../components/SeasonalHero.astro";
-import { SITE_DESCRIPTION, SOCIAL_LINKS, EMAIL, SITE_AUTHOR } from "../consts";
+import { getCollection } from "astro:content";
+import { SITE_DESCRIPTION, SOCIAL_LINKS, EMAIL, SITE_AUTHOR, BASE_PATH } from "../consts";
 
 // スキルセクションに表示する技術タグ
 const skills = [
@@ -14,6 +15,12 @@ const skills = [
   "Grafana",
   "Prometheus",
 ];
+
+// 制作セクションに抜粋する最新プロジェクト（draft除外・pubDate降順の先頭2件）
+const recentProjects = (await getCollection("projects"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
 ---
 
 <BaseLayout title="Home" description={SITE_DESCRIPTION}>
@@ -28,9 +35,39 @@ const skills = [
     </SeasonalHero>
   </div>
 
+  <p class="home-intro" data-reveal>
+    自動車業界で、つくって動かし続ける仕事をしています。
+    <a class="home-intro-link" href={`${BASE_PATH}about/`}>わたしについて<span class="arrow" aria-hidden="true">→</span></a>
+  </p>
+
   <section class="home-section">
     <h2 class="section-heading" data-reveal>
       <span class="section-num">壱</span>
+      <span class="section-title">制作</span>
+      <span class="section-label" aria-hidden="true">WORKS</span>
+    </h2>
+    {recentProjects.length > 0 ? (
+      <ul class="works-list" role="list" data-reveal="delayed">
+        {recentProjects.map((project) => (
+          <li>
+            <a class="works-link" href={`${BASE_PATH}projects/${project.id}/`}>
+              <span class="works-title">{project.data.title}</span>
+              <span class="works-desc">{project.data.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="works-empty" data-reveal="delayed">公開できる制作物を準備中です。</p>
+    )}
+    <a class="section-more" href={`${BASE_PATH}projects/`} data-reveal="delayed">
+      制作をすべて見る<span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </section>
+
+  <section class="home-section">
+    <h2 class="section-heading" data-reveal>
+      <span class="section-num">弐</span>
       <span class="section-title">技術</span>
       <span class="section-label" aria-hidden="true">SKILLS</span>
     </h2>
@@ -41,7 +78,7 @@ const skills = [
 
   <section class="home-section">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">弐</span>
+      <span class="section-num">参</span>
       <span class="section-title">連絡先</span>
       <span class="section-label" aria-hidden="true">CONTACT</span>
     </h2>
