@@ -7,7 +7,6 @@
   --color-border: #e0e0e0;
   --color-tag-bg: #f0f0f0;
   --color-muted: #666666;
-  --color-link: #0066cc;
 
   /* フォント（Google Fonts） */
   --font-serif: "Shippori Mincho", "Hiragino Mincho ProN", serif;
@@ -18,17 +17,23 @@
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --anim-duration: 0.7s;
 
-  /* 季節アクセント（html[data-season] に連動。デフォルト: 春） */
+  /* 季節アクセント（html[data-season] に連動。デフォルト: 春）
+     --season-accent: 装飾用（下線・区切り記号・図形）
+     --season-accent-text: 文字用。白地とヒーロー淡地の双方で WCAG AA（4.5:1）を満たす濃色 */
   --season-accent: #e48ca0;
+  --season-accent-text: #a8465e;
 }
 html[data-season="summer"] {
   --season-accent: #3a9daa;
+  --season-accent-text: #26707b;
 }
 html[data-season="autumn"] {
   --season-accent: #cf6a2e;
+  --season-accent-text: #a04e1c;
 }
 html[data-season="winter"] {
   --season-accent: #87a3bc;
+  --season-accent-text: #4c6b86;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,17 +44,21 @@ html[data-season="winter"] {
     --color-border: #333333;
     --color-tag-bg: #2a2a2a;
     --color-muted: #999999;
-    --color-link: #5599ff;
-    --season-accent: #e79aae; /* 春（ダーク版） */
+    /* 春（ダーク版）。ダーク版アクセントは藍墨地で 4.5:1 以上のため文字用も同値 */
+    --season-accent: #e79aae;
+    --season-accent-text: #e79aae;
   }
   html[data-season="summer"] {
     --season-accent: #5cbdca;
+    --season-accent-text: #5cbdca;
   }
   html[data-season="autumn"] {
     --season-accent: #e0904f;
+    --season-accent-text: #e0904f;
   }
   html[data-season="winter"] {
     --season-accent: #a3bdd4;
+    --season-accent-text: #a3bdd4;
   }
 }
 
@@ -102,13 +111,17 @@ body {
   overflow-x: clip;
 }
 
-/* ===== Homeページ: エディトリアルリンク（Home スコープ・墨色文字＋季節下線） ===== */
-.home-section a {
+/* ===== エディトリアルリンク（全ページ共通・墨色文字＋季節下線）
+   ナビゲーション等の例外はコンポーネントのスコープドスタイルで上書きする ===== */
+a {
   color: var(--color-text);
   text-decoration: underline;
   text-decoration-color: var(--season-accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
+}
+a:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* ===== Homeページ: ヒーロー ===== */
@@ -131,7 +144,7 @@ body {
   font-family: var(--font-serif);
   font-size: clamp(0.7rem, 1.6vw, 0.85rem);
   letter-spacing: 0.35em;
-  color: var(--season-accent);
+  color: var(--season-accent-text);
   margin-bottom: 1rem;
 }
 .hero-name {
@@ -200,7 +213,7 @@ body {
   }
 }
 
-/* ===== Homeページ: セクション共通 ===== */
+/* ===== セクション見出し（全ページ共通・明朝＋英字ラベル） ===== */
 .home-section {
   margin-block: 4rem;
 }
@@ -212,17 +225,22 @@ body {
 }
 .section-num {
   font-size: 0.9em;
-  color: var(--season-accent);
+  color: var(--season-accent-text);
 }
 .section-title {
   letter-spacing: 0.25em;
 }
 .section-label {
   font-family: var(--font-sans);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.3em;
   color: var(--color-muted);
+}
+/* 下層ページの h1 に section-heading と併用する */
+.page-heading {
+  font-size: 1.65rem;
+  margin-block: 2.5rem 2rem;
 }
 
 /* ===== Homeページ: スキル（・区切りの文字組み） ===== */

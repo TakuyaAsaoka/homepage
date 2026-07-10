@@ -3,7 +3,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { NOTE_RSS_URL, SITE_LOCALE } from "../consts";
 import Parser from "rss-parser";
 
+// note のプロフィールURL（RSS取得失敗時の代替導線に使う）
+const noteProfileUrl = NOTE_RSS_URL.replace(/\/rss\/?$/, "");
+
 let feedItems: { title: string; link: string; pubDate: string }[] = [];
+let fetchFailed = false;
 
 if (NOTE_RSS_URL) {
   try {
@@ -15,6 +19,7 @@ if (NOTE_RSS_URL) {
       pubDate: item.pubDate ?? "",
     }));
   } catch (error) {
+    fetchFailed = true;
     if (error instanceof Error) {
       console.error("RSSフィード取得エラー:", error.message);
     }
@@ -22,11 +27,14 @@ if (NOTE_RSS_URL) {
 }
 ---
 
-<BaseLayout title="Blog" description="Blog posts from note">
+<BaseLayout title="Blog" description="noteに書いた記事の一覧">
   <section>
-    <h1>Blog</h1>
+    <h1 class="section-heading page-heading">
+      <span class="section-title">記事</span>
+      <span class="section-label" aria-hidden="true">BLOG</span>
+    </h1>
     {NOTE_RSS_URL === "" && (
-      <p>Set <code>NOTE_RSS_URL</code> in <code>src/consts.ts</code> to display blog posts.</p>
+      <p><code>src/consts.ts</code> の <code>NOTE_RSS_URL</code> を設定すると記事が表示されます。</p>
     )}
     {feedItems.length > 0 ? (
       <ul class="blog-list">
@@ -43,8 +51,14 @@ if (NOTE_RSS_URL) {
           </li>
         ))}
       </ul>
+    ) : fetchFailed ? (
+      <p>
+        記事を読み込めませんでした。
+        <a href={noteProfileUrl} target="_blank" rel="noopener noreferrer">note</a>
+        で直接ご覧いただけます。
+      </p>
     ) : NOTE_RSS_URL !== "" && (
-      <p>No posts found.</p>
+      <p>まだ記事がありません。</p>
     )}
   </section>
 </BaseLayout>

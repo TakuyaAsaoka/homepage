@@ -1,5 +1,12 @@
 ---
-import { SOCIAL_LINKS } from "../consts";
+import { SOCIAL_LINKS, COPYRIGHT_HOLDER } from "../consts";
+
+// SNSキー → 表示名（正式表記）
+const SOCIAL_LABELS: Record<string, string> = {
+  github: "GitHub",
+  twitter: "X",
+  youtube: "YouTube",
+};
 
 const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
 ---
@@ -11,19 +18,21 @@ const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
         {activeLinks.map(([name, url]) => (
           <li>
             <a href={url} target="_blank" rel="noopener noreferrer">
-              {name}
+              {SOCIAL_LABELS[name] ?? name}
             </a>
           </li>
         ))}
       </ul>
     )}
-    <p>&copy; {new Date().getFullYear()} All rights reserved.</p>
+    <p class="copyright">&copy; {new Date().getFullYear()} {COPYRIGHT_HOLDER}</p>
   </div>
 </footer>
 
 <style>
   .footer {
+    margin-top: 4rem;
     padding: 2rem 1rem;
+    border-top: 1px solid var(--color-border);
     text-align: center;
   }
   .footer-inner {
@@ -34,7 +43,16 @@ const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
     display: flex;
     justify-content: center;
     list-style: none;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-bottom: 1rem;
+  }
+  .social-links a {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+  .copyright {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--color-muted);
   }
 </style>

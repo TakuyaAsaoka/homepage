@@ -16,5 +16,7 @@ export const NOTE_RSS_URL: string = "https://note.com/limber_iguana638/rss";
 
 // Home ヒーローの表示名（フルネームにしない）
 export const SITE_AUTHOR = "アサオカ";
+// フッターの著作権表記名（欧文表記）
+export const COPYRIGHT_HOLDER = "ASAOKA";
 // Contact の mailto に使うメールアドレス
 export const EMAIL = "asaoka.biz@gmail.com";
