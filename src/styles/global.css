@@ -76,6 +76,8 @@ html[data-season="winter"] {
 html {
   font-family: var(--font-sans);
   line-height: 1.7;
+  /* スクロールバー領域を常時確保し、ページ間で表示幅が変わって中央寄せがずれるのを防ぐ */
+  scrollbar-gutter: stable;
 }
 
 h1,
