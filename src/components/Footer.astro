@@ -1,24 +1,22 @@
 ---
 import { SOCIAL_LINKS, COPYRIGHT_HOLDER } from "../consts";
 
-// SNSキー → 表示名（正式表記）
-const SOCIAL_LABELS: Record<string, string> = {
-  github: "GitHub",
-  twitter: "X",
-  youtube: "YouTube",
-};
-
-const activeLinks = Object.entries(SOCIAL_LINKS).filter(([, url]) => url);
+// 表示順のSNSリンク定義（プロパティ参照なので SOCIAL_LINKS のキー変更に型で追従する）
+const activeLinks = [
+  { label: "GitHub", url: SOCIAL_LINKS.github },
+  { label: "X", url: SOCIAL_LINKS.twitter },
+  { label: "YouTube", url: SOCIAL_LINKS.youtube },
+].filter((item) => item.url);
 ---
 
 <footer class="footer">
   <div class="footer-inner">
     {activeLinks.length > 0 && (
       <ul class="social-links">
-        {activeLinks.map(([name, url]) => (
+        {activeLinks.map((item) => (
           <li>
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              {SOCIAL_LABELS[name] ?? name}
+            <a href={item.url} target="_blank" rel="noopener noreferrer">
+              {item.label}
             </a>
           </li>
         ))}

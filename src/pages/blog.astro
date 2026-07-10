@@ -52,11 +52,7 @@ if (NOTE_RSS_URL) {
         ))}
       </ul>
     ) : fetchFailed ? (
-      <p>
-        記事を読み込めませんでした。
-        <a href={noteProfileUrl} target="_blank" rel="noopener noreferrer">note</a>
-        で直接ご覧いただけます。
-      </p>
+      <p>記事を読み込めませんでした。<a href={noteProfileUrl} target="_blank" rel="noopener noreferrer">note</a>で直接ご覧いただけます。</p>
     ) : NOTE_RSS_URL !== "" && (
       <p>まだ記事がありません。</p>
     )}
