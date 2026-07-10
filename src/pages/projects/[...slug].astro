@@ -45,4 +45,20 @@ const { Content } = await render(project);
   .content {
     margin-top: 2rem;
   }
+  /* Markdown本文の縦リズム（グローバルリセットで消えた余白を戻す） */
+  .content :global(p) {
+    margin-block: 1em;
+  }
+  .content :global(ul),
+  .content :global(ol) {
+    margin-block: 1em;
+    padding-left: 1.5em;
+  }
+  .content :global(li) {
+    margin-block: 0.4em;
+  }
+  .content :global(h2),
+  .content :global(h3) {
+    margin-block: 1.5em 0.75em;
+  }
 </style>
