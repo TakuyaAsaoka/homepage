@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE, SITE_LANG, BASE_PATH } from "../consts";
+import { SITE_TITLE, SITE_LANG, BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
 
 interface Props {
   title: string;
@@ -10,7 +10,9 @@ interface Props {
 
 const { title, description, image, noindex } = Astro.props;
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
-const ogImage = image && Astro.site ? new URL(image, Astro.site).href : image;
+// ページ個別指定が無ければデフォルトOGP画像を使う。絶対URL化して og:image に出力する
+const resolvedImage = image ?? DEFAULT_OG_IMAGE;
+const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedImage;
 ---
 
 <meta charset="utf-8" />
