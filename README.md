@@ -63,3 +63,7 @@ npm run preview   # ビルド結果をローカルでプレビュー
 ### 独自ドメイン・SSL化
 
 独自ドメインの設定とHTTPS化の手順は [`docs/custom-domain-ssl.md`](docs/custom-domain-ssl.md) を参照してください。
+
+### 検索エンジンへのサイトマップ登録
+
+Google Search Console への登録手順と robots.txt を置かない理由は [`docs/search-console.md`](docs/search-console.md) を参照してください。

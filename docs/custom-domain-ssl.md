@@ -137,6 +137,8 @@ export const SITE_URL = "https://example.com";
 site_url: https://example.com
 ```
 
+> **移行後のSEO再設定**: 独自ドメインへの移行後は、Search Console の再登録と robots.txt の配置が必要になります。[`docs/search-console.md`](search-console.md) の「独自ドメイン移行時の注意」を参照してください。
+
 ---
 
 ## 7. 確認とトラブルシューティング
