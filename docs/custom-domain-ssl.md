@@ -125,12 +125,6 @@ export default defineConfig({
 
 > **ポイント**: GitHub Pages のサブディレクトリ配信（`username.github.io/repo-name`）から独自ドメインに変更する場合、`base` の設定を削除してください。
 
-### `src/consts.ts`
-
-```typescript
-export const SITE_URL = "https://example.com";
-```
-
 ### `public/admin/config.yml`（CMS使用時）
 
 ```yaml
