@@ -29,7 +29,7 @@
 - robots.txt の仕様上、クローラーは**ドメインルート**（`https://takuyaasaoka.github.io/robots.txt`）しか読まない
 - 本サイトは GitHub Pages のプロジェクトページ（`/homepage/` 配下）で公開されているため、このリポジトリの `public/robots.txt` は `/homepage/robots.txt` に配置され、クローラーに無視される
 
-そのため、Search Console への直接登録がサイトマップを検索エンジンに伝える唯一の手段です。設計判断の詳細は [`docs/records/specs/2026-07-16-2-sitemap-generation-design.md`](records/specs/2026-07-16-2-sitemap-generation-design.md) を参照してください。
+そのため、Search Console への直接登録が Google にサイトマップを伝える唯一の手段です。設計判断の詳細は [`docs/records/specs/2026-07-16-2-sitemap-generation-design.md`](records/specs/2026-07-16-2-sitemap-generation-design.md) を参照してください。
 
 ---
 
@@ -54,4 +54,4 @@
 |------|------|
 | Search Console の再登録 | URLが変わるため、新ドメインでプロパティを作り直し、サイトマップを再送信する |
 | robots.txt の配置 | 独自ドメインではサイトがドメインルートで配信されるため、robots.txt が機能するようになる。`public/robots.txt` を作成し `Sitemap: https://<新ドメイン>/sitemap-index.xml` を記載する |
-| 旧URLからの移転通知 | Search Console の「アドレス変更」ツールで新ドメインへの移転を通知する |
+| 旧URLからの移転通知 | Search Console の「アドレス変更」ツールで新ドメインへの移転を通知する（旧URLから新URLへの301リダイレクトが前提。GitHub Pages は独自ドメイン設定時に自動でリダイレクトする） |
