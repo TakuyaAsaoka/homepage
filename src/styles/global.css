@@ -1,7 +1,7 @@
 :root {
   color-scheme: light dark; /* ネイティブUI（フォーム/スクロールバー）をテーマ追従 */
   --content-max-width: 800px;
-  /* コンテンツの左右パディング。Header / main / ヒーロー内テキスト / Footer で共用し、
+  /* コンテンツの左右パディング。Header / main-inner / ヒーロー内テキスト / Footer で共用し、
      全ページの左端ラインを一直線に揃える */
   --content-pad: clamp(1.25rem, 5vw, 2rem);
   --color-bg: #ffffff;
@@ -97,9 +97,13 @@ body {
   color: var(--color-text);
 }
 
+/* main は全幅のままヒーロー（hero スロット）を受け、本文の幅制限は main-inner が担う */
 main {
   flex: 1;
   width: 100%;
+}
+
+.main-inner {
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 1rem var(--content-pad);
@@ -108,12 +112,6 @@ main {
 img {
   max-width: 100%;
   height: auto;
-}
-
-/* full-bleed（100vw）のヒーローが生む横溢れを防ぐ */
-html,
-body {
-  overflow-x: clip;
 }
 
 /* ===== エディトリアルリンク（全ページ共通・墨色文字＋季節下線）
@@ -130,13 +128,8 @@ a:hover {
 }
 
 /* ===== Homeページ: ヒーロー ===== */
-.home-hero {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  margin-top: -1rem; /* main の上パディングを打ち消しヘッダー直下に密着 */
-}
-/* ヒーロー内テキストを本文と同じコンテナに載せ、左端ラインを全ページで揃える
-   （背景・季節演出は full-bleed のまま） */
+/* ヒーロー内テキストを本文（main-inner）と同じ幅制限に載せ、左端ラインを全ページで揃える
+   （背景・季節演出は main の全幅に広がる） */
 .hero-inner {
   height: 100%;
   max-width: var(--content-max-width);
@@ -262,7 +255,8 @@ h2.section-heading {
 
 /* ===== Homeページ: ヒーロー直下の橋渡し（Aboutへの導線） ===== */
 .home-intro {
-  margin-block: 3.5rem 5rem;
+  /* main-inner の padding-top 1rem と合わせ、ヒーロー下端から 3.5rem の間隔を維持する */
+  margin-block: 2.5rem 5rem;
   font-family: var(--font-serif);
   font-size: clamp(0.95rem, 2vw, 1.1rem);
   line-height: 2;

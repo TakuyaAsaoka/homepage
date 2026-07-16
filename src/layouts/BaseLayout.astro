@@ -51,7 +51,10 @@ const { title, description, image, noindex } = Astro.props;
   <body>
     <Header />
     <main>
-      <slot />
+      <slot name="hero" />
+      <div class="main-inner">
+        <slot />
+      </div>
     </main>
     <Footer />
     <script>
