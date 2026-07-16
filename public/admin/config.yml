@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: "" # e.g. "username/homepage"
+  repo: "TakuyaAsaoka/homepage"
   branch: main
 
 media_folder: "public/images"
