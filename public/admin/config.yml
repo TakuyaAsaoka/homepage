@@ -3,7 +3,8 @@ backend:
   name: github
   repo: "TakuyaAsaoka/homepage"
   branch: main
-  # OAuthログインを有効にするには base_url にsveltia-cms-auth WorkerのURLを設定する（docs/cms-oauth-setup.md のStep 4）
+  # OAuthログイン用のsveltia-cms-auth WorkerのURL（docs/cms-oauth-setup.md のStep 4）
+  base_url: "https://sveltia-cms-auth.dimas080201.workers.dev"
 
 media_folder: "public/images"
 public_folder: "/homepage/images"
