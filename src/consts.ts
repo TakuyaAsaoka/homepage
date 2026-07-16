@@ -7,7 +7,6 @@ export const BASE_PATH = import.meta.env.BASE_URL.endsWith("/")
 
 export const SITE_TITLE = "ASAOKA Homepage";
 export const SITE_DESCRIPTION = "アサオカのホームページ";
-export const SITE_URL = "https://takuyaasaoka.github.io";
 export const SITE_LANG = "ja";
 export const SITE_LOCALE = "ja-JP";
 // OGP（SNS/チャット共有）のデフォルト画像。ページ個別指定が無いときのフォールバック
