@@ -1,7 +1,7 @@
 :root {
   color-scheme: light dark; /* ネイティブUI（フォーム/スクロールバー）をテーマ追従 */
   --content-max-width: 800px;
-  /* コンテンツの左右パディング。Header / main / ヒーロー内テキスト / Footer で共用し、
+  /* コンテンツの左右パディング。Header / main-inner / ヒーロー内テキスト / Footer で共用し、
      全ページの左端ラインを一直線に揃える */
   --content-pad: clamp(1.25rem, 5vw, 2rem);
   --color-bg: #ffffff;
@@ -255,7 +255,8 @@ h2.section-heading {
 
 /* ===== Homeページ: ヒーロー直下の橋渡し（Aboutへの導線） ===== */
 .home-intro {
-  margin-block: 3.5rem 5rem;
+  /* main-inner の padding-top 1rem と合わせ、ヒーロー下端から 3.5rem の間隔を維持する */
+  margin-block: 2.5rem 5rem;
   font-family: var(--font-serif);
   font-size: clamp(0.95rem, 2vw, 1.1rem);
   line-height: 2;
