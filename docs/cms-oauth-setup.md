@@ -71,6 +71,13 @@ npx wrangler deploy     # デプロイを実行する
 
 > 環境変数（`GITHUB_CLIENT_ID` 等）はこの時点ではまだ設定しません。値が必要になるのはStep 2でOAuth Appを作った後なので、**Step 3** で設定します。
 
+> **補足: `wrangler` 実行中に出る「Cloudflare skills」インストールの確認について**
+> `wrangler` が AI コーディングエージェント（Claude Code / Codex / GitHub Copilot 等）を検出すると、
+> 「Would you like Wrangler to automatically install Cloudflare skills for the best experience?（Y/n）」
+> と聞かれることがあります。これは AI エージェント向けの補助ファイルをローカルに追加する提案で、
+> **今回のような単発のWorkerデプロイには不要**です。**`n`** を選べばローカル設定を変更せずにデプロイが続行します。
+> （日常的にCloudflareをAI支援で開発する場合のみ `Y` を検討）
+
 ### 方法B: Cloudflareダッシュボード（ボタンデプロイ）
 
 CLIを使いたくない場合の代替手段です。
