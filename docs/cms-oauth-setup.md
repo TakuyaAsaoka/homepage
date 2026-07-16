@@ -113,6 +113,8 @@ CLIを使いたくない場合の代替手段です。
    | Homepage URL | `https://takuyaasaoka.github.io/homepage/` |
    | Authorization callback URL | **`<Worker URL>/callback`**（Step 1のURL + `/callback`） |
 
+   > **「Enable Device Flow」はチェック不要**（オフのまま）。sveltia-cms-auth は標準の認可コードフロー（ブラウザのリダイレクト方式）で動作し、デバイスフロー（CLIやTV等の入力制限デバイス向け）は使わないためです。
+
 3. 登録後、**Client ID** を控える
 4. **「Generate a new client secret」** で **Client Secret** を発行し、控える（画面を離れると二度と表示されないので注意）
 
