@@ -1,7 +1,9 @@
+# CMS管理画面のログイン設定（OAuth導入手順・PAT方式）は docs/cms-oauth-setup.md を参照
 backend:
   name: github
   repo: "TakuyaAsaoka/homepage"
   branch: main
+  # OAuthログインを有効にするには base_url にsveltia-cms-auth WorkerのURLを設定する（docs/cms-oauth-setup.md のStep 4）
 
 media_folder: "public/images"
 public_folder: "/homepage/images"

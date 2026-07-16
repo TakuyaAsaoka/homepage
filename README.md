@@ -67,3 +67,11 @@ npm run preview   # ビルド結果をローカルでプレビュー
 ### 検索エンジンへのサイトマップ登録
 
 Google Search Console への登録手順と robots.txt を置かない理由は [`docs/search-console.md`](docs/search-console.md) を参照してください。
+
+## CMS（管理画面）
+
+コンテンツは管理画面 `/admin/`（[Sveltia CMS](https://github.com/sveltia/sveltia-cms)）から編集できます。
+
+### ログイン設定（GitHub OAuth）
+
+「GitHubにログイン」ボタンでログインできるようにする手順（OAuth仲介Workerのデプロイ、GitHub OAuth App登録、`config.yml` 設定）は [`docs/cms-oauth-setup.md`](docs/cms-oauth-setup.md) を参照してください。開発者本人向けのアクセストークン（PAT）方式も同ドキュメントに記載しています。
