@@ -86,7 +86,7 @@ Expected: 以下6URLがすべて含まれる:
 - [ ] **Step 2: 404ページが含まれないことを確認（check-then-decide）**
 
 ```bash
-grep -c "404" dist/sitemap-0.xml || echo "404なし: OK"
+grep -c "/404" dist/sitemap-0.xml || echo "404なし: OK"
 ```
 
 Expected: `404なし: OK`（近年の `@astrojs/sitemap` は404ルートをデフォルト除外するため、これが本命の結果）
@@ -114,8 +114,16 @@ draft: true
 検証用。コミットしないこと。
 ```
 
+ビルドとgrepは別コマンドで実行する（`&&`で繋ぐとビルド失敗時にも「OK」が出る偽陽性がある）:
+
 ```bash
-npm run build && grep -c "draft-fixture" dist/sitemap-0.xml || echo "draft除外: OK"
+npm run build
+```
+
+Expected: ビルド成功（失敗した場合はここで止まる）
+
+```bash
+grep -c "draft-fixture" dist/sitemap-0.xml || echo "draft除外: OK"
 ```
 
 Expected: `draft除外: OK`（`draft-fixture` がサイトマップに含まれない）
