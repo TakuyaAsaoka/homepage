@@ -2,7 +2,7 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://TakuyaAsaoka.github.io",
+  site: "https://takuyaasaoka.github.io",
   base: "/homepage",
   integrations: [sitemap()],
 });
