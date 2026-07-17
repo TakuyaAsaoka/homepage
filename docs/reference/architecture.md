@@ -14,14 +14,12 @@
 
 全体像:
 
-```
-                     ┌─────────────────────┐
-  [入口1] CMS ──────►│                     │
-   (/admin)          │   Git リポジトリ     │      ┌─────────────┐     ┌──────────────┐
-                     │  （唯一の正・SoT）   ├─push─►│ GitHub Actions├────►│ GitHub Pages │
-  [入口2] 直接編集 ──►│  src/ 配下のファイル  │      │  ビルド        │     │   公開サイト   │
-   (エディタ)         │                     │      └─────────────┘     └──────────────┘
-                     └─────────────────────┘
+```mermaid
+flowchart LR
+    CMS["入口1: CMS (/admin)"] --> Git
+    Direct["入口2: 直接編集 (エディタ)"] --> Git
+    Git["Git リポジトリ<br/>（唯一の正・SoT）<br/>src/ 配下のファイル"] -->|push| GA["GitHub Actions<br/>ビルド"]
+    GA --> Pages["GitHub Pages<br/>公開サイト"]
 ```
 
 編集の入口は2つあるが、どちらも「リポジトリのファイルを書き換えてコミットする」ことに収束する。だから正本は常に1つで、食い違いが起きない。
@@ -47,18 +45,16 @@ Astroは静的サイト生成フレームワーク。このサイトが受けて
 
 編集内容が公開されるまでの流れ。ポイントは、**入口が違っても最終的にすべて `main` へのコミットに集約される**こと。
 
-```
-[入口1] CMS で保存 ──┐
-                     ├──► main ブランチに commit
-[入口2] 直接編集push ─┘            │
-                                  ▼
-              GitHub Actions（.github/workflows/deploy.yml）
-                  ├─ check : 型チェック（npm run check）
-                  ├─ build : Astro が HTML を生成
-                  └─ deploy: GitHub Pages へ公開
-                                  │
-                                  ▼
-                        数分後、公開サイトに反映
+```mermaid
+flowchart TD
+    CMS["CMS で保存"] --> Commit["main ブランチに commit"]
+    Direct["直接編集して push"] --> Commit
+    subgraph Actions["GitHub Actions（.github/workflows/deploy.yml）"]
+        direction LR
+        Check["check<br/>型チェック（npm run check）"] --> Build["build<br/>Astro が HTML を生成"] --> Deploy["deploy<br/>GitHub Pages へ公開"]
+    end
+    Commit --> Check
+    Deploy --> Live["数分後、公開サイトに反映"]
 ```
 
 - **CMSもデータベースを持たない。** Sveltia CMSは管理画面から**同じリポジトリのファイルを書き換えてコミットするGUI**にすぎない。裏に別の保管場所はない。
