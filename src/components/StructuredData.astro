@@ -1,0 +1,96 @@
+---
+import { SITE_TITLE, SITE_AUTHOR, BASE_PATH } from "../consts";
+import type { BreadcrumbItem } from "./Breadcrumb.astro";
+
+// Article ノードの生成に必要なページ固有データ。
+// headline / description は Props の title / description を再利用するため持たない（重複回避）
+export interface ArticleData {
+  datePublished: Date;
+  keywords: string[];
+  image?: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  // Home を除くパンくず階層（Breadcrumb.astro と同じデータ）。省略時は BreadcrumbList を出力しない
+  breadcrumb?: BreadcrumbItem[];
+  // 記事情報。省略時は Article を出力しない
+  article?: ArticleData;
+}
+
+const { title, description, breadcrumb, article } = Astro.props;
+
+// URL 生成規約: import.meta.env.BASE_URL の直接連結は禁止（src/consts.ts 参照）。
+// Astro.site はオリジンのみを持つため、サイトルートは BASE_PATH と合成して得る。
+// Astro.site 未設定時は相対パスのままフォールバックする（既存 BaseHead と同流儀）
+const siteRootURL = Astro.site ? new URL(BASE_PATH, Astro.site).href : BASE_PATH;
+const canonicalURL = (Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url).href;
+
+// WebSite ノード（全ページ共通）
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "WebSite",
+    name: SITE_TITLE,
+    url: siteRootURL,
+  },
+];
+
+// BreadcrumbList ノード（breadcrumb があるページのみ）。
+// 視覚的パンくず（Breadcrumb.astro）と同様に先頭へ Home を付与し、同じ階層データから機械可読版を生成する
+if (breadcrumb) {
+  const allItems: BreadcrumbItem[] = [{ label: "Home", href: BASE_PATH }, ...breadcrumb];
+  graph.push({
+    "@type": "BreadcrumbList",
+    itemListElement: allItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      // href 無し（末尾 = 現在ページ）は canonical URL を用いる
+      item: item.href
+        ? Astro.site
+          ? new URL(item.href, Astro.site).href
+          : item.href
+        : canonicalURL,
+    })),
+  });
+}
+
+// Article ノード（article があるページのみ）
+if (article) {
+  // image は CMS が BASE_PATH 込みのパス（例: /homepage/images/foo.png）で保存するため、
+  // Astro.site との合成だけで絶対URLになる（既存 BaseHead の resolvedImage → ogImage と同流儀）。
+  // ただしデフォルト画像へのフォールバックはせず、存在時のみ Article に含める
+  const articleImage = article.image
+    ? Astro.site
+      ? new URL(article.image, Astro.site).href
+      : article.image
+    : undefined;
+  graph.push({
+    "@type": "Article",
+    headline: title,
+    description: description,
+    datePublished: article.datePublished.toISOString(),
+    keywords: article.keywords,
+    author: {
+      "@type": "Person",
+      name: SITE_AUTHOR,
+    },
+    mainEntityOfPage: canonicalURL,
+    // image は存在時のみ含める
+    ...(articleImage ? { image: articleImage } : {}),
+  });
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": graph,
+};
+// script データブロック内で </script> や <!-- が要素を早期終了させないよう、< を Unicode
+// エスケープする（title/description/tags 等の CMS 入力対策。JSON としては同値・schema.org 的にも同義）
+const jsonLdString = JSON.stringify(jsonLd).replace(/</g, "\\u003c");
+---
+
+<!-- JSON-LD の唯一の出力点。他のコンポーネント・ページで application/ld+json を出力してはならない。
+     JSON-LD はバンドル対象ではなくインラインのデータブロックとして出力するため is:inline を明示する -->
+<script type="application/ld+json" is:inline set:html={jsonLdString} />
