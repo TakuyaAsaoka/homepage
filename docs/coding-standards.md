@@ -63,16 +63,16 @@ homepage/
 │   │   ├── BaseHead.astro  # <head>メタ情報
 │   │   ├── Header.astro    # ヘッダー
 │   │   ├── Footer.astro    # フッター
-│   │   └── ProjectCard.astro
+│   │   └── WorkCard.astro
 │   ├── content/            # コンテンツコレクション
-│   │   └── projects/       # プロジェクト記事（Markdown）
+│   │   └── works/          # 制作記事（Markdown）
 │   ├── layouts/            # ページレイアウト
 │   │   └── BaseLayout.astro
 │   ├── pages/              # ページ（ファイルベースルーティング）
 │   │   ├── index.astro
 │   │   ├── about.astro
 │   │   ├── blog.astro
-│   │   └── projects/
+│   │   └── works/
 │   ├── styles/             # グローバルスタイル
 │   │   └── global.css
 │   ├── consts.ts           # サイト定数
@@ -88,11 +88,11 @@ homepage/
 
 | 対象 | 形式 | 例 |
 |------|------|-----|
-| Astroコンポーネント | PascalCase | `BaseHead.astro`, `ProjectCard.astro` |
+| Astroコンポーネント | PascalCase | `BaseHead.astro`, `WorkCard.astro` |
 | ページ | kebab-case | `about.astro`, `blog.astro` |
 | TypeScriptファイル | kebab-case | `consts.ts`, `content.config.ts` |
-| コンテンツ（Markdown） | kebab-case | `sample-project.md` |
-| ディレクトリ | kebab-case | `components/`, `projects/` |
+| コンテンツ（Markdown） | kebab-case | `sample-work.md` |
+| ディレクトリ | kebab-case | `components/`, `works/` |
 
 ### モジュール形式
 
@@ -124,7 +124,7 @@ interface Props {
 }
 
 // ✅ ユニオン型は type
-type PageType = "home" | "about" | "blog" | "projects";
+type PageType = "home" | "about" | "blog" | "works";
 ```
 
 ### 命名規則
@@ -132,10 +132,10 @@ type PageType = "home" | "about" | "blog" | "projects";
 | 対象 | 形式 | 例 |
 |------|------|-----|
 | 変数・関数 | camelCase | `formatDate`, `isPublished` |
-| 型・インターフェース | PascalCase | `Props`, `ProjectEntry` |
+| 型・インターフェース | PascalCase | `Props`, `WorkEntry` |
 | 定数 | SCREAMING_SNAKE_CASE | `SITE_TITLE`, `NOTE_RSS_URL` |
 | ファイル | kebab-case | `content.config.ts` |
-| コンポーネント | PascalCase | `ProjectCard.astro` |
+| コンポーネント | PascalCase | `WorkCard.astro` |
 
 ### 型の厳密性
 
@@ -148,7 +148,7 @@ type PageType = "home" | "about" | "blog" | "projects";
 const title = "My Homepage"; // string と推論される
 
 // ✅ 複雑な戻り値は明示
-function getPublishedProjects(): Promise<ProjectEntry[]> {
+function getPublishedWorks(): Promise<WorkEntry[]> {
   // ...
 }
 ```
@@ -267,15 +267,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("projects");
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project },
+  const works = await getCollection("works");
+  return works.map((work) => ({
+    params: { slug: work.id },
+    props: { work },
   }));
 }
 
-const { project } = Astro.props;
-const { Content } = await render(project);
+const { work } = Astro.props;
+const { Content } = await render(work);
 ---
 ```
 
@@ -295,7 +295,7 @@ export function formatDate(date: Date): string {
 }
 
 // ✅ コールバックはアロー関数
-const published = projects.filter((p) => !p.data.draft);
+const published = works.filter((p) => !p.data.draft);
 ```
 
 ### 日付フォーマットのロケール
@@ -345,7 +345,7 @@ Astroは静的サイト生成のため、ビルド時にエラーが発生した
 
 ```typescript
 // ✅ ビルド時のフォールバック
-const projects = await getCollection("projects").catch(() => []);
+const works = await getCollection("works").catch(() => []);
 ```
 
 ---
@@ -359,8 +359,8 @@ const projects = await getCollection("projects").catch(() => []);
 
 ```typescript
 // ✅ 並列処理
-const [projects, blogPosts] = await Promise.all([
-  getCollection("projects"),
+const [works, blogPosts] = await Promise.all([
+  getCollection("works"),
   fetchBlogPosts(),
 ]);
 ```
@@ -415,8 +415,8 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-const projects = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+const works = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/works" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -435,8 +435,8 @@ const projects = defineCollection({
 
 ```markdown
 ---
-title: プロジェクト名
-description: プロジェクトの概要
+title: 制作名
+description: 制作の概要
 tags: ["astro", "typescript"]
 pubDate: 2026-01-01
 draft: false
@@ -479,7 +479,7 @@ Sveltia CMS の設定は `public/admin/config.yml` で管理します。
 
 ### クラス命名
 
-- シンプルなケバブケースを使用（例: `project-card`, `site-header`）
+- シンプルなケバブケースを使用（例: `work-card`, `site-header`）
 - Astroのスコープドスタイルにより、BEM等の厳密な命名規則は不要
 
 ---
