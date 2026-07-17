@@ -1,0 +1,15 @@
+hero:
+  role: SOFTWARE ENGINEER / SRE
+  tagline: つくることと、動かし続けること。
+intro:
+  text: 自動車業界で、つくって動かし続ける仕事をしています。
+  linkLabel: わたしについて
+skills:
+  - TypeScript
+  - React
+  - Node.js
+  - AWS
+  - Kubernetes
+  - Terraform
+  - Grafana
+  - Prometheus
