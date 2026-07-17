@@ -312,12 +312,13 @@ Expected: 両方成功、0 errors / 0 warnings / 0 hints。
 
 ```bash
 test -d dist/works && test ! -d dist/projects && echo "URL: /works/ に統一 OK"
-grep -o "WORKS" dist/index.html | head -1        # Home サブラベル
-grep -o "WORKS" dist/works/index.html | head -1  # 一覧 サブラベル（旧PROJECTS）
-grep -o "works/homepage/" dist/rss.xml | head -1 # RSS item link
+# サブラベルは section-label span を厳密一致で確認（無関係なWORKSに反応しないため）
+grep -o '<span class="section-label"[^>]*>WORKS</span>' dist/index.html | head -1        # Home
+grep -o '<span class="section-label"[^>]*>WORKS</span>' dist/works/index.html | head -1  # 一覧（旧PROJECTS）
+grep -o 'works/homepage/' dist/rss.xml | head -1                                          # RSS item link
 node -e "const h=require('fs').readFileSync('dist/works/homepage/index.html','utf8');console.log('制作を見る:', h.includes('制作を見る'));"
 ```
-Expected: `dist/works/` 生成・`dist/projects/` 非存在、Home・一覧ともに `WORKS`、RSS link が `works/...`、詳細ページのボタンが「制作を見る」。
+Expected: `dist/works/` 生成・`dist/projects/` 非存在、Home・一覧ともに `section-label` が `WORKS`、RSS link が `works/...`、詳細ページのボタンが「制作を見る」。`dist/projects/` が残る場合はルート移動漏れ。
 
 - [ ] **Step 4: 既存コンテンツのslug維持確認**
 
