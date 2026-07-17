@@ -71,7 +71,7 @@ collections:
           - { label: "サイト説明", name: "description", widget: "string", hint: "検索結果やSNS共有時に表示される説明文" }
           - { label: "表示名", name: "author", widget: "string", hint: "Homeのヒーローに大きく表示される名前" }
           - { label: "著作権表記", name: "copyrightHolder", widget: "string", hint: "フッターの©の後に表示される欧文表記" }
-          - { label: "メールアドレス", name: "email", widget: "string", hint: "Homeの連絡先に表示されます" }
+          - { label: "メールアドレス", name: "email", widget: "string", pattern: ["^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "正しいメールアドレスの形式で入力してください"], hint: "Homeの連絡先に表示されます" }
           - label: "SNSリンク"
             name: "social"
             widget: "object"
