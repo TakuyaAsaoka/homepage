@@ -18,7 +18,8 @@ const allItems: BreadcrumbItem[] = [{ label: "Home", href: BASE_PATH }, ...items
 ---
 
 <nav class="breadcrumb" aria-label="パンくずリスト">
-  <ol>
+  <!-- list-style: none で剥がれるリストセマンティクスを復元する（Safari/VoiceOver 対策・既存の index.astro と同じ流儀） -->
+  <ol role="list">
     {allItems.map((item) =>
       item.href ? (
         <li><a href={item.href}>{item.label}</a></li>
