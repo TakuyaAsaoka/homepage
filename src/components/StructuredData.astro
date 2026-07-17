@@ -86,8 +86,11 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": graph,
 };
+// script データブロック内で </script> や <!-- が要素を早期終了させないよう、< を Unicode
+// エスケープする（title/description/tags 等の CMS 入力対策。JSON としては同値・schema.org 的にも同義）
+const jsonLdString = JSON.stringify(jsonLd).replace(/</g, "\\u003c");
 ---
 
 <!-- JSON-LD の唯一の出力点。他のコンポーネント・ページで application/ld+json を出力してはならない。
      JSON-LD はバンドル対象ではなくインラインのデータブロックとして出力するため is:inline を明示する -->
-<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+<script type="application/ld+json" is:inline set:html={jsonLdString} />
