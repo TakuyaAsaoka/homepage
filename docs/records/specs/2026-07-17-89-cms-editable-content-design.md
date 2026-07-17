@@ -118,8 +118,14 @@ noteRssUrl: https://note.com/limber_iguana638/rss  # 空文字でRSS連携無効
 | `src/components/Footer.astro` | 著作権表記・SNSリンクを `site.yaml` から取得 |
 | `src/pages/rss.xml.ts` | サイト名・説明を `site.yaml` から取得 |
 | `src/pages/blog.astro` | note RSS URLを `site.yaml` から取得 |
+| `src/components/Header.astro` | サイト名を `site.yaml` から取得 |
+| `src/components/StructuredData.astro` | サイト名・表示名を `site.yaml` から取得 |
 
-※ 実装時に `consts.ts` の各定数のimport箇所をgrepで洗い出し、漏れなく置換する。
+※ 実装時に `consts.ts` の各定数のimport箇所をgrepで洗い出し、上記に漏れがないか最終確認する。
+
+### Home連絡先のGitHubリンク
+
+現状、GitHubリンクの表示テキスト（`github.com/TakuyaAsaoka`）はURLとは別にハードコードされている。CMSでURLを変更すると表示テキストだけ古いまま残るため、**表示テキストはURLから導出する**（プロトコル部を除いた文字列を表示）。また、フッターと同様に**空文字なら行ごと非表示**にし、挙動を統一する。
 
 ## CMS設定（public/admin/config.yml）
 
