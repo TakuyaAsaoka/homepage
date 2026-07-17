@@ -1,0 +1,54 @@
+---
+import { BASE_PATH } from "../consts";
+
+// パンくずの1項目。href省略時は現在ページ（リンクなし・aria-current="page"）として描画する
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  // Home を除く階層。末尾要素が現在ページ（href なし）
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+// 先頭の Home は全ページ共通のためコンポーネント側で付与する
+const allItems: BreadcrumbItem[] = [{ label: "Home", href: BASE_PATH }, ...items];
+---
+
+<nav class="breadcrumb" aria-label="パンくずリスト">
+  <!-- list-style: none で剥がれるリストセマンティクスを復元する（Safari/VoiceOver 対策・既存の index.astro と同じ流儀） -->
+  <ol role="list">
+    {allItems.map((item) =>
+      item.href ? (
+        <li><a href={item.href}>{item.label}</a></li>
+      ) : (
+        <li><span aria-current="page">{item.label}</span></li>
+      )
+    )}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    margin-block: 1.5rem;
+    font-size: 0.85rem;
+  }
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap; /* 長いパンくずは折り返す（レスポンシブ対応） */
+    list-style: none;
+  }
+  /* 区切り文字。alt テキスト空文字構文でスクリーンリーダーに読ませない。
+     旧ブラウザ向けに通常構文を先に書き、対応ブラウザでは後の宣言で上書きする */
+  .breadcrumb li + li::before {
+    content: "/";
+    content: "/" / "";
+    margin-inline: 0.5em;
+    color: var(--season-accent); /* 区切り記号は季節アクセント（global.css の変数コメントの用途どおり） */
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--color-muted);
+  }
+</style>
