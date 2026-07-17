@@ -4,12 +4,12 @@ import type { APIContext } from "astro";
 import { BASE_PATH } from "../consts";
 import { getSiteSettings } from "../site-settings";
 
-// プロジェクトコレクションからRSSフィードを生成する。
+// 制作コレクションからRSSフィードを生成する。
 // draft を除外し、公開日の新しい順に並べる。
 export async function GET(context: APIContext) {
   const site = await getSiteSettings();
-  const projects = (await getCollection("projects"))
-    .filter((project) => !project.data.draft)
+  const works = (await getCollection("works"))
+    .filter((work) => !work.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   // astro.config.mjs で site を設定していないと URL を解決できない。設定漏れを早期に検知する。
@@ -25,12 +25,12 @@ export async function GET(context: APIContext) {
     title: site.title,
     description: site.description,
     site: siteUrl,
-    items: projects.map((project) => ({
-      title: project.data.title,
-      description: project.data.description,
-      pubDate: project.data.pubDate,
+    items: works.map((work) => ({
+      title: work.data.title,
+      description: work.data.description,
+      pubDate: work.data.pubDate,
       // base は siteUrl 側に含まれるため、ここでは相対パスにして解決を委ねる
-      link: `projects/${project.id}/`,
+      link: `works/${work.id}/`,
     })),
   });
 }

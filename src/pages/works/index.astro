@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WorkCard from "../../components/WorkCard.astro";
+import { getCollection } from "astro:content";
+
+const works = (await getCollection("works"))
+  .filter((work) => !work.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Works" description="アサオカの制作一覧" breadcrumb={[{ label: "Works" }]}>
+  <section>
+    <h1 class="section-heading page-heading">
+      <span class="section-title">制作</span>
+      <span class="section-label" aria-hidden="true">WORKS</span>
+    </h1>
+    {works.length > 0 ? (
+      works.map((work) => (
+        <WorkCard
+          title={work.data.title}
+          description={work.data.description}
+          tags={work.data.tags}
+          url={work.data.url}
+          slug={work.id}
+        />
+      ))
+    ) : (
+      <p>公開できる制作を準備中です。</p>
+    )}
+  </section>
+</BaseLayout>

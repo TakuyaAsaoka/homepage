@@ -280,7 +280,7 @@ a:hover .arrow {
   transform: translateX(0.25em);
 }
 
-/* ===== Homeページ: 制作（Projects抜粋） ===== */
+/* ===== Homeページ: 制作（WORKS抜粋） ===== */
 .works-list {
   list-style: none;
   display: flex;

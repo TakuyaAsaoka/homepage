@@ -10,21 +10,6 @@ media_folder: "public/images"
 public_folder: "/homepage/images"
 
 collections:
-  - name: "projects"
-    label: "制作物"
-    folder: "src/content/projects"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "タイトル", name: "title", widget: "string", hint: "制作物の名前" }
-      - { label: "説明", name: "description", widget: "text", hint: "一覧やSNS共有時に表示される短い説明文" }
-      - { label: "タグ", name: "tags", widget: "list", default: [], hint: "使用技術など。Enterで追加できます" }
-      - { label: "画像", name: "image", widget: "image", required: false, hint: "一覧・詳細ページに表示される画像" }
-      - { label: "URL", name: "url", widget: "string", required: false, hint: "制作物の公開URL（あれば）" }
-      - { label: "公開日", name: "pubDate", widget: "datetime", hint: "一覧はこの日付の新しい順に並びます" }
-      - { label: "下書き", name: "draft", widget: "boolean", default: false, hint: "オンにするとサイトに表示されません" }
-      - { label: "本文", name: "body", widget: "markdown", hint: "詳細ページの本文" }
-
   - name: "pages"
     label: "ページ"
     files:
@@ -59,6 +44,21 @@ collections:
               - { label: "見出し", name: "title", widget: "string", hint: "例: 歩み" }
               - { label: "英字ラベル", name: "label", widget: "string", hint: "見出しの横に表示される英字（例: CAREER）" }
               - { label: "本文", name: "body", widget: "text", hint: "空行を入れると段落が分かれます" }
+
+  - name: "works"
+    label: "制作"
+    folder: "src/content/works"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "タイトル", name: "title", widget: "string", hint: "制作の名前" }
+      - { label: "説明", name: "description", widget: "text", hint: "一覧やSNS共有時に表示される短い説明文" }
+      - { label: "タグ", name: "tags", widget: "list", default: [], hint: "使用技術など。Enterで追加できます" }
+      - { label: "画像", name: "image", widget: "image", required: false, hint: "一覧・詳細ページに表示される画像" }
+      - { label: "URL", name: "url", widget: "string", required: false, hint: "制作の公開URL（あれば）" }
+      - { label: "公開日", name: "pubDate", widget: "datetime", hint: "一覧はこの日付の新しい順に並びます" }
+      - { label: "下書き", name: "draft", widget: "boolean", default: false, hint: "オンにするとサイトに表示されません" }
+      - { label: "本文", name: "body", widget: "markdown", hint: "詳細ページの本文" }
 
   - name: "settings"
     label: "サイト設定"

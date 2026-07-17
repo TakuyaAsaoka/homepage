@@ -5,40 +5,40 @@ import { getCollection, render } from "astro:content";
 import { BASE_PATH, SITE_LOCALE } from "../../consts";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("projects");
-  return projects
-    .filter((p) => !p.data.draft)
-    .map((project) => ({
-      params: { slug: project.id },
-      props: { project },
+  const works = await getCollection("works");
+  return works
+    .filter((work) => !work.data.draft)
+    .map((work) => ({
+      params: { slug: work.id },
+      props: { work },
     }));
 }
 
-const { project } = Astro.props;
-const { Content } = await render(project);
+const { work } = Astro.props;
+const { Content } = await render(work);
 ---
 
 <BaseLayout
-  title={project.data.title}
-  description={project.data.description}
+  title={work.data.title}
+  description={work.data.description}
   breadcrumb={[
-    { label: "Projects", href: `${BASE_PATH}projects/` },
-    { label: project.data.title },
+    { label: "Works", href: `${BASE_PATH}works/` },
+    { label: work.data.title },
   ]}
   article={{
-    datePublished: project.data.pubDate,
-    keywords: project.data.tags,
-    image: project.data.image,
+    datePublished: work.data.pubDate,
+    keywords: work.data.tags,
+    image: work.data.image,
   }}
 >
   <article>
-    <h1>{project.data.title}</h1>
-    <time datetime={project.data.pubDate.toISOString()}>
-      {project.data.pubDate.toLocaleDateString(SITE_LOCALE)}
+    <h1>{work.data.title}</h1>
+    <time datetime={work.data.pubDate.toISOString()}>
+      {work.data.pubDate.toLocaleDateString(SITE_LOCALE)}
     </time>
-    <TagList tags={project.data.tags} />
-    {project.data.url && (
-      <p><a href={project.data.url} target="_blank" rel="noopener noreferrer">プロジェクトを見る</a></p>
+    <TagList tags={work.data.tags} />
+    {work.data.url && (
+      <p><a href={work.data.url} target="_blank" rel="noopener noreferrer">制作を見る</a></p>
     )}
     <div class="content">
       <Content />
