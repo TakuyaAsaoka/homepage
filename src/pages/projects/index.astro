@@ -8,7 +8,7 @@ const projects = (await getCollection("projects"))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Projects" description="アサオカの制作物一覧">
+<BaseLayout title="Projects" description="アサオカの制作物一覧" breadcrumb={[{ label: "Projects" }]}>
   <section>
     <h1 class="section-heading page-heading">
       <span class="section-title">制作</span>
