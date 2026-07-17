@@ -95,7 +95,8 @@ noteRssUrl: https://note.com/limber_iguana638/rss  # 空文字でRSS連携無効
 
 ### content.config.ts
 
-`glob` loaderで `pages` / `settings` コレクションを定義し、zodスキーマで検証する。
+`glob` loaderで `home` / `about` / `settings` の3コレクションを定義し、zodスキーマで検証する。
+（HomeとAboutはスキーマが異なるため、1つの `pages` コレクションにunion型で同居させず、コレクションを分割して `getEntry()` の戻り値の型を厳密に保つ。YAMLファイルの置き場所とCMS管理画面上のグルーピング「ページ」は変わらない）
 
 - URL系フィールドは `z.url()`（空文字許容が必要なものは `z.union([z.url(), z.literal("")])`）
 - `email` は `z.email()`
