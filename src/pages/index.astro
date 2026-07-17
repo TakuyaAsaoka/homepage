@@ -16,9 +16,9 @@ const site = await getSiteSettings();
 // GitHubリンクの表示テキストはURLから導出する（URLだけ変更されて表示が古く残ることを防ぐ）
 const githubLabel = site.social.github.replace(/^https?:\/\//, "");
 
-// 制作セクションに抜粋する最新プロジェクト（draft除外・pubDate降順の先頭2件）
-const recentProjects = (await getCollection("projects"))
-  .filter((p) => !p.data.draft)
+// 制作セクションに抜粋する最新の制作（draft除外・pubDate降順の先頭2件）
+const recentWorks = (await getCollection("works"))
+  .filter((work) => !work.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 2);
 ---
@@ -46,21 +46,21 @@ const recentProjects = (await getCollection("projects"))
       <span class="section-title">制作</span>
       <span class="section-label" aria-hidden="true">WORKS</span>
     </h2>
-    {recentProjects.length > 0 ? (
+    {recentWorks.length > 0 ? (
       <ul class="works-list" role="list" data-reveal="delayed">
-        {recentProjects.map((project) => (
+        {recentWorks.map((work) => (
           <li>
-            <a class="works-link" href={`${BASE_PATH}projects/${project.id}/`}>
-              <span class="works-title">{project.data.title}</span>
-              <span class="works-desc">{project.data.description}</span>
+            <a class="works-link" href={`${BASE_PATH}works/${work.id}/`}>
+              <span class="works-title">{work.data.title}</span>
+              <span class="works-desc">{work.data.description}</span>
             </a>
           </li>
         ))}
       </ul>
     ) : (
-      <p class="works-empty" data-reveal="delayed">公開できる制作物を準備中です。</p>
+      <p class="works-empty" data-reveal="delayed">公開できる制作を準備中です。</p>
     )}
-    <a class="section-more" href={`${BASE_PATH}projects/`} data-reveal="delayed">
+    <a class="section-more" href={`${BASE_PATH}works/`} data-reveal="delayed">
       制作をすべて見る<span class="arrow" aria-hidden="true">→</span>
     </a>
   </section>
