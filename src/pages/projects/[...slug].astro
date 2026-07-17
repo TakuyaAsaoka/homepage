@@ -25,6 +25,11 @@ const { Content } = await render(project);
     { label: "Projects", href: `${BASE_PATH}projects/` },
     { label: project.data.title },
   ]}
+  article={{
+    datePublished: project.data.pubDate,
+    keywords: project.data.tags,
+    image: project.data.image,
+  }}
 >
   <article>
     <h1>{project.data.title}</h1>
