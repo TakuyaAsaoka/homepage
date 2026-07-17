@@ -5,6 +5,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Breadcrumb, { type BreadcrumbItem } from "../components/Breadcrumb.astro";
+import { type ArticleData } from "../components/StructuredData.astro";
 import { SITE_LANG } from "../consts";
 import "../styles/global.css";
 
@@ -15,15 +16,24 @@ interface Props {
   noindex?: boolean;
   // Home を除くパンくず階層。省略時はパンくず非表示（Home・404 は渡さない）
   breadcrumb?: BreadcrumbItem[];
+  // JSON-LD（Article）用の記事情報。プロジェクト詳細ページのみ渡す
+  article?: ArticleData;
 }
 
-const { title, description, image, noindex, breadcrumb } = Astro.props;
+const { title, description, image, noindex, breadcrumb, article } = Astro.props;
 ---
 
 <!doctype html>
 <html lang={SITE_LANG}>
   <head>
-    <BaseHead title={title} description={description} image={image} noindex={noindex} />
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      noindex={noindex}
+      breadcrumb={breadcrumb}
+      article={article}
+    />
     <ClientRouter />
     <script is:inline>
       // html に季節連動の data-season と、js / reduced-motion フラグを付与する。
