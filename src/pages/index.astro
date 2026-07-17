@@ -1,20 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SeasonalHero from "../components/SeasonalHero.astro";
-import { getCollection } from "astro:content";
-import { SITE_DESCRIPTION, SOCIAL_LINKS, EMAIL, SITE_AUTHOR, BASE_PATH } from "../consts";
+import { getCollection, getEntry } from "astro:content";
+import { BASE_PATH } from "../consts";
+import { getSiteSettings } from "../site-settings";
 
-// スキルセクションに表示する技術タグ
-const skills = [
-  "TypeScript",
-  "React",
-  "Node.js",
-  "AWS",
-  "Kubernetes",
-  "Terraform",
-  "Grafana",
-  "Prometheus",
-];
+// CMS管理のHome文言とサイト設定を取得する
+const homeEntry = await getEntry("home", "home");
+if (!homeEntry) {
+  throw new Error("Home文言（src/content/pages/home.yaml）が見つかりません");
+}
+const home = homeEntry.data;
+const site = await getSiteSettings();
+
+// GitHubリンクの表示テキストはURLから導出する（URLだけ変更されて表示が古く残ることを防ぐ）
+const githubLabel = site.social.github.replace(/^https?:\/\//, "");
 
 // 制作セクションに抜粋する最新プロジェクト（draft除外・pubDate降順の先頭2件）
 const recentProjects = (await getCollection("projects"))
@@ -23,21 +23,21 @@ const recentProjects = (await getCollection("projects"))
   .slice(0, 2);
 ---
 
-<BaseLayout title="Home" description={SITE_DESCRIPTION}>
+<BaseLayout title="Home" description={site.description}>
   <SeasonalHero slot="hero" season="auto" height="70vh">
     <div class="hero-inner">
       <div class="hero-content">
-        <p class="hero-role">SOFTWARE ENGINEER / SRE</p>
-        <h1 class="hero-name">{SITE_AUTHOR}</h1>
+        <p class="hero-role">{home.hero.role}</p>
+        <h1 class="hero-name">{site.author}</h1>
         <span class="hero-rule" aria-hidden="true"></span>
-        <p class="hero-copy">つくることと、動かし続けること。</p>
+        <p class="hero-copy">{home.hero.tagline}</p>
       </div>
     </div>
   </SeasonalHero>
 
   <p class="home-intro" data-reveal>
-    自動車業界で、つくって動かし続ける仕事をしています。
-    <a class="home-intro-link" href={`${BASE_PATH}about/`}>わたしについて<span class="arrow" aria-hidden="true">→</span></a>
+    {home.intro.text}
+    <a class="home-intro-link" href={`${BASE_PATH}about/`}>{home.intro.linkLabel}<span class="arrow" aria-hidden="true">→</span></a>
   </p>
 
   <section class="home-section">
@@ -72,7 +72,7 @@ const recentProjects = (await getCollection("projects"))
       <span class="section-label" aria-hidden="true">SKILLS</span>
     </h2>
     <ul class="skill-list" role="list" data-reveal="delayed">
-      {skills.map((skill) => <li>{skill}</li>)}
+      {home.skills.map((skill) => <li>{skill}</li>)}
     </ul>
   </section>
 
@@ -83,13 +83,15 @@ const recentProjects = (await getCollection("projects"))
       <span class="section-label" aria-hidden="true">CONTACT</span>
     </h2>
     <ul class="contact-list" role="list" data-reveal="delayed">
-      <li>
-        <span class="contact-label">GITHUB</span>
-        <a href={SOCIAL_LINKS.github} target="_blank" rel="noopener noreferrer">github.com/TakuyaAsaoka</a>
-      </li>
+      {site.social.github && (
+        <li>
+          <span class="contact-label">GITHUB</span>
+          <a href={site.social.github} target="_blank" rel="noopener noreferrer">{githubLabel}</a>
+        </li>
+      )}
       <li>
         <span class="contact-label">EMAIL</span>
-        <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
       </li>
     </ul>
   </section>
