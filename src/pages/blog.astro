@@ -1,18 +1,21 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { NOTE_RSS_URL, SITE_LOCALE } from "../consts";
 import Parser from "rss-parser";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_LOCALE } from "../consts";
+import { getSiteSettings } from "../site-settings";
+
+const site = await getSiteSettings();
 
 // note のプロフィールURL（RSS取得失敗時の代替導線に使う）
-const noteProfileUrl = NOTE_RSS_URL.replace(/\/rss\/?$/, "");
+const noteProfileUrl = site.noteRssUrl.replace(/\/rss\/?$/, "");
 
 let feedItems: { title: string; link: string; pubDate: string }[] = [];
 let fetchFailed = false;
 
-if (NOTE_RSS_URL) {
+if (site.noteRssUrl) {
   try {
     const parser = new Parser();
-    const feed = await parser.parseURL(NOTE_RSS_URL);
+    const feed = await parser.parseURL(site.noteRssUrl);
     feedItems = (feed.items ?? []).map((item) => ({
       title: item.title ?? "",
       link: item.link ?? "",
@@ -33,8 +36,8 @@ if (NOTE_RSS_URL) {
       <span class="section-title">記事</span>
       <span class="section-label" aria-hidden="true">BLOG</span>
     </h1>
-    {NOTE_RSS_URL === "" && (
-      <p><code>src/consts.ts</code> の <code>NOTE_RSS_URL</code> を設定すると記事が表示されます。</p>
+    {site.noteRssUrl === "" && (
+      <p>サイト設定の「note RSS URL」を設定すると記事が表示されます。</p>
     )}
     {feedItems.length > 0 ? (
       <ul class="blog-list">
@@ -53,7 +56,7 @@ if (NOTE_RSS_URL) {
       </ul>
     ) : fetchFailed ? (
       <p>記事を読み込めませんでした。<a href={noteProfileUrl} target="_blank" rel="noopener noreferrer">note</a>で直接ご覧いただけます。</p>
-    ) : NOTE_RSS_URL !== "" && (
+    ) : site.noteRssUrl !== "" && (
       <p>まだ記事がありません。</p>
     )}
   </section>

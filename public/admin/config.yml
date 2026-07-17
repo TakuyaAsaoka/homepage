@@ -11,16 +11,72 @@ public_folder: "/homepage/images"
 
 collections:
   - name: "projects"
-    label: "Projects"
+    label: "制作物"
     folder: "src/content/projects"
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Description", name: "description", widget: "text" }
-      - { label: "Tags", name: "tags", widget: "list", default: [] }
-      - { label: "Image", name: "image", widget: "image", required: false }
-      - { label: "URL", name: "url", widget: "string", required: false }
-      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
-      - { label: "Draft", name: "draft", widget: "boolean", default: false }
-      - { label: "Body", name: "body", widget: "markdown" }
+      - { label: "タイトル", name: "title", widget: "string", hint: "制作物の名前" }
+      - { label: "説明", name: "description", widget: "text", hint: "一覧やSNS共有時に表示される短い説明文" }
+      - { label: "タグ", name: "tags", widget: "list", default: [], hint: "使用技術など。Enterで追加できます" }
+      - { label: "画像", name: "image", widget: "image", required: false, hint: "一覧・詳細ページに表示される画像" }
+      - { label: "URL", name: "url", widget: "string", required: false, hint: "制作物の公開URL（あれば）" }
+      - { label: "公開日", name: "pubDate", widget: "datetime", hint: "一覧はこの日付の新しい順に並びます" }
+      - { label: "下書き", name: "draft", widget: "boolean", default: false, hint: "オンにするとサイトに表示されません" }
+      - { label: "本文", name: "body", widget: "markdown", hint: "詳細ページの本文" }
+
+  - name: "pages"
+    label: "ページ"
+    files:
+      - name: "home"
+        label: "Home"
+        file: "src/content/pages/home.yaml"
+        fields:
+          - label: "ヒーロー"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "肩書き", name: "role", widget: "string", hint: "名前の上に英字で表示されます（例: SOFTWARE ENGINEER / SRE）" }
+              - { label: "キャッチコピー", name: "tagline", widget: "string", hint: "名前の下に表示される一文" }
+          - label: "紹介文"
+            name: "intro"
+            widget: "object"
+            fields:
+              - { label: "本文", name: "text", widget: "text", hint: "ヒーロー直下に表示される自己紹介の一文" }
+              - { label: "リンクテキスト", name: "linkLabel", widget: "string", hint: "Aboutページへのリンクの文言" }
+          - { label: "スキル一覧", name: "skills", widget: "list", hint: "技術セクションに表示されます。Enterで追加できます" }
+      - name: "about"
+        label: "About"
+        file: "src/content/pages/about.yaml"
+        fields:
+          - { label: "リード文", name: "lead", widget: "text", hint: "ページ冒頭に表示される導入文" }
+          - label: "セクション"
+            name: "sections"
+            widget: "list"
+            summary: "{{fields.title}}"
+            hint: "セクションの追加・削除・並び替えができます"
+            fields:
+              - { label: "見出し", name: "title", widget: "string", hint: "例: 歩み" }
+              - { label: "英字ラベル", name: "label", widget: "string", hint: "見出しの横に表示される英字（例: CAREER）" }
+              - { label: "本文", name: "body", widget: "text", hint: "空行を入れると段落が分かれます" }
+
+  - name: "settings"
+    label: "サイト設定"
+    files:
+      - name: "site"
+        label: "サイト設定"
+        file: "src/content/settings/site.yaml"
+        fields:
+          - { label: "サイト名", name: "title", widget: "string", hint: "ヘッダー・ブラウザのタブ・SNS共有時に表示されます" }
+          - { label: "サイト説明", name: "description", widget: "string", hint: "検索結果やSNS共有時に表示される説明文" }
+          - { label: "表示名", name: "author", widget: "string", hint: "Homeのヒーローに大きく表示される名前" }
+          - { label: "著作権表記", name: "copyrightHolder", widget: "string", hint: "フッターの©の後に表示される欧文表記" }
+          - { label: "メールアドレス", name: "email", widget: "string", pattern: ["^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "正しいメールアドレスの形式で入力してください"], hint: "Homeの連絡先に表示されます" }
+          - label: "SNSリンク"
+            name: "social"
+            widget: "object"
+            fields:
+              - { label: "GitHub", name: "github", widget: "string", required: false, default: "", hint: "プロフィールのURL。空にすると非表示になります" }
+              - { label: "X（Twitter）", name: "twitter", widget: "string", required: false, default: "", hint: "プロフィールのURL。空にすると非表示になります" }
+              - { label: "YouTube", name: "youtube", widget: "string", required: false, default: "", hint: "チャンネルのURL。空にすると非表示になります" }
+          - { label: "note RSS URL", name: "noteRssUrl", widget: "string", required: false, default: "", hint: "noteのRSS URL（例: https://note.com/xxx/rss）。空にするとブログページのRSS連携が止まります" }

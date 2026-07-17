@@ -1,5 +1,6 @@
 ---
-import { SITE_TITLE, SITE_LANG, BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
+import { SITE_LANG, BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
+import { getSiteSettings } from "../site-settings";
 import StructuredData, { type ArticleData } from "./StructuredData.astro";
 import type { BreadcrumbItem } from "./Breadcrumb.astro";
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const { title, description, image, noindex, breadcrumb, article } = Astro.props;
+const site = await getSiteSettings();
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 // ページ個別指定が無ければデフォルトOGP画像を使う。絶対URL化して og:image に出力する
 const resolvedImage = image ?? DEFAULT_OG_IMAGE;
@@ -30,7 +32,7 @@ const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedI
 <link
   rel="alternate"
   type="application/rss+xml"
-  title={SITE_TITLE}
+  title={site.title}
   href={Astro.site ? new URL(`${BASE_PATH}rss.xml`, Astro.site).href : `${BASE_PATH}rss.xml`}
 />
 
@@ -43,8 +45,8 @@ const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedI
 />
 
 <!-- Primary Meta Tags -->
-<title>{title} | {SITE_TITLE}</title>
-<meta name="title" content={`${title} | ${SITE_TITLE}`} />
+<title>{title} | {site.title}</title>
+<meta name="title" content={`${title} | ${site.title}`} />
 <meta name="description" content={description} />
 {noindex && <meta name="robots" content="noindex" />}
 <link rel="canonical" href={canonicalURL} />
@@ -52,15 +54,15 @@ const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedI
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonicalURL} />
-<meta property="og:title" content={`${title} | ${SITE_TITLE}`} />
+<meta property="og:title" content={`${title} | ${site.title}`} />
 <meta property="og:description" content={description} />
 <meta property="og:locale" content={SITE_LANG} />
-<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:site_name" content={site.title} />
 {ogImage && <meta property="og:image" content={ogImage} />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={`${title} | ${SITE_TITLE}`} />
+<meta name="twitter:title" content={`${title} | ${site.title}`} />
 <meta name="twitter:description" content={description} />
 {ogImage && <meta name="twitter:image" content={ogImage} />}
 

@@ -1,5 +1,8 @@
 ---
-import { SITE_TITLE, BASE_PATH } from "../consts";
+import { BASE_PATH } from "../consts";
+import { getSiteSettings } from "../site-settings";
+
+const site = await getSiteSettings();
 
 const navItems = [
   { label: "Home", href: BASE_PATH },
@@ -17,7 +20,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 
 <header class="header">
   <nav class="nav">
-    <a href={BASE_PATH} class="nav-title">{SITE_TITLE}</a>
+    <a href={BASE_PATH} class="nav-title">{site.title}</a>
     <button
       class="menu-toggle"
       aria-expanded="false"

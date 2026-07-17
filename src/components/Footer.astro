@@ -1,17 +1,19 @@
 ---
-import { SOCIAL_LINKS, COPYRIGHT_HOLDER } from "../consts";
+import { getSiteSettings } from "../site-settings";
 
-// 表示順のSNSリンク定義（プロパティ参照なので SOCIAL_LINKS のキー変更に型で追従する）
+const site = await getSiteSettings();
+
+// 表示順のSNSリンク定義（空文字リンクは非表示にする）
 const activeLinks = [
-  { label: "GitHub", url: SOCIAL_LINKS.github },
-  { label: "X", url: SOCIAL_LINKS.twitter },
-  { label: "YouTube", url: SOCIAL_LINKS.youtube },
+  { label: "GitHub", url: site.social.github },
+  { label: "X", url: site.social.twitter },
+  { label: "YouTube", url: site.social.youtube },
 ].filter((item) => item.url);
 ---
 
 <footer class="footer">
   <div class="footer-inner">
-    <p class="copyright">&copy; {new Date().getFullYear()} {COPYRIGHT_HOLDER}</p>
+    <p class="copyright">&copy; {new Date().getFullYear()} {site.copyrightHolder}</p>
     {activeLinks.length > 0 && (
       <ul class="social-links">
         {activeLinks.map((item) => (

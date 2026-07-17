@@ -1,5 +1,6 @@
 ---
-import { SITE_TITLE, SITE_AUTHOR, BASE_PATH } from "../consts";
+import { BASE_PATH } from "../consts";
+import { getSiteSettings } from "../site-settings";
 import type { BreadcrumbItem } from "./Breadcrumb.astro";
 
 // Article ノードの生成に必要なページ固有データ。
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const { title, description, breadcrumb, article } = Astro.props;
+const site = await getSiteSettings();
 
 // URL 生成規約: import.meta.env.BASE_URL の直接連結は禁止（src/consts.ts 参照）。
 // Astro.site はオリジンのみを持つため、サイトルートは BASE_PATH と合成して得る。
@@ -31,7 +33,7 @@ const canonicalURL = (Astro.site ? new URL(Astro.url.pathname, Astro.site) : Ast
 const graph: Record<string, unknown>[] = [
   {
     "@type": "WebSite",
-    name: SITE_TITLE,
+    name: site.title,
     url: siteRootURL,
   },
 ];
@@ -74,7 +76,7 @@ if (article) {
     keywords: article.keywords,
     author: {
       "@type": "Person",
-      name: SITE_AUTHOR,
+      name: site.author,
     },
     mainEntityOfPage: canonicalURL,
     // image は存在時のみ含める

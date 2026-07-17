@@ -1,11 +1,13 @@
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
 import type { APIContext } from "astro";
-import { SITE_TITLE, SITE_DESCRIPTION, BASE_PATH } from "../consts";
+import { BASE_PATH } from "../consts";
+import { getSiteSettings } from "../site-settings";
 
 // プロジェクトコレクションからRSSフィードを生成する。
 // draft を除外し、公開日の新しい順に並べる。
 export async function GET(context: APIContext) {
+  const site = await getSiteSettings();
   const projects = (await getCollection("projects"))
     .filter((project) => !project.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -20,8 +22,8 @@ export async function GET(context: APIContext) {
   const siteUrl = new URL(BASE_PATH, context.site).href;
 
   return rss({
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    title: site.title,
+    description: site.description,
     site: siteUrl,
     items: projects.map((project) => ({
       title: project.data.title,
