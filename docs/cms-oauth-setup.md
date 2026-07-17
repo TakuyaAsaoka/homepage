@@ -173,7 +173,7 @@ backend:
 1. デプロイ反映後、`https://takuyaasaoka.github.io/homepage/admin/` を開く
 2. **「GitHubにログイン」** ボタンを押す
 3. GitHubの認可画面に遷移 → 認可する
-4. CMSに戻り、コレクション（Projects等）の編集画面が表示されればOK
+4. CMSに戻り、コレクション（制作等）の編集画面が表示されればOK
 
 ---
 

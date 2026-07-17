@@ -45,7 +45,7 @@
 | ホーム | `/` | トップページ |
 | About | `/about` | 自己紹介 |
 | Blog | `/blog` | ブログ記事一覧 |
-| Projects | `/projects` | プロジェクト一覧・詳細 |
+| Works | `/works` | 制作一覧・詳細 |
 
 ## コマンド
 
