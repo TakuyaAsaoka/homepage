@@ -20,11 +20,13 @@ homepage/
 │   └── favicon.svg
 ├── src/
 │   ├── components/         # 再利用可能なAstroコンポーネント
-│   ├── content/            # コンテンツコレクション（Markdown）
+│   ├── content/            # コンテンツコレクション（Markdown / YAML）
 │   ├── layouts/            # ページレイアウト
 │   ├── pages/              # ページ（ファイルベースルーティング）
+│   ├── scripts/            # クライアントサイドスクリプト
 │   ├── styles/             # グローバルスタイル
 │   ├── consts.ts           # サイト定数
+│   ├── site-settings.ts    # サイト設定の取得ユーティリティ
 │   └── content.config.ts   # コンテンツスキーマ定義
 ├── astro.config.mjs        # Astro設定
 └── tsconfig.json           # TypeScript設定（astro/tsconfigs/strict 継承）
