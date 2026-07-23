@@ -1,17 +1,16 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TagList from "../../components/TagList.astro";
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import { BASE_PATH, SITE_LOCALE } from "../../consts";
+import { getPublishedWorks } from "../../works";
 
 export async function getStaticPaths() {
-  const works = await getCollection("works");
-  return works
-    .filter((work) => !work.data.draft)
-    .map((work) => ({
-      params: { slug: work.id },
-      props: { work },
-    }));
+  const works = await getPublishedWorks();
+  return works.map((work) => ({
+    params: { slug: work.id },
+    props: { work },
+  }));
 }
 
 const { work } = Astro.props;

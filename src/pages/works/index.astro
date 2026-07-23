@@ -1,11 +1,9 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import WorkCard from "../../components/WorkCard.astro";
-import { getCollection } from "astro:content";
+import { getPublishedWorks } from "../../works";
 
-const works = (await getCollection("works"))
-  .filter((work) => !work.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const works = await getPublishedWorks();
 ---
 
 <BaseLayout title="Works" description="アサオカの制作一覧" breadcrumb={[{ label: "Works" }]}>
