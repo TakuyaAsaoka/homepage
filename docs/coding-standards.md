@@ -279,14 +279,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 ```astro
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
   const works = await getCollection("works");
-  return works.map((work) => ({
-    params: { slug: work.id },
-    props: { work },
-  }));
+  return works
+    .filter((work) => !work.data.draft)
+    .map((work) => ({
+      params: { slug: work.id },
+      props: { work },
+    }));
 }
 
 const { work } = Astro.props;
@@ -437,7 +439,7 @@ const works = defineCollection({
     description: z.string(),
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
     pubDate: z.coerce.date(),
     draft: z.boolean().default(false),
   }),
