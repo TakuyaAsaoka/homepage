@@ -20,22 +20,29 @@
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --anim-duration: 0.7s;
 
-  /* 季節アクセント（html[data-season] に連動。デフォルト: 春）
-     --season-accent: 装飾用（下線・区切り記号・図形）
+  /* 季節アクセントのトークン（単一情報源）。文字装飾（下線・区切り記号・図形）と
+     SeasonalHero の JS（日輪・夏の波紋）の双方が var(--accent-<season>) で参照する。
+     色値の定義はこの :root と下の @media dark の2ブロックのみに集約する。 */
+  --accent-spring: #e48ca0;
+  --accent-summer: #3a9daa;
+  --accent-autumn: #cf6a2e;
+  --accent-winter: #87a3bc;
+
+  /* --season-accent: 装飾用（html[data-season] に連動。デフォルト: 春）
      --season-accent-text: 文字用。白地とヒーロー淡地の双方で WCAG AA（4.5:1）を満たす濃色 */
-  --season-accent: #e48ca0;
+  --season-accent: var(--accent-spring);
   --season-accent-text: #a8465e;
 }
 html[data-season="summer"] {
-  --season-accent: #3a9daa;
+  --season-accent: var(--accent-summer);
   --season-accent-text: #26707b;
 }
 html[data-season="autumn"] {
-  --season-accent: #cf6a2e;
+  --season-accent: var(--accent-autumn);
   --season-accent-text: #a04e1c;
 }
 html[data-season="winter"] {
-  --season-accent: #87a3bc;
+  --season-accent: var(--accent-winter);
   --season-accent-text: #4c6b86;
 }
 
@@ -47,21 +54,24 @@ html[data-season="winter"] {
     --color-border: #333333;
     --color-tag-bg: #2a2a2a;
     --color-muted: #999999;
-    /* 春（ダーク版）。ダーク版アクセントは藍墨地で 4.5:1 以上のため文字用も同値 */
-    --season-accent: #e79aae;
-    --season-accent-text: #e79aae;
+    /* 季節アクセントのトークンをダーク版（藍墨地でも沈まない明度）に差し替える。
+       html[data-season] の --season-accent は var(--accent-<season>) を参照するため、
+       ここで --season-accent を再定義しなくてもダーク値に自動追従する。 */
+    --accent-spring: #e79aae;
+    --accent-summer: #5cbdca;
+    --accent-autumn: #e0904f;
+    --accent-winter: #a3bdd4;
+    /* ダーク版アクセントは藍墨地で 4.5:1 以上のため、文字用もアクセント同値とする */
+    --season-accent-text: var(--accent-spring);
   }
   html[data-season="summer"] {
-    --season-accent: #5cbdca;
-    --season-accent-text: #5cbdca;
+    --season-accent-text: var(--accent-summer);
   }
   html[data-season="autumn"] {
-    --season-accent: #e0904f;
-    --season-accent-text: #e0904f;
+    --season-accent-text: var(--accent-autumn);
   }
   html[data-season="winter"] {
-    --season-accent: #a3bdd4;
-    --season-accent-text: #a3bdd4;
+    --season-accent-text: var(--accent-winter);
   }
 }
 
