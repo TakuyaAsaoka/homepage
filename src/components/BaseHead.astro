@@ -23,6 +23,8 @@ const resolvedImage = image ?? DEFAULT_OG_IMAGE;
 const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedImage;
 // og:locale は "language_TERRITORY" 形式（例: ja_JP）を期待するため、SITE_LOCALE のハイフンを変換する
 const ogLocale = SITE_LOCALE.replace("-", "_");
+// 各メタタグ間でタイトル表記を統一するため、フォーマット済みタイトルを1箇所で定義する
+const fullTitle = `${title} | ${site.title}`;
 ---
 
 <meta charset="utf-8" />
@@ -47,8 +49,8 @@ const ogLocale = SITE_LOCALE.replace("-", "_");
 />
 
 <!-- Primary Meta Tags -->
-<title>{title} | {site.title}</title>
-<meta name="title" content={`${title} | ${site.title}`} />
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
 {noindex && <meta name="robots" content="noindex" />}
 <link rel="canonical" href={canonicalURL} />
@@ -56,7 +58,7 @@ const ogLocale = SITE_LOCALE.replace("-", "_");
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonicalURL} />
-<meta property="og:title" content={`${title} | ${site.title}`} />
+<meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:locale" content={ogLocale} />
 <meta property="og:site_name" content={site.title} />
@@ -64,7 +66,7 @@ const ogLocale = SITE_LOCALE.replace("-", "_");
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={`${title} | ${site.title}`} />
+<meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 {ogImage && <meta name="twitter:image" content={ogImage} />}
 
