@@ -66,7 +66,7 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
   const pick = <T,>(rnd: () => number, arr: T[]): T =>
     arr[Math.floor(rnd() * arr.length) % arr.length];
 
-  // 落下粒子色（春/秋/冬）。夏は波紋のため ACCENT.summer を使う別経路。
+  // 落下粒子色（春/秋/冬）。夏は波紋のためアクセントトークン（var(--accent-summer)）を使う別経路。
   const PARTICLE_COLORS_LIGHT: Record<string, string[]> = {
     spring: ["#f2b7c6", "#eda0b4", "#f7cdd8", "#e48ca0"],
     autumn: ["#cf6a2e", "#d99a3b", "#b4522a", "#e0b25c"],
@@ -78,20 +78,9 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
     autumn: ["#e0904f", "#e6ac52", "#cc6c3a", "#ecc274"],
     winter: ["#ffffff", "#eef4fa", "#dbe6f0", "#c9d8e8"],
   };
-  // 季節アクセント（日輪・夏の波紋の色）。global.css の --season-accent と同値。
-  // 色を変える際は両方の更新が必要（JS は style 直書き、CSS は文字装飾用で別管理）。
-  const ACCENT_LIGHT: Record<string, string> = {
-    spring: "#e48ca0",
-    summer: "#3a9daa",
-    autumn: "#cf6a2e",
-    winter: "#87a3bc",
-  };
-  const ACCENT_DARK: Record<string, string> = {
-    spring: "#e79aae",
-    summer: "#5cbdca",
-    autumn: "#e0904f",
-    winter: "#a3bdd4",
-  };
+  // 季節アクセント（日輪・夏の波紋の色）は global.css の --accent-<season> トークンを
+  // var() で参照する（単一情報源）。light/dark は CSS の prefers-color-scheme が解決するため
+  // JS 側でのダーク判定・色定義は不要で、閲覧中の OS テーマ切替にも追従する。
 
   const SEASONS = ["spring", "summer", "autumn", "winter"];
   // 月→季節: 12〜2月=winter / 3〜5月=spring / 6〜8月=summer / 9〜11月=autumn
@@ -195,7 +184,6 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
     teardownSeasonalHero(); // 遷移後の再初期化・多重ループを防ぐ
     const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const PARTICLE_COLORS = isDark ? PARTICLE_COLORS_DARK : PARTICLE_COLORS_LIGHT;
-    const ACCENT = isDark ? ACCENT_DARK : ACCENT_LIGHT;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     for (const root of document.querySelectorAll<HTMLElement>("[data-seasonal-hero]")) {
@@ -210,6 +198,8 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
       }
       const density = parseFloat(root.dataset.density || "1");
       const speed = parseFloat(root.dataset.speed || "1");
+      // アクセント色は解決済み season のトークンを参照（日輪と夏の波紋で共用）
+      const accent = `var(--accent-${season})`;
 
       // 日輪（ゆっくり呼吸する円）
       const disc = document.createElement("div");
@@ -221,13 +211,13 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
       ds.height = "340px";
       ds.marginTop = "-170px";
       ds.borderRadius = "50%";
-      ds.background = ACCENT[season];
+      ds.background = accent;
       ds.opacity = "0.14";
       layer.appendChild(disc);
 
       const tick =
         season === "summer"
-          ? setupRipples(layer, density, ACCENT.summer)
+          ? setupRipples(layer, density, accent)
           : setupFalling(layer, season, density, PARTICLE_COLORS[season]);
 
       const slot = rafIds.length; // このインスタンス専用のスロット
