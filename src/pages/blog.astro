@@ -1,7 +1,7 @@
 ---
-import Parser from "rss-parser";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_LOCALE } from "../consts";
+import { fetchFeedItems } from "../rss";
 import { getSiteSettings } from "../site-settings";
 
 const site = await getSiteSettings();
@@ -13,25 +13,9 @@ const noteProfileUrl = site.noteRssUrl.replace(/\/rss\/?$/, "");
 // フロントマター・テンプレート全体で同一パターンに統一する
 const hasRssUrl = site.noteRssUrl !== "";
 
-let feedItems: { title: string; link: string; pubDate: string }[] = [];
-let fetchFailed = false;
-
-if (hasRssUrl) {
-  try {
-    const parser = new Parser();
-    const feed = await parser.parseURL(site.noteRssUrl);
-    feedItems = (feed.items ?? []).map((item) => ({
-      title: item.title ?? "",
-      link: item.link ?? "",
-      pubDate: item.pubDate ?? "",
-    }));
-  } catch (error) {
-    fetchFailed = true;
-    if (error instanceof Error) {
-      console.error("RSSフィード取得エラー:", error.message);
-    }
-  }
-}
+const { items: feedItems, failed: fetchFailed } = hasRssUrl
+  ? await fetchFeedItems(site.noteRssUrl)
+  : { items: [], failed: false };
 ---
 
 <BaseLayout title="Blog" description="noteに書いた記事の一覧" breadcrumb={[{ label: "Blog" }]}>
