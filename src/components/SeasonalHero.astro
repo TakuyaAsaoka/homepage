@@ -54,6 +54,8 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
 </style>
 
 <script>
+  import { currentSeason } from "../season";
+
   function mulberry32(a: number) {
     return function () {
       a |= 0;
@@ -83,12 +85,7 @@ const { season = "spring", density = 1, speed = 1, height = "600px" } = Astro.pr
   // JS 側でのダーク判定・色定義は不要で、閲覧中の OS テーマ切替にも追従する。
 
   const SEASONS = ["spring", "summer", "autumn", "winter"];
-  // 月→季節: 12〜2月=winter / 3〜5月=spring / 6〜8月=summer / 9〜11月=autumn
-  // （BaseLayout のインラインスクリプトと同一マッピングであること）
-  function currentSeason(): string {
-    const m = new Date().getMonth() + 1;
-    return m <= 2 || m === 12 ? "winter" : m <= 5 ? "spring" : m <= 8 ? "summer" : "autumn";
-  }
+  // 月→季節の判定は src/season.ts の currentSeason に集約（単一情報源）。
 
   function setupFalling(
     layer: HTMLElement,

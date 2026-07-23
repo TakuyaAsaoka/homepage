@@ -7,6 +7,7 @@ import Footer from "../components/Footer.astro";
 import Breadcrumb, { type BreadcrumbItem } from "../components/Breadcrumb.astro";
 import { type ArticleData } from "../components/StructuredData.astro";
 import { SITE_LANG } from "../consts";
+import { MONTH_SEASONS } from "../season";
 import "../styles/global.css";
 
 interface Props {
@@ -35,22 +36,17 @@ const { title, description, image, noindex, breadcrumb, article } = Astro.props;
       article={article}
     />
     <ClientRouter />
-    <script is:inline>
+    <script is:inline define:vars={{ monthSeasons: MONTH_SEASONS }}>
       // html に季節連動の data-season と、js / reduced-motion フラグを付与する。
       // ClientRouter の遷移では <html> の属性・クラスが遷移先ドキュメント（フラグ未設定）で
       // 置換されるため、初回ペイント前の実行に加え astro:after-swap でも再適用する。
-      // マッピング: 12〜2月=winter / 3〜5月=spring / 6〜8月=summer / 9〜11月=autumn
+      // 季節マッピングは src/season.ts が単一情報源。is:inline は import 不可のため、
+      // define:vars で MONTH_SEASONS（月→季節の12要素配列）を受け取り月インデックスで引く。
+      // new Date() はクライアント実行のままなので訪問時の季節を反映する。
       function applyDocumentFlags() {
         const de = document.documentElement;
         const month = new Date().getMonth() + 1;
-        de.dataset.season =
-          month <= 2 || month === 12
-            ? "winter"
-            : month <= 5
-              ? "spring"
-              : month <= 8
-                ? "summer"
-                : "autumn";
+        de.dataset.season = monthSeasons[month - 1];
         de.classList.add("js");
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
           de.classList.add("reduced-motion");
