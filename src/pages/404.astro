@@ -1,6 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { BASE_PATH } from "../consts";
+
+// 迷子になった訪問者向けの主要セクション導線。
+// Home は下部の「ホームに戻る」で別途案内するため、ここには含めない。
+const sectionLinks = [
+  { label: "About", href: `${BASE_PATH}about/`, description: "アサオカについて" },
+  { label: "Blog", href: `${BASE_PATH}blog/`, description: "技術記事や日々の記録" },
+  { label: "Works", href: `${BASE_PATH}works/`, description: "制作した作品・プロジェクト" },
+];
 ---
 
 <BaseLayout title="ページが見つかりません" description="お探しのページは存在しません" noindex>
@@ -10,6 +18,19 @@ import { BASE_PATH } from "../consts";
       <span class="section-label" aria-hidden="true">NOT FOUND</span>
     </h1>
     <p>お探しのページは見つかりませんでした。</p>
+    <nav class="section-links" aria-label="主要セクション">
+      <ul>
+        {sectionLinks.map((item) => (
+          <li>
+            <a href={item.href}>
+              <span class="section-link-label">{item.label}</span>
+              <span class="section-link-arrow" aria-hidden="true">→</span>
+              <span class="section-link-desc">{item.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
     <p class="back">
       <a href={BASE_PATH}>ホームに戻る<span class="arrow" aria-hidden="true">→</span></a>
     </p>
@@ -20,7 +41,59 @@ import { BASE_PATH } from "../consts";
   .not-found p {
     color: var(--color-muted);
   }
+  .section-links {
+    margin-top: 2rem;
+  }
+  .section-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .section-links li {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .section-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.9rem 0;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .section-link-label {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .section-link-arrow {
+    color: var(--season-accent-text);
+    transition: transform 0.2s;
+  }
+  .section-link-desc {
+    color: var(--color-text-soft);
+    font-size: 0.9rem;
+  }
+  .section-links a:hover .section-link-label {
+    text-decoration: underline;
+    text-decoration-color: var(--season-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+  .section-links a:hover .section-link-arrow {
+    transform: translateX(3px);
+  }
   .not-found .back {
     margin-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    .section-links a {
+      flex-wrap: wrap;
+      gap: 0.25rem 0.75rem;
+    }
+    .section-link-desc {
+      flex-basis: 100%;
+    }
   }
 </style>
