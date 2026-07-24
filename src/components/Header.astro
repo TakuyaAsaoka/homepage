@@ -16,6 +16,17 @@ function normalizePath(path: string): string {
   return path.replace(/\/$/, "");
 }
 const currentPath = normalizePath(Astro.url.pathname);
+const basePath = normalizePath(BASE_PATH);
+
+// Home（BASE_PATH）はあらゆるパスの先頭に一致するため完全一致で判定する。
+// それ以外は子ルート（例: /works/[slug]）でも親ナビをアクティブにするため
+// 前方一致で判定する。ただし /works が /works-foo に誤マッチしないよう
+// セグメント境界（自身、または "/" 配下）で判定する。
+function isActive(href: string): boolean {
+  const target = normalizePath(href);
+  if (target === basePath) return currentPath === basePath;
+  return currentPath === target || currentPath.startsWith(`${target}/`);
+}
 ---
 
 <header class="header">
@@ -34,7 +45,7 @@ const currentPath = normalizePath(Astro.url.pathname);
         <li>
           <a
             href={item.href}
-            class:list={["nav-link", { active: currentPath === normalizePath(item.href) }]}
+            class:list={["nav-link", { active: isActive(item.href) }]}
           >
             {item.label}
           </a>
