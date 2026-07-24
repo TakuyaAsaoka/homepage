@@ -11,9 +11,9 @@
   --color-tag-bg: #f0f0f0;
   --color-muted: #666666;
 
-  /* フォント（Google Fonts） */
-  --font-serif: "Shippori Mincho", "Hiragino Mincho ProN", serif;
-  --font-sans: "Zen Kaku Gothic New", system-ui, -apple-system, sans-serif;
+  /* フォント: --font-serif / --font-sans は Astro Fonts API が注入する
+     （定義箇所: astro.config.mjs の fonts / 注入箇所: BaseHead.astro の <Font>）。
+     フォールバック（Hiragino Mincho ProN / system-ui 等）も astro.config.mjs 側で管理する */
 
   /* アニメーション */
   --hero-rule-width: 52px;

@@ -1,4 +1,5 @@
 ---
+import { Font } from "astro:assets";
 import { SITE_LOCALE, BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
 import { getSiteSettings } from "../site-settings";
 import StructuredData, { type ArticleData } from "./StructuredData.astro";
@@ -40,13 +41,9 @@ const fullTitle = `${title} | ${site.title}`;
   href={Astro.site ? new URL(`${BASE_PATH}rss.xml`, Astro.site).href : `${BASE_PATH}rss.xml`}
 />
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
-/>
+<!-- Fonts（セルフホスト。@font-face と CSS 変数を注入する。設定: astro.config.mjs の fonts） -->
+<Font cssVariable="--font-serif" />
+<Font cssVariable="--font-sans" />
 
 <!-- Primary Meta Tags -->
 <title>{fullTitle}</title>
