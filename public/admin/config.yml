@@ -55,7 +55,7 @@ collections:
       - { label: "説明", name: "description", widget: "text", hint: "一覧やSNS共有時に表示される短い説明文" }
       - { label: "タグ", name: "tags", widget: "list", default: [], hint: "使用技術など。Enterで追加できます" }
       - { label: "画像", name: "image", widget: "image", required: false, hint: "一覧・詳細ページに表示される画像" }
-      - { label: "URL", name: "url", widget: "string", required: false, hint: "制作の公開URL（あれば）" }
+      - { label: "URL", name: "url", widget: "string", required: false, pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "制作の公開URL（あれば）" }
       - { label: "公開日", name: "pubDate", widget: "datetime", hint: "一覧はこの日付の新しい順に並びます" }
       - { label: "下書き", name: "draft", widget: "boolean", default: false, hint: "オンにするとサイトに表示されません" }
       - { label: "本文", name: "body", widget: "markdown", hint: "詳細ページの本文" }
@@ -76,7 +76,7 @@ collections:
             name: "social"
             widget: "object"
             fields:
-              - { label: "GitHub", name: "github", widget: "string", required: false, default: "", hint: "プロフィールのURL。空にすると非表示になります" }
-              - { label: "X（Twitter）", name: "twitter", widget: "string", required: false, default: "", hint: "プロフィールのURL。空にすると非表示になります" }
-              - { label: "YouTube", name: "youtube", widget: "string", required: false, default: "", hint: "チャンネルのURL。空にすると非表示になります" }
-          - { label: "note RSS URL", name: "noteRssUrl", widget: "string", required: false, default: "", hint: "noteのRSS URL（例: https://note.com/xxx/rss）。空にするとブログページのRSS連携が止まります" }
+              - { label: "GitHub", name: "github", widget: "string", required: false, default: "", pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "プロフィールのURL。空にすると非表示になります" }
+              - { label: "X（Twitter）", name: "twitter", widget: "string", required: false, default: "", pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "プロフィールのURL。空にすると非表示になります" }
+              - { label: "YouTube", name: "youtube", widget: "string", required: false, default: "", pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "チャンネルのURL。空にすると非表示になります" }
+          - { label: "note RSS URL", name: "noteRssUrl", widget: "string", required: false, default: "", pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "noteのRSS URL（例: https://note.com/xxx/rss）。空にするとブログページのRSS連携が止まります" }
