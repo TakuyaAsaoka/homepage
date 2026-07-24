@@ -96,3 +96,191 @@ const recentWorks = (await getCollection("works"))
     </ul>
   </section>
 </BaseLayout>
+
+<style>
+  /* ===== ヒーロー ===== */
+  /* ヒーロー内テキストを本文（main-inner）と同じ幅制限に載せ、左端ラインを全ページで揃える
+     （背景・季節演出は main の全幅に広がる） */
+  .hero-inner {
+    height: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding-inline: var(--content-pad);
+  }
+  .hero-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: left;
+    padding-block: 0 clamp(2rem, 6vh, 3.25rem);
+    color: var(--color-text);
+  }
+  .hero-role {
+    font-family: var(--font-serif);
+    font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+    letter-spacing: 0.35em;
+    color: var(--season-accent-text);
+    margin-bottom: 1rem;
+  }
+  .hero-name {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    letter-spacing: 0.12em;
+    line-height: 1.25;
+  }
+  .hero-rule {
+    width: 0;
+    height: 1px;
+    background: var(--color-text);
+    margin: 1.25rem 0;
+  }
+  .hero-copy {
+    font-family: var(--font-serif);
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    letter-spacing: 0.22em;
+  }
+
+  /* ===== ヒーロー入場アニメーション（純CSS・JS無効でも再生） ===== */
+  @keyframes hero-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-grow-rule {
+    from {
+      width: 0;
+    }
+    to {
+      width: var(--hero-rule-width);
+    }
+  }
+  .hero-role {
+    opacity: 0;
+    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
+  }
+  .hero-name {
+    opacity: 0;
+    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
+  }
+  .hero-rule {
+    animation: hero-grow-rule 0.6s var(--anim-ease) 0.7s forwards;
+  }
+  .hero-copy {
+    opacity: 0;
+    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.95s forwards;
+  }
+
+  /* reduced-motion: ヒーロー入場を無効化し最終状態で静止 */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-role,
+    .hero-name,
+    .hero-copy {
+      opacity: 1;
+      animation: none;
+    }
+    .hero-rule {
+      width: var(--hero-rule-width);
+      animation: none;
+    }
+  }
+
+  /* ===== セクション間隔 ===== */
+  .home-section {
+    margin-block: 5rem;
+  }
+
+  /* ===== ヒーロー直下の橋渡し（Aboutへの導線） ===== */
+  .home-intro {
+    /* main-inner の padding-top 1rem と合わせ、ヒーロー下端から 3.5rem の間隔を維持する */
+    margin-block: 2.5rem 5rem;
+    font-family: var(--font-serif);
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    line-height: 2;
+    letter-spacing: 0.08em;
+    color: var(--color-text-soft);
+  }
+  .home-intro-link {
+    display: inline-block;
+    margin-left: 0.5em;
+    white-space: nowrap;
+    color: var(--color-text);
+  }
+
+  /* ===== 制作（WORKS抜粋） ===== */
+  .works-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .works-link {
+    display: block;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--color-border);
+    /* 抜粋はカード見出し的に扱うため、共通の下線は外す */
+    text-decoration: none;
+  }
+  .works-title {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text);
+  }
+  .works-desc {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--color-text-soft);
+  }
+  .works-link:hover .works-title {
+    text-decoration: underline;
+    text-decoration-color: var(--season-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  /* 罫線を上下対称に閉じる（各項目の上罫線＋最終項目の下罫線） */
+  .works-list li:last-child .works-link {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .works-empty {
+    color: var(--color-text-soft);
+  }
+
+  /* ===== スキル（・区切りの文字組み） ===== */
+  .skill-list {
+    list-style: none;
+    color: var(--color-text-soft);
+    line-height: 2.4;
+    letter-spacing: 0.06em;
+  }
+  .skill-list li {
+    display: inline;
+  }
+  .skill-list li + li::before {
+    content: "・";
+    color: var(--season-accent);
+    margin: 0 0.5em;
+  }
+
+  /* ===== Contact ===== */
+  .contact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .contact-label {
+    display: inline-block;
+    width: 5em;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--color-muted);
+  }
+</style>
