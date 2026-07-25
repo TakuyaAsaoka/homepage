@@ -22,16 +22,25 @@ const { title, description, tags, slug } = Astro.props;
 
 <style>
   .work-card {
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    margin-bottom: 1rem;
   }
   .work-card h3 a {
     text-decoration: none;
     color: inherit;
   }
+  .work-card h3 a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--season-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  /* カード高さが行内で揃った際、タグを下端に寄せて空白の浮きを防ぐ */
   .work-card :global(.tags) {
-    margin-top: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
   }
 </style>
