@@ -49,6 +49,15 @@ homepage/
 npm run dev           # 開発サーバー（localhost:4321）
 npm run build         # プロダクションビルド
 npm run preview       # ビルド結果のプレビュー
+npm run check         # astro check による型チェック
+```
+
+## 品質ゲート
+
+以下を warning 0件で全パスする（マージ前検証）:
+
+```bash
+npm run build && npm run check
 ```
 
 ## プロジェクト固有のルール
