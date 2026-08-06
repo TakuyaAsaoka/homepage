@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Claude Code のworktree置き場
 .claude/worktrees/
+
+# Superpowers ブレスト成果物（ローカル作業用）
+.superpowers/
