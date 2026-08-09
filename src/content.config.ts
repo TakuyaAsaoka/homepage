@@ -10,7 +10,9 @@ const works = defineCollection({
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
     url: z.url().optional(),
-    pubDate: z.coerce.date(),
+    // 公開日は暦日（どこで見ても動かない日付）。瞬間として持つとビルド環境のTZで1日ずれるため、
+    // "YYYY-MM-DD" 文字列に正規化して保持する
+    pubDate: z.coerce.date().transform((d) => d.toISOString().slice(0, 10)),
     draft: z.boolean().default(false),
   }),
 });

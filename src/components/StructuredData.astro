@@ -6,7 +6,8 @@ import type { BreadcrumbItem } from "./Breadcrumb.astro";
 // Article ノードの生成に必要なページ固有データ。
 // headline / description は Props の title / description を再利用するため持たない（重複回避）
 export interface ArticleData {
-  datePublished: Date;
+  // 暦日（"YYYY-MM-DD"）。schema.org の Date 形式にそのまま合致する
+  datePublished: string;
   keywords: string[];
   image?: string;
 }
@@ -72,7 +73,7 @@ if (article) {
     "@type": "Article",
     headline: title,
     description: description,
-    datePublished: article.datePublished.toISOString(),
+    datePublished: article.datePublished,
     keywords: article.keywords,
     author: {
       "@type": "Person",
