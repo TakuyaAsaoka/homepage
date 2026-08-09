@@ -15,6 +15,11 @@ export async function getStaticPaths() {
 
 const { work } = Astro.props;
 const { Content } = await render(work);
+
+// pubDate は "YYYY-MM-DD"（暦日）。UTC固定で整形し、ビルド環境のTZで日付がずれないようにする
+const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE, {
+  timeZone: "UTC",
+});
 ---
 
 <BaseLayout
@@ -32,9 +37,7 @@ const { Content } = await render(work);
 >
   <article>
     <h1>{work.data.title}</h1>
-    <time datetime={work.data.pubDate.toISOString()}>
-      {work.data.pubDate.toLocaleDateString(SITE_LOCALE)}
-    </time>
+    <time datetime={work.data.pubDate}>{pubDateLabel}</time>
     <TagList tags={work.data.tags} />
     {work.data.url && (
       <p><a href={work.data.url} target="_blank" rel="noopener noreferrer">制作を見る</a></p>

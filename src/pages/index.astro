@@ -1,9 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SeasonalHero from "../components/SeasonalHero.astro";
-import { getCollection, getEntry } from "astro:content";
+import { getEntry } from "astro:content";
 import { BASE_PATH } from "../consts";
 import { getSiteSettings } from "../site-settings";
+import { getPublishedWorks } from "../works";
 
 // CMS管理のHome文言とサイト設定を取得する
 const homeEntry = await getEntry("home", "home");
@@ -17,10 +18,7 @@ const site = await getSiteSettings();
 const githubLabel = site.social.github.replace(/^https?:\/\//, "");
 
 // 制作セクションに抜粋する最新の制作（draft除外・pubDate降順の先頭2件）
-const recentWorks = (await getCollection("works"))
-  .filter((work) => !work.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 2);
+const recentWorks = (await getPublishedWorks()).slice(0, 2);
 ---
 
 <BaseLayout title="Home" description={site.description}>

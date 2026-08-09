@@ -56,7 +56,8 @@ collections:
       - { label: "タグ", name: "tags", widget: "list", default: [], hint: "使用技術など。Enterで追加できます" }
       - { label: "画像", name: "image", widget: "image", required: false, hint: "一覧・詳細ページに表示される画像" }
       - { label: "URL", name: "url", widget: "string", required: false, pattern: ["^(https?://\\S+)?$", "https:// または http:// で始まる正しいURLを入力してください（空欄可）"], hint: "制作の公開URL（あれば）" }
-      - { label: "公開日", name: "pubDate", widget: "datetime", hint: "一覧はこの日付の新しい順に並びます" }
+      # 公開日は暦日として保存する（時刻を持たせると保存時のTZで日付が1日ずれる）
+      - { label: "公開日", name: "pubDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, hint: "一覧はこの日付の新しい順に並びます" }
       - { label: "下書き", name: "draft", widget: "boolean", default: false, hint: "オンにするとサイトに表示されません" }
       - { label: "本文", name: "body", widget: "markdown", hint: "詳細ページの本文" }
 

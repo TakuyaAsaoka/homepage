@@ -5,5 +5,5 @@ import { getCollection, type CollectionEntry } from "astro:content";
 export async function getPublishedWorks(): Promise<CollectionEntry<"works">[]> {
   return (await getCollection("works"))
     .filter((work) => !work.data.draft)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    .sort((a, b) => b.data.pubDate.localeCompare(a.data.pubDate));
 }
