@@ -15,7 +15,7 @@ const activeLinks = [
   <div class="footer-inner">
     <p class="copyright">&copy; {new Date().getFullYear()} {site.copyrightHolder}</p>
     {activeLinks.length > 0 && (
-      <ul class="social-links">
+      <ul class="social-links" role="list">
         {activeLinks.map((item) => (
           <li>
             <a href={item.url} target="_blank" rel="noopener noreferrer">

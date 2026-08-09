@@ -28,7 +28,7 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
       <p>サイト設定の「note RSS URL」を設定すると記事が表示されます。</p>
     )}
     {feedItems.length > 0 ? (
-      <ul class="blog-list">
+      <ul class="blog-list" role="list">
         {feedItems.map((item) => (
           <li>
             <a href={item.link} target="_blank" rel="noopener noreferrer">
