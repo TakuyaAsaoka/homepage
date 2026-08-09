@@ -58,8 +58,11 @@ const { title, description, image, noindex, breadcrumb, article } = Astro.props;
     </script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">メインコンテンツへスキップ</a>
+    {/* Header / Footer は body 直下に置くこと。ここでの <header> / <footer> は
+        暗黙で banner / contentinfo になるため role の明示を省いている（何かで囲むと失われる） */}
     <Header />
-    <main>
+    <main id="main-content" tabindex="-1">
       <slot name="hero" />
       <div class="main-inner">
         {breadcrumb && <Breadcrumb items={breadcrumb} />}

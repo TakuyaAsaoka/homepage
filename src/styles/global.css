@@ -107,6 +107,23 @@ body {
   color: var(--color-text);
 }
 
+/* スキップリンクは通常オフスクリーンに退避し、キーボードフォーカス時のみ左上に出す。
+   背景と文字色を本文と反転させ、ブラウザ既定のフォーカスリングに頼らず単体で視認できるようにする */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 /* main は全幅のままヒーロー（hero スロット）を受け、本文の幅制限は main-inner が担う */
 main {
   flex: 1;
