@@ -1,6 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import TagList from "./TagList.astro";
-import { BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
+import { BASE_PATH, DEFAULT_IMAGE } from "../consts";
 
 interface Props {
   title: string;
@@ -11,14 +12,14 @@ interface Props {
 }
 
 const { title, description, tags, slug, image } = Astro.props;
-// 画像なしの制作でもカードの見た目を揃えるため、未設定時はOGPのデフォルト画像で埋める
-const thumbnail = image?.src ?? DEFAULT_OG_IMAGE;
+// 画像なしの制作でもカードの見た目を揃えるため、未設定時はデフォルト画像で埋める
+const thumbnail = image ?? DEFAULT_IMAGE;
 ---
 
 <article class="work-card">
   {/* サムネイルは装飾。直下の見出しリンクが同じタイトルを読み上げ、
       デフォルト画像は制作の内容を表さないため alt は空にする */}
-  <img class="thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
+  <Image class="thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
   <h3>
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>

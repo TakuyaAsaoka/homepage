@@ -1,6 +1,6 @@
 ---
 import { Font } from "astro:assets";
-import { SITE_LOCALE, BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
+import { SITE_LOCALE, BASE_PATH, DEFAULT_IMAGE } from "../consts";
 import { getSiteSettings } from "../site-settings";
 import StructuredData, { type ArticleData } from "./StructuredData.astro";
 import type { BreadcrumbItem } from "./Breadcrumb.astro";
@@ -20,7 +20,7 @@ const { title, description, image, noindex, breadcrumb, article } = Astro.props;
 const site = await getSiteSettings();
 const canonicalURL = Astro.site ? new URL(Astro.url.pathname, Astro.site) : Astro.url;
 // ページ個別指定が無ければデフォルトOGP画像を使う。絶対URL化して og:image に出力する
-const resolvedImage = image ?? DEFAULT_OG_IMAGE;
+const resolvedImage = image ?? DEFAULT_IMAGE.src;
 const ogImage = Astro.site ? new URL(resolvedImage, Astro.site).href : resolvedImage;
 // og:locale は "language_TERRITORY" 形式（例: ja_JP）を期待するため、SITE_LOCALE のハイフンを変換する
 const ogLocale = SITE_LOCALE.replace("-", "_");
