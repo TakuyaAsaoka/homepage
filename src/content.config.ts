@@ -4,22 +4,24 @@ import { z } from "astro/zod";
 
 const works = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/works" }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    tags: z.array(z.string()).default([]),
-    // CMSで一度設定した画像を消すと空文字が残る。表示・OGP・JSON-LDの各所で
-    // 空文字を判定し直さずに済むよう、ここで「未設定」に正規化する
-    image: z
-      .string()
-      .optional()
-      .transform((v) => v || undefined),
-    url: z.url().optional(),
-    // 公開日は暦日（どこで見ても動かない日付）。瞬間として持つとビルド環境のTZで1日ずれるため、
-    // "YYYY-MM-DD" 文字列に正規化して保持する
-    pubDate: z.coerce.date().transform((d) => d.toISOString().slice(0, 10)),
-    draft: z.boolean().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      tags: z.array(z.string()).default([]),
+      // image() はMarkdownからの相対パスを解決し、寸法つきの画像として読み込む。
+      // CMSで一度設定した画像を消すと空文字が残るが、image() は空文字も「画像あり」として
+      // 通してしまうため、先に空文字を受けてから「未設定」に正規化する
+      image: z
+        .union([z.literal(""), image()])
+        .optional()
+        .transform((v) => v || undefined),
+      url: z.url().optional(),
+      // 公開日は暦日（どこで見ても動かない日付）。瞬間として持つとビルド環境のTZで1日ずれるため、
+      // "YYYY-MM-DD" 文字列に正規化して保持する
+      pubDate: z.coerce.date().transform((d) => d.toISOString().slice(0, 10)),
+      draft: z.boolean().default(false),
+    }),
 });
 
 // SNSリンク等は空文字で「使わない」を表すため、URL形式か空文字のみ許可する

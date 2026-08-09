@@ -61,7 +61,7 @@ if (breadcrumb) {
 
 // Article ノード（article があるページのみ）
 if (article) {
-  // image は CMS が BASE_PATH 込みのパス（例: /homepage/images/foo.png）で保存するため、
+  // image は BASE_PATH 込みのパス（例: /homepage/_astro/foo.hash.png）で渡ってくるため、
   // Astro.site との合成だけで絶対URLになる（既存 BaseHead の resolvedImage → ogImage と同流儀）。
   // ただしデフォルト画像へのフォールバックはせず、存在時のみ Article に含める
   const articleImage = article.image

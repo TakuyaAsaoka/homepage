@@ -7,14 +7,12 @@ interface Props {
   description: string;
   tags: string[];
   slug: string;
-  // CMSは BASE_PATH 込みのパス（例: /homepage/images/foo.png）で保存するため、
-  // src に使うときも BASE_PATH を連結してはならない
-  image?: string;
+  image?: ImageMetadata;
 }
 
 const { title, description, tags, slug, image } = Astro.props;
 // 画像なしの制作でもカードの見た目を揃えるため、未設定時はOGPのデフォルト画像で埋める
-const thumbnail = image ?? DEFAULT_OG_IMAGE;
+const thumbnail = image?.src ?? DEFAULT_OG_IMAGE;
 ---
 
 <article class="work-card">
