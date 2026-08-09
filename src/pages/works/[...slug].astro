@@ -25,6 +25,7 @@ const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE,
 <BaseLayout
   title={work.data.title}
   description={work.data.description}
+  image={work.data.image}
   breadcrumb={[
     { label: "Works", href: `${BASE_PATH}works/` },
     { label: work.data.title },
@@ -37,6 +38,11 @@ const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE,
 >
   <article>
     <h1>{work.data.title}</h1>
+    {/* 詳細ページは実際の画像があるときだけ出す（デフォルト画像は制作の内容を表さないため）。
+        画像は public 配下でビルド時に寸法が分からないため、比率は指定せず原寸の比率で表示する */}
+    {work.data.image && (
+      <img class="hero-image" src={work.data.image} alt={work.data.title} decoding="async" />
+    )}
     <time datetime={work.data.pubDate}>{pubDateLabel}</time>
     <TagList tags={work.data.tags} />
     {work.data.url && (
@@ -52,6 +58,13 @@ const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE,
   time {
     color: var(--color-muted);
     font-size: 0.9rem;
+  }
+  /* コンテナ幅に収めるのはグローバルの img { max-width: 100% } が担う。
+     小さい画像を引き伸ばさないよう width は指定しない */
+  .hero-image {
+    display: block;
+    margin-block: 1rem 0.75rem;
+    border-radius: 4px;
   }
   article :global(.tags) {
     margin: 0.5rem 0;
