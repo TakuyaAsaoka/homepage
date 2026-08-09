@@ -8,7 +8,12 @@ const works = defineCollection({
     title: z.string(),
     description: z.string(),
     tags: z.array(z.string()).default([]),
-    image: z.string().optional(),
+    // CMSで一度設定した画像を消すと空文字が残る。表示・OGP・JSON-LDの各所で
+    // 空文字を判定し直さずに済むよう、ここで「未設定」に正規化する
+    image: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
     url: z.url().optional(),
     // 公開日は暦日（どこで見ても動かない日付）。瞬間として持つとビルド環境のTZで1日ずれるため、
     // "YYYY-MM-DD" 文字列に正規化して保持する

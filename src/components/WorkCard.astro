@@ -1,18 +1,26 @@
 ---
 import TagList from "./TagList.astro";
-import { BASE_PATH } from "../consts";
+import { BASE_PATH, DEFAULT_OG_IMAGE } from "../consts";
 
 interface Props {
   title: string;
   description: string;
   tags: string[];
   slug: string;
+  // CMSは BASE_PATH 込みのパス（例: /homepage/images/foo.png）で保存するため、
+  // src に使うときも BASE_PATH を連結してはならない
+  image?: string;
 }
 
-const { title, description, tags, slug } = Astro.props;
+const { title, description, tags, slug, image } = Astro.props;
+// 画像なしの制作でもカードの見た目を揃えるため、未設定時はOGPのデフォルト画像で埋める
+const thumbnail = image ?? DEFAULT_OG_IMAGE;
 ---
 
 <article class="work-card">
+  {/* サムネイルは装飾。直下の見出しリンクが同じタイトルを読み上げ、
+      デフォルト画像は制作の内容を表さないため alt は空にする */}
+  <img class="thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
   <h3>
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>
@@ -27,6 +35,19 @@ const { title, description, tags, slug } = Astro.props;
     padding: 1rem;
     border: 1px solid var(--color-border);
     border-radius: 4px;
+    /* サムネイルの角をカードの角丸に合わせて切る */
+    overflow: hidden;
+  }
+  /* 画像の実寸に関わらずカード間で高さを揃え、読み込み前も領域を確保する（表示のガタつき防止）。
+     カード枠いっぱいに出すため、padding 分を負のマージンで打ち消す */
+  .thumbnail {
+    display: block;
+    width: calc(100% + 2rem);
+    /* グローバルの img { max-width: 100% } が padding を打ち消す分を削るため解除する */
+    max-width: none;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    margin: -1rem -1rem 0.75rem;
   }
   .work-card h3 a {
     text-decoration: none;
