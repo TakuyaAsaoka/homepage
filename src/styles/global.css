@@ -107,6 +107,22 @@ body {
   color: var(--color-text);
 }
 
+/* スキップリンクは通常オフスクリーンに退避し、キーボードフォーカス時のみ左上に出す */
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 /* main は全幅のままヒーロー（hero スロット）を受け、本文の幅制限は main-inner が担う */
 main {
   flex: 1;
