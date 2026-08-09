@@ -57,10 +57,11 @@ homepage/
 │   ├── admin/                       # Sveltia CMS 管理画面
 │   │   ├── config.yml               # CMS設定
 │   │   └── index.html               # CMS管理画面エントリ
-│   ├── images/                      # 画像ファイル
-│   │   └── og.png                   # OGP画像
+│   ├── images/                      # CMSのグローバル保存先（現在どのコレクションも使わない）
 │   └── favicon.svg                  # ファビコン
 ├── src/
+│   ├── assets/                      # サイト共通の画像
+│   │   └── og.png                   # OGP・一覧カードのデフォルト画像
 │   ├── components/                  # 再利用可能なコンポーネント
 │   │   ├── BaseHead.astro           # <head>メタ情報
 │   │   ├── Breadcrumb.astro         # パンくずナビゲーション
@@ -74,6 +75,7 @@ homepage/
 │   │   ├── pages/                   # ページ文言（YAML）
 │   │   ├── settings/                # サイト設定（YAML）
 │   │   └── works/                   # 制作記事（Markdown）
+│   │       └── images/              # 制作の画像（CMSがここへ保存する）
 │   ├── layouts/                     # ページレイアウト
 │   │   └── BaseLayout.astro
 │   ├── pages/                       # ページ（ファイルベースルーティング）
@@ -434,17 +436,34 @@ import { z } from "astro/zod";
 
 const works = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/works" }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    tags: z.array(z.string()).default([]),
-    image: z.string().optional(),
-    url: z.url().optional(),
-    pubDate: z.coerce.date(),
-    draft: z.boolean().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      tags: z.array(z.string()).default([]),
+      image: z
+        .union([z.literal(""), image()])
+        .optional()
+        .transform((v) => v || undefined),
+      url: z.url().optional(),
+      pubDate: z.coerce.date(),
+      draft: z.boolean().default(false),
+    }),
 });
 ```
+
+### 画像の置き場所
+
+画像は `src/` 配下に置き、`public/` には置きません。`public/` のファイルはビルド時にそのままコピーされるだけでAstroが中身を読まないため、寸法が分からず `<img>` に `width` / `height` を出せません（読み込み完了時にページの内容が下へずれる）。ファイルを消しても気づけません。
+
+| 用途 | 置き場所 | 参照の仕方 |
+|---|---|---|
+| 制作（works）の画像 | `src/content/works/images/` | スキーマの `image()` ヘルパー。フロントマターには `./images/foo.png` と書く（CMSがこの形で保存する） |
+| サイト共通の画像 | `src/assets/` | `import` して使う（例: `src/consts.ts` の `DEFAULT_IMAGE`） |
+
+表示には `<img>` ではなく `astro:assets` の `<Image>` を使います。寸法が属性として出力されます。ページ最上部に出る画像には `loading="eager"` を付けます（`<Image>` は既定で遅延読み込みになるため）。
+
+`image()` は空文字を「画像あり」として通してしまいます。CMSで画像を消すとフロントマターに `image: ""` が残るため、上の例のように `z.union([z.literal(""), image()])` で先に空文字を受けてから「未設定」に正規化します。
 
 ### Markdownフロントマター
 

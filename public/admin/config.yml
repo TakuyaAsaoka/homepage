@@ -6,6 +6,10 @@ backend:
   # OAuthログイン用のsveltia-cms-auth WorkerのURL（docs/cms-oauth-setup.md のStep 4）
   base_url: "https://sveltia-cms-auth.dimas080201.workers.dev"
 
+# 画像欄を持つのは works だけで、works は下で保存先を上書きしている。
+# ここは使われないが、他のコレクションに画像欄を足すときは works と同じく
+# コレクション側で media_folder / public_folder を指定すること
+# （public/ 配下に保存するとAstroが画像を読めず、寸法が出せない）
 media_folder: "public/images"
 public_folder: "/homepage/images"
 

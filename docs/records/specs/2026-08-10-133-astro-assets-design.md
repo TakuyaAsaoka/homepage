@@ -15,7 +15,7 @@
 | 問題 | 現れ方 |
 |---|---|
 | 寸法が分からない | `width` / `height` を出せない（本Issue） |
-| 最適化されない | WebP変換・リサイズが一切かからない |
+| 最適化されない | WebP変換・リサイズが一切かからない（今回はWebP変換までを解消する。表示幅に合わせたリサイズは別Issueに切る） |
 | 参照切れを検出できない | 画像ファイルを消してもビルドは通り、公開後に404になる |
 | コンテンツにデプロイ先が混入する | フロントマターに `/homepage/images/foo.png` と `BASE_PATH` がそのまま入る。`WorkCard.astro` と `StructuredData.astro` に「`BASE_PATH` を連結してはならない」という同じ注意書きが2箇所ある |
 
@@ -105,6 +105,8 @@ OGP と JSON-LD には `work.data.image?.src` を渡す。`src` は元画像（P
 ### 一覧カード（`src/components/WorkCard.astro`）
 
 `<Image>` に幅を指定せず、元画像の寸法のまま出す。カードの表示幅は2カラム時で約350px、1カラム時で約736pxと幅があり、固定幅を決めると片方で粗くなる。枠は従来どおりCSSの `aspect-ratio` が確保するので、属性の寸法は表示に影響しない。
+
+表示幅に合わせて複数サイズを出す方法（`widths` と `sizes` による srcset）はあるが、`sizes` を正しく書くには実際のレイアウト幅を測る必要があり、本Issueの目的（レイアウト移動の解消）とは別の問題（転送量）なので別Issueに切る。一覧カードとヒーロー画像の両方が対象。
 
 `src/styles/global.css:139-142` に `img { max-width: 100%; height: auto }` があるため、`width` / `height` 属性が付いても縮小時に縦横比は崩れない。
 
