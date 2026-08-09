@@ -19,7 +19,17 @@ const thumbnail = image ?? DEFAULT_IMAGE;
 <article class="work-card">
   {/* サムネイルは装飾。直下の見出しリンクが同じタイトルを読み上げ、
       デフォルト画像は制作の内容を表さないため alt は空にする */}
-  <Image class="thumbnail" src={thumbnail} alt="" loading="lazy" decoding="async" />
+  {/* 表示幅は2カラム時390px（コンテンツ幅736px − gap20px の半分 ＋ padding分32px）、
+      767px以下の1カラム時はほぼ画面幅。widths は等倍・2倍・3倍の画面をまかなう */}
+  <Image
+    class="thumbnail"
+    src={thumbnail}
+    alt=""
+    widths={[400, 800, 1200]}
+    sizes="(min-width: 768px) 390px, 100vw"
+    loading="lazy"
+    decoding="async"
+  />
   <h3>
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>
