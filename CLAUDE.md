@@ -50,6 +50,8 @@ npm run dev           # 開発サーバー（localhost:4321）
 npm run build         # プロダクションビルド
 npm run preview       # ビルド結果のプレビュー
 npm run check         # astro check による型チェック
+npm run test          # Vitest（watchモード）
+npm run test:run      # Vitest（1回実行）
 ```
 
 ## 品質ゲート
@@ -57,7 +59,7 @@ npm run check         # astro check による型チェック
 以下を warning 0件で全パスする（マージ前検証）:
 
 ```bash
-npm run build && npm run check
+npm run build && npm run check && npm run test:run
 ```
 
 ## プロジェクト固有のルール
