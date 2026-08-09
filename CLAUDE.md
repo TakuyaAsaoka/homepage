@@ -16,11 +16,11 @@ homepage/
 ├── docs/                   # ドキュメント
 ├── public/
 │   ├── admin/              # Sveltia CMS 管理画面
-│   ├── images/             # 画像ファイル
 │   └── favicon.svg
 ├── src/
+│   ├── assets/             # サイト共通の画像（OGPのデフォルト画像）
 │   ├── components/         # 再利用可能なAstroコンポーネント
-│   ├── content/            # コンテンツコレクション（Markdown / YAML）
+│   ├── content/            # コンテンツコレクション（Markdown / YAML、制作の画像）
 │   ├── layouts/            # ページレイアウト
 │   ├── pages/              # ページ（ファイルベースルーティング）
 │   ├── scripts/            # クライアントサイドスクリプト

@@ -6,6 +6,10 @@ backend:
   # OAuthログイン用のsveltia-cms-auth WorkerのURL（docs/cms-oauth-setup.md のStep 4）
   base_url: "https://sveltia-cms-auth.dimas080201.workers.dev"
 
+# 画像欄を持つのは works だけで、works は下で保存先を上書きしている。
+# ここは使われないが、他のコレクションに画像欄を足すときは works と同じく
+# コレクション側で media_folder / public_folder を指定すること
+# （public/ 配下に保存するとAstroが画像を読めず、寸法が出せない）
 media_folder: "public/images"
 public_folder: "/homepage/images"
 
@@ -50,6 +54,11 @@ collections:
     folder: "src/content/works"
     create: true
     slug: "{{slug}}"
+    # 画像は制作と同じ場所（src/content/works/images/）に置き、Markdownからの相対パスで保存する。
+    # public/ に置くとAstroが中身を読めず、img に寸法を出せない（読み込み時に本文がずれる）。
+    # public_folder は先頭が "." のときだけそのまま使われ、それ以外は "/" を前置される
+    media_folder: "images"
+    public_folder: "./images"
     fields:
       - { label: "タイトル", name: "title", widget: "string", hint: "制作の名前" }
       - { label: "説明", name: "description", widget: "text", hint: "一覧やSNS共有時に表示される短い説明文" }

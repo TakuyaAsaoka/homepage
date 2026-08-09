@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TagList from "../../components/TagList.astro";
 import { render } from "astro:content";
@@ -25,7 +26,7 @@ const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE,
 <BaseLayout
   title={work.data.title}
   description={work.data.description}
-  image={work.data.image}
+  image={work.data.image?.src}
   breadcrumb={[
     { label: "Works", href: `${BASE_PATH}works/` },
     { label: work.data.title },
@@ -33,15 +34,25 @@ const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE,
   article={{
     datePublished: work.data.pubDate,
     keywords: work.data.tags,
-    image: work.data.image,
+    image: work.data.image?.src,
   }}
 >
   <article>
     <h1>{work.data.title}</h1>
     {/* 詳細ページは実際の画像があるときだけ出す（デフォルト画像は制作の内容を表さないため）。
-        画像は public 配下でビルド時に寸法が分からないため、比率は指定せず原寸の比率で表示する */}
+        Image は寸法を属性に出すため、読み込み前から高さが確保され本文が押し出されない。
+        ページ最上部に出る画像なので、既定の遅延読み込み（loading="lazy"）は打ち消す。
+        表示幅はコンテンツ幅いっぱい（最大736px）。widths は等倍と2倍の画面をまかなう */}
     {work.data.image && (
-      <img class="hero-image" src={work.data.image} alt={work.data.title} decoding="async" />
+      <Image
+        class="hero-image"
+        src={work.data.image}
+        alt={work.data.title}
+        widths={[736, 1472]}
+        sizes="(min-width: 800px) 736px, 100vw"
+        loading="eager"
+        decoding="async"
+      />
     )}
     <time datetime={work.data.pubDate}>{pubDateLabel}</time>
     <TagList tags={work.data.tags} />

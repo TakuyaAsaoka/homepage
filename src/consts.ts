@@ -9,5 +9,6 @@ export const BASE_PATH = import.meta.env.BASE_URL.endsWith("/")
 // ここには技術的な定数のみを置く
 export const SITE_LANG = "ja";
 export const SITE_LOCALE = "ja-JP";
-// OGP（SNS/チャット共有）のデフォルト画像。ページ個別指定が無いときのフォールバック
-export const DEFAULT_OG_IMAGE = `${BASE_PATH}images/og.png`;
+// OGP共有と一覧カードのデフォルト画像。ページ個別指定が無いときのフォールバック。
+// import で持つことで寸法が分かり、ファイルを消せばビルドが失敗する（URL直書きだと公開後まで気づけない）
+export { default as DEFAULT_IMAGE } from "./assets/og.png";

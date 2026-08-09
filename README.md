@@ -21,11 +21,11 @@
 ├── public/
 │   ├── admin/              # Sveltia CMS 管理画面
 │   │   └── config.yml      # CMS設定
-│   ├── images/             # 画像ファイル
 │   └── favicon.svg
 ├── src/
+│   ├── assets/             # サイト共通の画像（OGPのデフォルト画像）
 │   ├── components/         # 再利用可能なコンポーネント
-│   ├── content/            # コンテンツコレクション（Markdown）
+│   ├── content/            # コンテンツコレクション（Markdown、制作の画像）
 │   ├── layouts/            # ページレイアウト
 │   ├── pages/              # ページ（ファイルベースルーティング）
 │   ├── styles/             # グローバルスタイル
