@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { formatPubDate } from "./date";
+import { formatPubDate, formatFeedDate } from "./date";
 
 describe("formatPubDate", () => {
   it("ja-JP のロケール形式で整形する", () => {
@@ -11,6 +11,27 @@ describe("formatPubDate", () => {
     vi.stubEnv("TZ", "America/New_York");
     try {
       expect(formatPubDate("2026-07-10", "ja-JP")).toBe("2026/7/10");
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+});
+
+describe("formatFeedDate", () => {
+  // note の RSS が返す形式（日時＋タイムゾーン）
+  it("日本時間の暦日で整形する", () => {
+    expect(formatFeedDate("Fri, 10 Jul 2026 00:30:00 +0900", "ja-JP")).toBe(
+      "2026/7/10",
+    );
+  });
+
+  it("実行環境のタイムゾーンに関わらず日本時間の暦日を返す", () => {
+    // UTCビルド（GitHub Actions）を再現する。日本時間 00:30 は UTC では前日 15:30
+    vi.stubEnv("TZ", "UTC");
+    try {
+      expect(formatFeedDate("Fri, 10 Jul 2026 00:30:00 +0900", "ja-JP")).toBe(
+        "2026/7/10",
+      );
     } finally {
       vi.unstubAllEnvs();
     }
