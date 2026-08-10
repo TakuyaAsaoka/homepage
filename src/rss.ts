@@ -1,6 +1,6 @@
 import Parser from "rss-parser";
 
-/** RSSフィードの1記事分の表示用データ */
+/** RSSフィードの1記事分の表示用データ。pubDate はISO 8601形式の日時か、空文字（日付なし） */
 export type FeedItem = {
   title: string;
   link: string;
@@ -20,7 +20,9 @@ export async function fetchFeedItems(url: string): Promise<FetchFeedResult> {
     const items = (feed.items ?? []).map((item) => ({
       title: item.title ?? "",
       link: item.link ?? "",
-      pubDate: item.pubDate ?? "",
+      // rss-parser が解釈できた日付だけを持つ isoDate を使う。生の pubDate をそのまま渡すと、
+      // フィードの1件の日付が壊れているだけで表示側の new Date() が例外を投げ、ビルド全体が落ちる
+      pubDate: item.isoDate ?? "",
     }));
     return { items, failed: false };
   } catch (error) {
