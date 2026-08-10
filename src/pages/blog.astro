@@ -36,7 +36,7 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
               {item.title}
             </a>
             {item.pubDate && (
-              <time datetime={new Date(item.pubDate).toISOString()}>
+              <time datetime={item.pubDate}>
                 {formatFeedDate(item.pubDate, SITE_LOCALE)}
               </time>
             )}

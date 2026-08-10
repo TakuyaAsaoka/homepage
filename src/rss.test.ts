@@ -11,19 +11,22 @@ function serveFeed(xml: string) {
     response.writeHead(200, { "Content-Type": "application/rss+xml" });
     response.end(xml);
   });
-  return new Promise<{ url: string; close: () => Promise<void> }>((resolve) => {
-    // ポート0で空きポートを自動割り当てし、テストの並行実行でぶつからないようにする
-    server.listen(0, "127.0.0.1", () => {
-      const address = server.address();
-      if (address === null || typeof address === "string") {
-        throw new Error("HTTPサーバのポートを取得できませんでした");
-      }
-      resolve({
-        url: `http://127.0.0.1:${address.port}/`,
-        close: () => new Promise<void>((done) => server.close(() => done())),
+  return new Promise<{ url: string; close: () => Promise<void> }>(
+    (resolve, reject) => {
+      // ポート0で空きポートを自動割り当てし、テストの並行実行でぶつからないようにする
+      server.listen(0, "127.0.0.1", () => {
+        const address = server.address();
+        if (address === null || typeof address === "string") {
+          reject(new Error("HTTPサーバのポートを取得できませんでした"));
+          return;
+        }
+        resolve({
+          url: `http://127.0.0.1:${address.port}/`,
+          close: () => new Promise<void>((done) => server.close(() => done())),
+        });
       });
-    });
-  });
+    },
+  );
 }
 
 function feedWith(items: string): string {
@@ -35,7 +38,7 @@ ${items}
 }
 
 describe("fetchFeedItems", () => {
-  it("記事のタイトル・リンク・公開日を取得する", async () => {
+  it("記事のタイトル・リンクと、ISO 8601形式に正規化した公開日を取得する", async () => {
     const feed = await serveFeed(
       feedWith(`<item>
         <title>正常な記事</title>
@@ -51,7 +54,8 @@ describe("fetchFeedItems", () => {
         {
           title: "正常な記事",
           link: "https://example.test/1",
-          pubDate: "Fri, 10 Jul 2026 00:30:00 +0900",
+          // 日本時間 7/10 00:30 はUTCでは前日 15:30
+          pubDate: "2026-07-09T15:30:00.000Z",
         },
       ]);
     } finally {
