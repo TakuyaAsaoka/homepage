@@ -20,20 +20,20 @@ function toParagraphs(body: string): string[] {
 
 <BaseLayout title="About" description="アサオカの自己紹介 — 経歴・仕事観・人となり" breadcrumb={[{ label: "About" }]}>
   <section>
-    <h1 class="section-heading page-heading">
+    <h1 class="section-heading page-heading" data-reveal>
       <span class="section-title">自己紹介</span>
       <span class="section-label" aria-hidden="true">ABOUT</span>
     </h1>
-    <p class="about-lead">{about.lead}</p>
+    <p class="about-lead" data-reveal="delayed">{about.lead}</p>
   </section>
 
   {about.sections.map((section) => (
     <section class="about-section">
-      <h2 class="section-heading">
+      <h2 class="section-heading" data-reveal>
         <span class="section-title">{section.title}</span>
         <span class="section-label" aria-hidden="true">{section.label}</span>
       </h2>
-      {toParagraphs(section.body).map((paragraph) => <p>{paragraph}</p>)}
+      {toParagraphs(section.body).map((paragraph) => <p data-reveal="delayed">{paragraph}</p>)}
     </section>
   ))}
 </BaseLayout>

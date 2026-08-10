@@ -8,14 +8,14 @@ const works = await getPublishedWorks();
 
 <BaseLayout title="Works" description="アサオカの制作一覧" breadcrumb={[{ label: "Works" }]}>
   <section>
-    <h1 class="section-heading page-heading">
+    <h1 class="section-heading page-heading" data-reveal>
       <span class="section-title">制作</span>
       <span class="section-label" aria-hidden="true">WORKS</span>
     </h1>
     {works.length > 0 ? (
       <ul class="work-grid" role="list">
         {works.map((work) => (
-          <li>
+          <li data-reveal="delayed">
             <WorkCard
               title={work.data.title}
               description={work.data.description}
@@ -27,7 +27,7 @@ const works = await getPublishedWorks();
         ))}
       </ul>
     ) : (
-      <p>公開できる制作を準備中です。</p>
+      <p data-reveal="delayed">公開できる制作を準備中です。</p>
     )}
   </section>
 </BaseLayout>
