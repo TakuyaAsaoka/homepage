@@ -17,6 +17,8 @@ const { tags } = Astro.props;
 <style>
   .tags {
     display: flex;
+    /* タグ数はCMSで自由に増えるため、1行に収まらなければ折り返す（カード幅からはみ出して切れるのを防ぐ） */
+    flex-wrap: wrap;
     list-style: none;
     gap: 0.5rem;
   }

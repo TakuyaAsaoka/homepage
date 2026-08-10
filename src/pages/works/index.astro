@@ -21,6 +21,7 @@ const works = await getPublishedWorks();
               description={work.data.description}
               tags={work.data.tags}
               slug={work.id}
+              pubDate={work.data.pubDate}
               image={work.data.image}
             />
           </li>

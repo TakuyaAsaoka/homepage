@@ -5,6 +5,7 @@ import TagList from "../../components/TagList.astro";
 import { render } from "astro:content";
 import { BASE_PATH, SITE_LOCALE } from "../../consts";
 import { getPublishedWorks } from "../../works";
+import { formatPubDate } from "../../date";
 
 export async function getStaticPaths() {
   const works = await getPublishedWorks();
@@ -17,10 +18,7 @@ export async function getStaticPaths() {
 const { work } = Astro.props;
 const { Content } = await render(work);
 
-// pubDate は "YYYY-MM-DD"（暦日）。UTC固定で整形し、ビルド環境のTZで日付がずれないようにする
-const pubDateLabel = new Date(work.data.pubDate).toLocaleDateString(SITE_LOCALE, {
-  timeZone: "UTC",
-});
+const pubDateLabel = formatPubDate(work.data.pubDate, SITE_LOCALE);
 ---
 
 <BaseLayout

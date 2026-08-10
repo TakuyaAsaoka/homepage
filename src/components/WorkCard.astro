@@ -1,17 +1,19 @@
 ---
 import { Image } from "astro:assets";
 import TagList from "./TagList.astro";
-import { BASE_PATH, DEFAULT_IMAGE } from "../consts";
+import { BASE_PATH, DEFAULT_IMAGE, SITE_LOCALE } from "../consts";
+import { formatPubDate } from "../date";
 
 interface Props {
   title: string;
   description: string;
   tags: string[];
   slug: string;
+  pubDate: string;
   image?: ImageMetadata;
 }
 
-const { title, description, tags, slug, image } = Astro.props;
+const { title, description, tags, slug, pubDate, image } = Astro.props;
 // 画像なしの制作でもカードの見た目を揃えるため、未設定時はデフォルト画像で埋める
 const thumbnail = image ?? DEFAULT_IMAGE;
 ---
@@ -34,7 +36,10 @@ const thumbnail = image ?? DEFAULT_IMAGE;
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>
   <p>{description}</p>
-  <TagList tags={tags} />
+  <div class="card-meta">
+    <time datetime={pubDate}>{formatPubDate(pubDate, SITE_LOCALE)}</time>
+    <TagList tags={tags} />
+  </div>
 </article>
 
 <style>
@@ -68,9 +73,18 @@ const thumbnail = image ?? DEFAULT_IMAGE;
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
   }
-  /* カード高さが行内で揃った際、タグを下端に寄せて空白の浮きを防ぐ */
-  .work-card :global(.tags) {
+  /* カード高さが行内で揃った際、公開日とタグを下端に寄せて空白の浮きを防ぐ。
+     タグが多い場合は折り返して日付の下に回り込ませる */
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
     margin-top: auto;
     padding-top: 0.5rem;
+  }
+  .card-meta time {
+    font-size: 0.85rem;
+    color: var(--color-muted);
   }
 </style>
