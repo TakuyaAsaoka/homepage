@@ -38,12 +38,13 @@ ${items}
 }
 
 describe("fetchFeedItems", () => {
-  it("記事のタイトル・リンクと、ISO 8601形式に正規化した公開日を取得する", async () => {
+  it("記事のタイトル・リンク・概要と、ISO 8601形式に正規化した公開日を取得する", async () => {
     const feed = await serveFeed(
       feedWith(`<item>
         <title>正常な記事</title>
         <link>https://example.test/1</link>
         <pubDate>Fri, 10 Jul 2026 00:30:00 +0900</pubDate>
+        <description><![CDATA[<p>記事の書き出しです。</p>]]></description>
       </item>`),
     );
     try {
@@ -56,8 +57,68 @@ describe("fetchFeedItems", () => {
           link: "https://example.test/1",
           // 日本時間 7/10 00:30 はUTCでは前日 15:30
           pubDate: "2026-07-09T15:30:00.000Z",
+          // HTMLタグは除かれた状態で取れる
+          description: "記事の書き出しです。",
         },
       ]);
+    } finally {
+      await feed.close();
+    }
+  });
+
+  it("noteが本文末尾に付ける「続きをみる」を概要から取り除く", async () => {
+    const feed = await serveFeed(
+      feedWith(`<item>
+        <title>noteの記事</title>
+        <link>https://example.test/3</link>
+        <description><![CDATA[<p>こんにちは！</p>
+本文の書き出しです。
+続きをみる]]></description>
+      </item>`),
+    );
+    try {
+      const result = await fetchFeedItems(feed.url);
+
+      expect(result.items[0]?.description).toBe(
+        "こんにちは！\n本文の書き出しです。",
+      );
+    } finally {
+      await feed.close();
+    }
+  });
+
+  it("長い概要も文字数で切り詰めずそのまま返す", async () => {
+    // 表示する行数はCSSの line-clamp が抑える。文字数で切ると画面幅によって
+    // 読めていた本文まで削れるため、取得側では切らない
+    const longText = "あ".repeat(200);
+    const feed = await serveFeed(
+      feedWith(`<item>
+        <title>長い概要の記事</title>
+        <link>https://example.test/5</link>
+        <description>${longText}</description>
+      </item>`),
+    );
+    try {
+      const result = await fetchFeedItems(feed.url);
+
+      expect(result.items[0]?.description).toBe(longText);
+    } finally {
+      await feed.close();
+    }
+  });
+
+  it("概要がない記事の概要は空文字になる", async () => {
+    const feed = await serveFeed(
+      feedWith(`<item>
+        <title>概要がない記事</title>
+        <link>https://example.test/4</link>
+      </item>`),
+    );
+    try {
+      const result = await fetchFeedItems(feed.url);
+
+      expect(result.items[0]?.description).toBe("");
+      expect(result.items[0]?.title).toBe("概要がない記事");
     } finally {
       await feed.close();
     }
