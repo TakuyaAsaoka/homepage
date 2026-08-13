@@ -8,6 +8,7 @@ if (!aboutEntry) {
   throw new Error("About文言（src/content/pages/about.yaml）が見つかりません");
 }
 const about = aboutEntry.data;
+const _brokenAtRuntime = new URL("not-a-url");
 
 // 本文を空行区切りで段落に分割する
 function toParagraphs(body: string): string[] {
