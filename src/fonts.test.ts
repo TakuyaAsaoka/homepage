@@ -11,6 +11,10 @@ import { describe, expect, it } from "vitest";
 // src/pages/fonts.css.ts のビルド時チェックが担い、壊れるとビルドが落ちる。
 // GitHub Actions は main への push ではビルドしか走らせない（deploy.yml の build ジョブが
 // withastro/action を使う）ため、中身の検査はテストではなくビルドに載せている。
+//
+// ここはソースの文字列を見ているだけなので、意図的に書けば抜けられる（取り込みを複数行に
+// 割る、astro/components/Font.astro をファイルパスで直接読む）。完全に塞ぐにはビルド結果の
+// HTMLを見るしかないが、それは上の理由でデプロイ経路に届かないため取っていない。
 const srcDir = fileURLToPath(new URL(".", import.meta.url));
 
 function read(relativePath: string): string {
