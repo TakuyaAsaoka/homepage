@@ -87,6 +87,26 @@ describe("fetchFeedItems", () => {
     }
   });
 
+  it("長い概要も文字数で切り詰めずそのまま返す", async () => {
+    // 表示する行数はCSSの line-clamp が抑える。文字数で切ると画面幅によって
+    // 読めていた本文まで削れるため、取得側では切らない
+    const longText = "あ".repeat(200);
+    const feed = await serveFeed(
+      feedWith(`<item>
+        <title>長い概要の記事</title>
+        <link>https://example.test/5</link>
+        <description>${longText}</description>
+      </item>`),
+    );
+    try {
+      const result = await fetchFeedItems(feed.url);
+
+      expect(result.items[0]?.description).toBe(longText);
+    } finally {
+      await feed.close();
+    }
+  });
+
   it("概要がない記事の概要は空文字になる", async () => {
     const feed = await serveFeed(
       feedWith(`<item>

@@ -12,6 +12,12 @@ export type FeedItem = {
   description: string;
 };
 
+/** RSSフィードの取得結果。failed が true のとき items は常に空配列 */
+export type FetchFeedResult = {
+  items: FeedItem[];
+  failed: boolean;
+};
+
 /**
  * note が本文末尾に付ける「続きをみる」リンクの文字。記事の概要ではないので取り除く。
  * 末尾一致だけで消すため、note 以外のフィードでは何も起きない。
@@ -19,12 +25,6 @@ export type FeedItem = {
  * まずこの行を疑うこと
  */
 const NOTE_READ_MORE = /\s*続きをみる\s*$/;
-
-/** RSSフィードの取得結果。failed が true のとき items は常に空配列 */
-export type FetchFeedResult = {
-  items: FeedItem[];
-  failed: boolean;
-};
 
 /** RSSフィードを取得し、表示用アイテムに変換する。url は空でない前提 */
 export async function fetchFeedItems(url: string): Promise<FetchFeedResult> {
@@ -38,7 +38,7 @@ export async function fetchFeedItems(url: string): Promise<FetchFeedResult> {
       pubDate: item.isoDate ?? "",
       // contentSnippet は rss-parser がHTMLタグを除いた本文の抜粋。
       // 表示の行数はCSSの line-clamp で抑えるので、ここでは文字数で切らない
-      description: (item.contentSnippet ?? "").replace(NOTE_READ_MORE, "").trim(),
+      description: (item.contentSnippet ?? "").replace(NOTE_READ_MORE, ""),
     }));
     return { items, failed: false };
   } catch (error) {
