@@ -1,5 +1,4 @@
 ---
-import { Font } from "astro:assets";
 import { SITE_LOCALE, BASE_PATH, DEFAULT_IMAGE } from "../consts";
 import { getSiteSettings } from "../site-settings";
 import StructuredData, { type ArticleData } from "./StructuredData.astro";
@@ -41,9 +40,11 @@ const fullTitle = `${title} | ${site.title}`;
   href={Astro.site ? new URL(`${BASE_PATH}rss.xml`, Astro.site).href : `${BASE_PATH}rss.xml`}
 />
 
-<!-- Fonts（セルフホスト。@font-face と CSS 変数を注入する。設定: astro.config.mjs の fonts） -->
-<Font cssVariable="--font-serif" />
-<Font cssVariable="--font-sans" />
+{/* Fonts（セルフホスト。設定: astro.config.mjs の fonts、中身の生成: src/pages/fonts.css.ts）。
+    Astro の Font コンポーネントは @font-face をページのHTMLへインライン展開するため使わない。
+    日本語は unicode-range で分割され606定義・474KBになり、ページをまたぐキャッシュが効かない。
+    HTMLコメントではなくJSXコメントにしているのは、出力に残さないため。 */}
+<link rel="stylesheet" href={`${BASE_PATH}fonts.css`} />
 
 <!-- Primary Meta Tags -->
 <title>{fullTitle}</title>

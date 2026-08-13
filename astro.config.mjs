@@ -6,8 +6,9 @@ export default defineConfig({
   base: "/homepage",
   integrations: [sitemap()],
   // Google Fonts をビルド時に取得してセルフホスト化する（Issue #101）。
-  // @font-face と CSS 変数（--font-serif / --font-sans）は BaseHead.astro の
-  // <Font> コンポーネントが :root に注入する。
+  // ここで取得した内容から @font-face と CSS 変数（--font-serif / --font-sans）を
+  // 組み立てて1枚の外部CSSに出すのは src/pages/fonts.css.ts（Issue #147）。
+  // Astro の Font コンポーネントは使わない（各ページのHTMLへインライン展開されるため）。
   fonts: [
     {
       provider: fontProviders.google(),
