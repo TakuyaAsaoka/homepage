@@ -275,7 +275,7 @@ html.js:not(.reduced-motion) [data-reveal="delayed"] {
   left: 0;
   width: 100%;
   height: 2px;
-  z-index: 90; /* .skip-link（100）より下。フォーカス中のスキップリンクを隠さない */
+  z-index: 90; /* 他の固定要素より前に出す必要が無いので .skip-link（100）より下に置く */
   background-color: var(--season-accent);
   transform: scaleX(0);
   transform-origin: 0 50%; /* width ではなく scaleX。毎フレームの再レイアウトを起こさない */
@@ -298,7 +298,7 @@ html[data-navigating] .nav-progress {
 /* 到達点を 0.92 で止める（満杯にしない）。前半で大きく伸ばして「押した」手応えを返し、
    以降は減速させる。10s は最も遅い実測（1474ms）を大きく包む長さ。
    分布が連続である以上、しきい値をどこに置いても「わずかに超えて終わる遷移」は必ず残る。
-   そこが硬い点滅にならないよう、最初の120msは不透明度を上げながら出す。 */
+   そこが硬い点滅にならないよう、最初の 1.2%（この10s尺では120ms）は不透明度を上げながら出す。 */
 @keyframes nav-progress {
   from {
     transform: scaleX(0);
@@ -323,7 +323,7 @@ html[data-navigating] .nav-progress {
 }
 
 /* reduced-motion: 二重の担保（[data-reveal] と同じ形）。伸びる動きをやめ、
-   同じ250msの判定のあとに幅固定の帯を出すだけにする（即時表示・即時非表示）。 */
+   同じ500msの判定のあとに幅固定の帯を出すだけにする（即時表示・即時非表示）。 */
 html.reduced-motion[data-navigating] .nav-progress {
   animation: nav-progress-static 1ms linear 500ms forwards;
 }

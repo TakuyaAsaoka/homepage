@@ -88,7 +88,9 @@ homepage/
 │   │   ├── 404.astro                # 404エラーページ
 │   │   └── rss.xml.ts               # RSSフィード生成
 │   ├── scripts/                     # クライアントサイドスクリプト
-│   │   └── reveal.ts                # スクロール登場アニメーション
+│   │   ├── reveal.ts                # スクロール登場アニメーション
+│   │   ├── seasonal-hero.ts         # ヒーローの季節演出
+│   │   └── nav-progress.ts          # ページ遷移の進行バー
 │   ├── styles/                      # グローバルスタイル
 │   │   └── global.css
 │   ├── consts.ts                    # サイト定数

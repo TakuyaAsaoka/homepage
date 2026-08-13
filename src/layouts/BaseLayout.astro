@@ -59,8 +59,9 @@ const { title, description, image, noindex, breadcrumb, article } = Astro.props;
   </head>
   <body>
     <a class="skip-link" href="#main-content">メインコンテンツへスキップ</a>
-    {/* 遷移の待ち時間を示す進行バー。装飾のため aria-hidden にする（遷移の読み上げは
-        ClientRouter の announcer が担うので、ここで role="progressbar" を足すと二重になる） */}
+    {/* 遷移の待ち時間を示す進行バー。取得の進捗率は取れず aria-valuenow を出せないので
+        role="progressbar" は付けず、装飾として aria-hidden にする。遷移が終われば
+        ClientRouter の announcer が遷移先のタイトルを読む */}
     <div class="nav-progress" aria-hidden="true"></div>
     {/* Header / Footer は body 直下に置くこと。ここでの <header> / <footer> は
         暗黙で banner / contentinfo になるため role の明示を省いている（何かで囲むと失われる） */}
