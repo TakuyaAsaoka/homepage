@@ -46,7 +46,12 @@ describe("フォント定義の読み込み", () => {
   it("Astro の Font コンポーネントをどこでも使わない", () => {
     // Font コンポーネントは @font-face をそのページのHTMLへ <style> で展開する。
     // 1箇所でも戻ると、そのページだけ474KBに膨らみ、ページ間のキャッシュが効かなくなる。
-    const used = sources.filter(({ text }) => /<Font\b/.test(text)).map(({ path }) => path);
+    // タグ名だけでなく取り込み元も見る。別名で import すればタグ名は何にでもできる。
+    const used = sources
+      .filter(
+        ({ text }) => /<Font\b/.test(text) || /\bFont\b[^\n]*from "astro:assets"/.test(text),
+      )
+      .map(({ path }) => path);
     expect(used).toEqual([]);
   });
 
@@ -54,11 +59,12 @@ describe("フォント定義の読み込み", () => {
     // 設定に書体を足しても fonts.css.ts に足し忘れると、その書体だけ黙って出ない。
     const config = readFileSync(new URL("../astro.config.mjs", import.meta.url), "utf8");
     const configured = [...config.matchAll(/cssVariable:\s*"([^"]+)"/g)].map((m) => m[1]);
-    const emitted = [
-      ...read("pages/fonts.css.ts").matchAll(/"(--font-[\w-]+)"/g),
-    ].map((m) => m[1]);
+    // 宣言の中だけを見る。ファイル全体から拾うと、コメントに書いた変数名を数えてしまう。
+    const declaration = read("pages/fonts.css.ts").match(/const CSS_VARIABLES = \[([^\]]*)\]/);
+    const emitted = [...(declaration?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 
     expect(configured.length).toBeGreaterThan(0);
-    expect(emitted).toEqual(configured);
+    // 並び順は見ない。CSSの連結順は表示に影響しない。
+    expect([...emitted].sort()).toEqual([...configured].sort());
   });
 });

@@ -17,18 +17,17 @@ export function GET() {
   // 「入っているものを確かめる」ではなく「出すと決めた書体を取りに行く」形にする。
   // 前者だと中身が丸ごと空になったときに一度も検査が回らず、素通りしてしまう。
   const css = CSS_VARIABLES.map((cssVariable) => {
-      const familyCss = componentDataByCssVariable.get(cssVariable)?.css ?? "";
-      // @font-face（書体の実体）と :root のCSS変数（参照する名前）の両方を要求する。
-      // 片方だけでは、字が出ないか、指定しても効かないかのどちらかになる。
-      if (!familyCss.includes("@font-face") || !familyCss.includes(cssVariable)) {
-        throw new Error(
-          `virtual:astro:assets/fonts/internal から ${cssVariable} の @font-face を` +
-            "取得できませんでした。Astro の更新でこの内部モジュールの形が変わった可能性があります",
-        );
-      }
-      return familyCss;
-    })
-    .join("");
+    const familyCss = componentDataByCssVariable.get(cssVariable)?.css ?? "";
+    // @font-face（書体の実体）と :root のCSS変数（参照する名前）の両方を要求する。
+    // 片方だけでは、字が出ないか、指定しても効かないかのどちらかになる。
+    if (!familyCss.includes("@font-face") || !familyCss.includes(cssVariable)) {
+      throw new Error(
+        `virtual:astro:assets/fonts/internal から ${cssVariable} の @font-face を` +
+          "取得できませんでした。Astro の更新でこの内部モジュールの形が変わった可能性があります",
+      );
+    }
+    return familyCss;
+  }).join("");
 
   return new Response(css, { headers: { "Content-Type": "text/css" } });
 }
