@@ -40,9 +40,10 @@ const fullTitle = `${title} | ${site.title}`;
   href={Astro.site ? new URL(`${BASE_PATH}rss.xml`, Astro.site).href : `${BASE_PATH}rss.xml`}
 />
 
-<!-- Fonts（セルフホスト。設定: astro.config.mjs の fonts、中身の生成: src/pages/fonts.css.ts）。
-     Astro の Font コンポーネントは @font-face をページのHTMLへインライン展開するため使わない。
-     日本語は unicode-range で分割され606定義・474KBになり、ページをまたぐキャッシュが効かない。 -->
+{/* Fonts（セルフホスト。設定: astro.config.mjs の fonts、中身の生成: src/pages/fonts.css.ts）。
+    Astro の Font コンポーネントは @font-face をページのHTMLへインライン展開するため使わない。
+    日本語は unicode-range で分割され606定義・474KBになり、ページをまたぐキャッシュが効かない。
+    HTMLコメントではなくJSXコメントにしているのは、出力に残さないため。 */}
 <link rel="stylesheet" href={`${BASE_PATH}fonts.css`} />
 
 <!-- Primary Meta Tags -->
