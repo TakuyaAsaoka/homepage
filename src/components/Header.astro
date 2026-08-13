@@ -61,6 +61,28 @@ const currentState = (href: string) =>
       });
     }
   });
+
+  // ESCキーと外側クリックは document で受けるため、登録は一度だけにする。
+  // （astro:page-load の中に置くと、ページ遷移のたびに登録が積み重なる）
+  // 開いているメニューを閉じる。returnFocus はキーボード操作のときだけ true にする
+  // （マウスで外側をクリックしたときにボタンへフォーカスが飛ぶのは不自然なため）。
+  const closeMenu = (returnFocus: boolean) => {
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    if (!toggle || toggle.getAttribute("aria-expanded") !== "true") return;
+
+    toggle.setAttribute("aria-expanded", "false");
+    if (returnFocus) toggle.focus();
+  };
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu(true);
+  });
+
+  document.addEventListener("click", (event) => {
+    const header = document.querySelector(".header");
+    if (!header || !(event.target instanceof Node)) return;
+    if (!header.contains(event.target)) closeMenu(false);
+  });
 </script>
 
 <style>
