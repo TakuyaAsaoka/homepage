@@ -19,6 +19,10 @@
   --hero-rule-width: 52px;
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --anim-duration: 0.7s;
+  /* ページ遷移の進行バーを出すまでの待ち時間（単一情報源）。
+     通常時と reduced-motion 時の規則がこれを共有し、片方だけずれるのを防ぐ。
+     値の根拠は下の .nav-progress のコメント */
+  --nav-progress-delay: 500ms;
 
   /* 季節アクセントのトークン（単一情報源）。文字装飾（下線・区切り記号・図形）と
      SeasonalHero の JS（日輪・夏の波紋）の双方が var(--accent-<season>) で参照する。
@@ -283,16 +287,16 @@ html.js:not(.reduced-motion) [data-reveal="delayed"] {
   pointer-events: none;
 }
 
-/* 出す条件は「遷移が500ms以上かかったこと」で、それを animation-delay が判定する。
-   JSにタイマーは置かない。500ms以内に data-navigating が外れれば、ブラウザはこのバーを
+/* 出す条件は「遷移が --nav-progress-delay 以上かかったこと」で、それを開始の遅延が判定する。
+   JSにタイマーは置かない。その時間内に data-navigating が外れれば、ブラウザはこのバーを
    一度も描かない（実測: 66msの遷移で描画0フレーム）。
-   500msの根拠は本番実測。遷移時間は「取得にかかる残り時間」でほぼ決まり、
+   500msという値の根拠は本番実測。遷移時間は「取得にかかる残り時間」でほぼ決まり、
    キャッシュ済み15ms・デスクトップ回線のコールド213〜229ms・低速回線1474msと連続して散らばる。
    500msはデスクトップの山（〜229ms）の上に置いた値で、通常の閲覧ではバーが一度も出ない。
    消えるほうは遷移時にブラウザ既定のクロスフェード（実測250ms）が古い画面ごと溶かすため、
    ここに消去のアニメーションは要らない。 */
 html[data-navigating] .nav-progress {
-  animation: nav-progress 10s linear 500ms forwards;
+  animation: nav-progress 10s linear var(--nav-progress-delay) forwards;
 }
 
 /* 到達点を 0.92 で止める（満杯にしない）。前半で大きく伸ばして「押した」手応えを返し、
@@ -323,20 +327,22 @@ html[data-navigating] .nav-progress {
 }
 
 /* reduced-motion: 二重の担保（[data-reveal] と同じ形）。伸びる動きをやめ、
-   同じ500msの判定のあとに幅固定の帯を出すだけにする（即時表示・即時非表示）。 */
+   同じ判定のあとに幅固定の帯を出すだけにする（即時表示・即時非表示）。 */
 html.reduced-motion[data-navigating] .nav-progress {
-  animation: nav-progress-static 1ms linear 500ms forwards;
+  animation: nav-progress-static 1ms linear var(--nav-progress-delay) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html[data-navigating] .nav-progress {
-    animation: nav-progress-static 1ms linear 500ms forwards;
+    animation: nav-progress-static 1ms linear var(--nav-progress-delay) forwards;
   }
 }
 
+/* 静止させても満杯にはしない。取得中に全幅の帯が出ると、動かないぶんだけ
+   「終わった」と読めてしまう。伸びる版と同じ 0.92 で止める。 */
 @keyframes nav-progress-static {
   to {
-    transform: scaleX(1);
+    transform: scaleX(0.92);
     opacity: 0.6;
   }
 }
