@@ -33,6 +33,11 @@ jobs:
         run: npm run check
       - name: Unit test
         run: npm run test:run
+      # PRではデプロイ用の build ジョブがスキップされるため、ここでビルドが通ることを確かめる。
+      # mainへのpushでは build ジョブが同じ npm run build を走らせるので二重に実行しない。
+      - name: Build
+        if: github.event_name == 'pull_request'
+        run: npm run build
 
   build:
     needs: check
