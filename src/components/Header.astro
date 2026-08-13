@@ -61,6 +61,30 @@ const currentState = (href: string) =>
       });
     }
   });
+
+  // 開いているメニューを閉じる。returnFocus はキーボード操作のときだけ true にする
+  // （マウスで外側を押したときにボタンへフォーカスが飛ぶのは不自然なため）。
+  function closeMenu(returnFocus: boolean) {
+    const toggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+    if (!toggle || toggle.getAttribute("aria-expanded") !== "true") return;
+
+    toggle.setAttribute("aria-expanded", "false");
+    if (returnFocus) toggle.focus();
+  }
+
+  // 以下2つは document で受けるため、登録は一度だけにする。
+  // （astro:page-load の中に置くと、ページ遷移のたびに登録が積み重なる）
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu(true);
+  });
+
+  // click ではなく pointerdown を使う。iOS Safari では、ボタンやリンク以外の要素を
+  // タップしても click が document まで上がってこないため、外側タップで閉じられない。
+  document.addEventListener("pointerdown", (event) => {
+    const header = document.querySelector(".header");
+    if (!header || !(event.target instanceof Node)) return;
+    if (!header.contains(event.target)) closeMenu(false);
+  });
 </script>
 
 <style>
