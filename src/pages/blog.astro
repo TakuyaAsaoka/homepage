@@ -32,13 +32,18 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
       <ul class="blog-list" role="list">
         {feedItems.map((item) => (
           <li>
-            <a href={item.link} target="_blank" rel="noopener noreferrer">
-              {item.title}
-            </a>
-            {item.pubDate && (
-              <time datetime={item.pubDate}>
-                {formatFeedDate(item.pubDate, SITE_LOCALE)}
-              </time>
+            <div class="blog-head">
+              <a href={item.link} target="_blank" rel="noopener noreferrer">
+                {item.title}
+              </a>
+              {item.pubDate && (
+                <time datetime={item.pubDate}>
+                  {formatFeedDate(item.pubDate, SITE_LOCALE)}
+                </time>
+              )}
+            </div>
+            {item.description && (
+              <p class="blog-description">{item.description}</p>
             )}
           </li>
         ))}
@@ -58,6 +63,8 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
   .blog-list li {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--color-border);
+  }
+  .blog-head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -67,5 +74,17 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
     font-size: 0.85rem;
     white-space: nowrap;
     color: var(--color-muted);
+  }
+  /* 概要は最大3行まで。文字数ではなく行数で抑えるので、画面幅が変わっても高さが揃う */
+  .blog-description {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
   }
 </style>
