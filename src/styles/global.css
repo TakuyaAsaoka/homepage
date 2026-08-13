@@ -19,6 +19,10 @@
   --hero-rule-width: 52px;
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --anim-duration: 0.7s;
+  /* ページ遷移の進行バーを出すまでの待ち時間（単一情報源）。
+     通常時と reduced-motion 時の規則がこれを共有し、片方だけずれるのを防ぐ。
+     値の根拠は下の .nav-progress のコメント */
+  --nav-progress-delay: 500ms;
 
   /* 季節アクセントのトークン（単一情報源）。文字装飾（下線・区切り記号・図形）と
      SeasonalHero の JS（日輪・夏の波紋）の双方が var(--accent-<season>) で参照する。
@@ -258,5 +262,87 @@ html.js:not(.reduced-motion) [data-reveal="delayed"] {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+/* ===== ページ遷移の進行バー（data-navigating・BaseLayout 配線の全ページ共通機構） =====
+   ClientRouter の遷移は、リンクを押してから遷移先のHTMLを取り終えるまで画面が動かない。
+   本番実測でこの待ち時間は 15ms（キャッシュ済み）〜1474ms（低速回線・先読みなし）と幅があり、
+   遅い側では「押したのに反応しない」ようにしか見えない。その間だけ画面上端に細い線を出す。
+
+   取得したバイト数を Astro が公開していないため、本物の進捗率は出せない。時間だけを根拠に
+   減速しながら伸ばし、満杯（scaleX(1)）には到達させない。満杯＝完了の意味を空けておき、
+   完了は遷移でバーごと消えることで表す。 */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  z-index: 90; /* 他の固定要素より前に出す必要が無いので .skip-link（100）より下に置く */
+  background-color: var(--season-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%; /* width ではなく scaleX。毎フレームの再レイアウトを起こさない */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 出す条件は「遷移が --nav-progress-delay 以上かかったこと」で、それを開始の遅延が判定する。
+   JSにタイマーは置かない。その時間内に data-navigating が外れれば、ブラウザはこのバーを
+   一度も描かない（実測: 66msの遷移で描画0フレーム）。
+   500msという値の根拠は本番実測。遷移時間は「取得にかかる残り時間」でほぼ決まり、
+   キャッシュ済み15ms・デスクトップ回線のコールド213〜229ms・低速回線1474msと連続して散らばる。
+   500msはデスクトップの山（〜229ms）の上に置いた値で、通常の閲覧ではバーが一度も出ない。
+   消えるほうは遷移時にブラウザ既定のクロスフェード（実測250ms）が古い画面ごと溶かすため、
+   ここに消去のアニメーションは要らない。 */
+html[data-navigating] .nav-progress {
+  animation: nav-progress 10s linear var(--nav-progress-delay) forwards;
+}
+
+/* 到達点を 0.92 で止める（満杯にしない）。前半で大きく伸ばして「押した」手応えを返し、
+   以降は減速させる。10s は最も遅い実測（1474ms）を大きく包む長さ。
+   分布が連続である以上、しきい値をどこに置いても「わずかに超えて終わる遷移」は必ず残る。
+   そこが硬い点滅にならないよう、最初の 1.2%（この10s尺では120ms）は不透明度を上げながら出す。 */
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  1.2% {
+    transform: scaleX(0.2);
+    opacity: 1;
+  }
+  10% {
+    transform: scaleX(0.55);
+    opacity: 1;
+  }
+  30% {
+    transform: scaleX(0.78);
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(0.92);
+    opacity: 1;
+  }
+}
+
+/* reduced-motion: 二重の担保（[data-reveal] と同じ形）。伸びる動きをやめ、
+   同じ判定のあとに幅固定の帯を出すだけにする（即時表示・即時非表示）。 */
+html.reduced-motion[data-navigating] .nav-progress {
+  animation: nav-progress-static 1ms linear var(--nav-progress-delay) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-navigating] .nav-progress {
+    animation: nav-progress-static 1ms linear var(--nav-progress-delay) forwards;
+  }
+}
+
+/* 静止させても満杯にはしない。取得中に全幅の帯が出ると、動かないぶんだけ
+   「終わった」と読めてしまう。伸びる版と同じ 0.92 で止める。 */
+@keyframes nav-progress-static {
+  to {
+    transform: scaleX(0.92);
+    opacity: 0.6;
   }
 }
