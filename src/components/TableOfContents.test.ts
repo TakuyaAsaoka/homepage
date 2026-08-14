@@ -15,7 +15,9 @@ async function renderToc(headings: MarkdownHeading[]) {
   // ソース位置（絶対パスが入るため、残すと実行した機械によって結果が変わる）。
   return html
     .replace(/ data-astro-(cid-[\w-]+|source-file|source-loc)(="[^"]*")?/g, "")
-    .replace(/\s+</g, "<")
+    // 要素と要素の間の改行・字下げだけを詰める。`\s+<` にすると見出しの文言に
+    // 含まれる空白まで落ちて、実際の出力と違う文字列を見ることになる
+    .replace(/>\s+</g, "><")
     .trim();
 }
 
