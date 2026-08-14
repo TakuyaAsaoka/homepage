@@ -69,6 +69,7 @@ homepage/
 │   │   ├── Header.astro             # ヘッダー
 │   │   ├── SeasonalHero.astro       # 季節ヒーロー背景
 │   │   ├── StructuredData.astro     # JSON-LD構造化データ
+│   │   ├── TableOfContents.astro    # 制作詳細ページの目次
 │   │   ├── TagList.astro            # タグ一覧表示
 │   │   └── WorkCard.astro           # 制作記事カード
 │   ├── content/                     # コンテンツコレクション
