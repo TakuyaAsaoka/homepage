@@ -13,14 +13,16 @@ const entries = buildToc(Astro.props.headings);
   /* 目次を出すかどうかの判定は buildToc が戻り値に畳んでいる（出さないときは空配列） */
   entries.length > 0 && (
     <nav class="toc" aria-label="目次">
-      <ul>
+      {/* role="list" は list-style: none でリストの意味が剥がれるのを防ぐ
+          （Breadcrumb.astro と同じ理由。入れ子の ul にも要る） */}
+      <ul role="list">
         {entries.map(({ heading, children }) => (
           <li>
             <a href={`#${heading.slug}`}>{heading.text}</a>
             {/* h3 は入れ子のリストにする。見た目の字下げだけでは、
                 どの h2 に属する項目なのかが読み上げに伝わらない */}
             {children.length > 0 && (
-              <ul>
+              <ul role="list">
                 {children.map(({ slug, text }) => (
                   <li>
                     <a href={`#${slug}`}>{text}</a>
@@ -44,9 +46,8 @@ const entries = buildToc(Astro.props.headings);
     border-left: 2px solid var(--season-accent);
     font-size: 0.9rem;
   }
+  /* margin と padding は global.css の全称リセットで既に0 */
   .toc ul {
-    margin: 0;
-    padding: 0;
     list-style: none;
   }
   /* h3 の入れ子だけ一段下げる */

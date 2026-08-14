@@ -1,3 +1,4 @@
+import type { MarkdownHeading } from "astro";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { describe, expect, it } from "vitest";
 import TableOfContents from "./TableOfContents.astro";
@@ -6,7 +7,7 @@ import TableOfContents from "./TableOfContents.astro";
 // ここが見るのは戻り値をHTMLに落とすところ。読み上げに効くのは
 // 「nav に名前が付いているか」「h3 が h2 の li の中の ul に入っているか」で、
 // どちらも buildToc の戻り値には現れないためテンプレートを描画して確かめる。
-async function renderToc(headings: { depth: number; slug: string; text: string }[]) {
+async function renderToc(headings: MarkdownHeading[]) {
   const container = await AstroContainer.create();
   const html = await container.renderToString(TableOfContents, { props: { headings } });
   // Astro が付ける data-* は中身と関係ないため落とす。
@@ -25,9 +26,9 @@ describe("TableOfContents", () => {
     const html = await renderToc([h(2, "背景", "制作の背景"), h(3, "経緯", "きっかけ")]);
     expect(html).toBe(
       '<nav class="toc" aria-label="目次">' +
-        "<ul>" +
+        '<ul role="list">' +
         '<li><a href="#背景">制作の背景</a>' +
-        '<ul><li><a href="#経緯">きっかけ</a></li></ul>' +
+        '<ul role="list"><li><a href="#経緯">きっかけ</a></li></ul>' +
         "</li>" +
         "</ul>" +
         "</nav>",
@@ -36,7 +37,7 @@ describe("TableOfContents", () => {
 
   it("h3 を持たない h2 には空のリストを出さない", async () => {
     const html = await renderToc([h(2, "背景", "背景"), h(2, "結果", "結果")]);
-    expect(html).not.toContain("<ul></ul>");
+    expect(html).not.toContain("</a><ul");
   });
 
   it("目次の nav には名前を付ける（ページ内に nav が複数あるため）", async () => {

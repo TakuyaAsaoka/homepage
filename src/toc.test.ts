@@ -34,6 +34,13 @@ describe("buildToc", () => {
     expect(buildToc([h(1, "a", "A"), h(4, "b", "B"), h(2, "c", "C")])).toEqual([]);
   });
 
+  it("h2 が1つも無いときは h3 どうしを親子にせず、全部を最上位に並べる", () => {
+    expect(buildToc([h(3, "a", "A"), h(3, "b", "B")])).toEqual([
+      { heading: h(3, "a", "A"), children: [] },
+      { heading: h(3, "b", "B"), children: [] },
+    ]);
+  });
+
   it("最初の h2 より前に h3 が来ても落ちず、最上位の項目になる", () => {
     expect(buildToc([h(3, "a", "A"), h(2, "b", "B")])).toEqual([
       { heading: h(3, "a", "A"), children: [] },
