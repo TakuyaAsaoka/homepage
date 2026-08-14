@@ -1,0 +1,71 @@
+---
+import type { MarkdownHeading } from "astro";
+import { buildToc } from "../toc";
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const entries = buildToc(Astro.props.headings);
+---
+
+{
+  /* 目次を出すかどうかの判定は buildToc が戻り値に畳んでいる（出さないときは空配列） */
+  entries.length > 0 && (
+    <nav class="toc" aria-label="目次">
+      <ul>
+        {entries.map(({ heading, children }) => (
+          <li>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+            {/* h3 は入れ子のリストにする。見た目の字下げだけでは、
+                どの h2 に属する項目なのかが読み上げに伝わらない */}
+            {children.length > 0 && (
+              <ul>
+                {children.map(({ slug, text }) => (
+                  <li>
+                    <a href={`#${slug}`}>{text}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<style>
+  /* 本文の前に置く地図。細い季節色の縦線で本文と区切る。
+     文字を小さくするのは .toc で一度だけ行う。li に置くと入れ子の h3 が二重に縮む */
+  .toc {
+    margin-top: 2rem;
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--season-accent);
+    font-size: 0.9rem;
+  }
+  .toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* h3 の入れ子だけ一段下げる */
+  .toc li ul {
+    padding-left: 1.25em;
+  }
+  .toc li {
+    margin-block: 0.35em;
+  }
+  /* ナビゲーション内のリンクは常時下線を引かない（Header.astro のナビ項目と同じ扱い）。
+     項目が縦に並ぶため、全部に季節色の下線が入ると本文より目立ってしまう */
+  .toc a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--season-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+</style>

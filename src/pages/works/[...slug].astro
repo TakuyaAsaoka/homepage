@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TagList from "../../components/TagList.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
 import { render } from "astro:content";
 import { BASE_PATH, SITE_LOCALE } from "../../consts";
 import { getPublishedWorks } from "../../works";
@@ -16,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { work } = Astro.props;
-const { Content } = await render(work);
+const { Content, headings } = await render(work);
 
 const pubDateLabel = formatPubDate(work.data.pubDate, SITE_LOCALE);
 ---
@@ -57,6 +58,7 @@ const pubDateLabel = formatPubDate(work.data.pubDate, SITE_LOCALE);
     {work.data.url && (
       <p><a href={work.data.url} target="_blank" rel="noopener noreferrer">制作を見る</a></p>
     )}
+    <TableOfContents headings={headings} />
     <div class="content">
       <Content />
     </div>
