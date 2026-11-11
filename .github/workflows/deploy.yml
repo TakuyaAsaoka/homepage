@@ -37,16 +37,18 @@ jobs:
       # PR以外（mainへのpush・手動実行）では build ジョブの withastro/action が
       # 同じビルドを走らせるので、ここでは実行しない。
       #
-      # ビルドは書体のファイル（100個以上）を Google から取り、node_modules/.astro/fonts に置く。
+      # ビルドは書体のファイル（多数）を Google から取り、node_modules/.astro/fonts に置く。
       # 1個でも通信に失敗するとビルドごと落ちるため、main のビルドが保存したものを読んで使い回す
       # （置いてある書体は取りに行かない）。保存しているのは build ジョブの withastro/action で、
-      # キーの形（astro-cache-<OS>-<コミット>）はその action に合わせている。ここでは読むだけで保存しない。
+      # ここでは読むだけで保存しない。
+      # キーの形（astro-cache-<OS>-<コミット>）と path の文字列（先頭の ./ まで）は、その action と
+      # 同じにする。path が1文字でも違うと別のキャッシュ扱いになり、エラーも出ずに当たらなくなる。
       # npm ci は node_modules を消してから入れ直すので、必ず Install dependencies より後に置く。
       - name: Restore Astro cache (PR only)
         if: github.event_name == 'pull_request'
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
-          path: node_modules/.astro
+          path: ./node_modules/.astro
           key: astro-cache-${{ runner.os }}-${{ github.sha }}
           restore-keys: |
             astro-cache-${{ runner.os }}-
