@@ -2,6 +2,7 @@
 title: "このホームページ"
 description: "Astro製の個人サイト。季節連動の和モダンデザインとアニメーション"
 tags: ["Astro", "TypeScript", "GitHub Pages"]
+image: "./images/homepage.jpg"
 url: "https://github.com/TakuyaAsaoka/homepage"
 role: "デザインからCI/CDまでひとりで"
 pubDate: 2026-07-10
