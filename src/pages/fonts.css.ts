@@ -3,9 +3,9 @@ import { componentDataByCssVariable } from "virtual:astro:assets/fonts/internal"
 // 出力する書体。astro.config.mjs の fonts に書いた cssVariable と一致させる。
 // 設定を直接 import すると Rollup が解決に失敗するため、ここに並べたうえで
 // 一致を src/fonts.test.ts が見張っている。
-const CSS_VARIABLES = ["--font-serif", "--font-sans"];
+const CSS_VARIABLES = ["--font-sans"];
 
-// @font-face と CSS 変数（--font-serif / --font-sans）を1枚の外部CSSにまとめて出す。
+// @font-face と CSS 変数（--font-sans）を1枚の外部CSSにまとめて出す。
 // Astro の Font コンポーネントは同じ内容を各ページのHTMLへインライン展開するため、
 // ページをまたいだブラウザキャッシュが効かない（日本語は unicode-range で分割され、
 // 606定義・474KBになる）。読み込みは BaseHead.astro の <link> が行う。
