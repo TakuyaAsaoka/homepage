@@ -44,7 +44,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   {/* ヒーローの窓だけが使う等幅の書体。全ページが読む fonts.css には入れず、Home だけで読む */}
   <link slot="head" rel="stylesheet" href={`${BASE_PATH}fonts-mono.css`} />
 
-  {/* エディタの窓を模したヒーロー。行番号・記号（#）・項目名（role: ・ work: ・ side:）・閉じる印・入力待ちの印は飾りなので、
+  {/* エディタの窓を模したヒーロー。行番号・記号（#）・項目名（role: ・ work: ・ freelance:）・閉じる印・入力待ちの印は飾りなので、
       読み上げからは隠す。読み上げには、見出し・肩書き・仕事と副業の説明と、窓の下の2つのボタンだけが残る */}
   <div slot="hero" class="hero">
     <div class="hero-blobs" aria-hidden="true">
@@ -78,15 +78,15 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
               <span class="code-pair">
                 <span class="code-key" aria-hidden="true">work:</span>
                 {/* 入力待ちの印は、窓の最後の行の終わりに置く（副業の行があればそちら） */}
-                <span>{home.hero.lead}{!home.hero.side && <span class="caret" aria-hidden="true" />}</span>
+                <span>{home.hero.lead}{!home.hero.freelance && <span class="caret" aria-hidden="true" />}</span>
               </span>
             </p>
-            {home.hero.side && (
+            {home.hero.freelance && (
               <p class="code-line">
                 <span class="line-no" aria-hidden="true">{headingLines.length + 3}</span>
                 <span class="code-pair">
-                  <span class="code-key" aria-hidden="true">side:</span>
-                  <span>{home.hero.side}<span class="caret" aria-hidden="true" /></span>
+                  <span class="code-key" aria-hidden="true">freelance:</span>
+                  <span>{home.hero.freelance}<span class="caret" aria-hidden="true" /></span>
                 </span>
               </p>
             )}
