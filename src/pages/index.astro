@@ -44,59 +44,49 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   {/* ヒーローの窓だけが使う等幅の書体。全ページが読む fonts.css には入れず、Home だけで読む */}
   <link slot="head" rel="stylesheet" href={`${BASE_PATH}fonts-mono.css`} />
 
-  {/* エディタの窓を模したヒーロー。行番号・記号（# と >）・項目名（role: と work:）・閉じる印・入力待ちの印は飾りなので、
-      読み上げからは隠す。読み上げには、見出し・肩書き・仕事の説明・2つのリンクだけが残る */}
+  {/* エディタの窓を模したヒーロー。行番号・記号（#）・項目名（role: と work:）・閉じる印・入力待ちの印は飾りなので、
+      読み上げからは隠す。読み上げには、見出し・肩書き・仕事の説明と、窓の下の2つのボタンだけが残る */}
   <div slot="hero" class="hero">
     <div class="hero-blobs" aria-hidden="true">
       <span></span><span></span><span></span><span></span>
     </div>
-    <div class="hero-window">
-      <div class="hero-bar">
-        <a href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">{repositoryLabel}</a>
-        <span aria-hidden="true">×</span>
-      </div>
-      <div class="hero-code">
-        <h1 class="hero-heading">
-          {headingLines.map((line, index) => (
-            <span class="code-line">
-              <span class="line-no" aria-hidden="true">{index + 1}</span>
-              <span class={index === 0 ? undefined : "heading-rest"}>
-                {index === 0 && <span class="code-mark" aria-hidden="true">{"# "}</span>}
-                {line}
-              </span>
-            </span>
-          ))}
-        </h1>
-        <div class="hero-meta">
-          <p class="code-line">
-            <span class="line-no" aria-hidden="true">{headingLines.length + 1}</span>
-            <span class="code-pair"><span class="code-key" aria-hidden="true">role:</span><span>{home.hero.role}</span></span>
-          </p>
-          <p class="code-line">
-            <span class="line-no" aria-hidden="true">{headingLines.length + 2}</span>
-            <span class="code-pair"><span class="code-key" aria-hidden="true">work:</span><span>{home.hero.lead}</span></span>
-          </p>
+    <div class="hero-body">
+      <div class="hero-window">
+        <div class="hero-bar">
+          <a href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">{repositoryLabel}</a>
+          <span aria-hidden="true">×</span>
         </div>
-        <ul class="hero-links" role="list">
-          <li class="code-line">
-            <span class="line-no" aria-hidden="true">{headingLines.length + 3}</span>
-            {/* span で包む。包まないと a が行いっぱいに伸び、押せる範囲とフォーカスの枠が広がる */}
-            <span>
-              <a class="hero-link" href="#works">
-                <span class="code-mark" aria-hidden="true">&gt;</span>制作を見る
-              </a>
-            </span>
-          </li>
-          <li class="code-line">
-            <span class="line-no" aria-hidden="true">{headingLines.length + 4}</span>
-            <span>
-              <a class="hero-link" href="#contact">
-                <span class="code-mark" aria-hidden="true">&gt;</span>連絡する
-              </a>
-              <span class="caret" aria-hidden="true"></span>
-            </span>
-          </li>
-        </ul>
+        <div class="hero-code">
+          <h1 class="hero-heading">
+            {headingLines.map((line, index) => (
+              <span class="code-line">
+                <span class="line-no" aria-hidden="true">{index + 1}</span>
+                <span class={index === 0 ? undefined : "heading-rest"}>
+                  {index === 0 && <span class="code-mark" aria-hidden="true">{"# "}</span>}
+                  {line}
+                </span>
+              </span>
+            ))}
+          </h1>
+          <div class="hero-meta">
+            <p class="code-line">
+              <span class="line-no" aria-hidden="true">{headingLines.length + 1}</span>
+              <span class="code-pair"><span class="code-key" aria-hidden="true">role:</span><span>{home.hero.role}</span></span>
+            </p>
+            <p class="code-line">
+              <span class="line-no" aria-hidden="true">{headingLines.length + 2}</span>
+              <span class="code-pair">
+                <span class="code-key" aria-hidden="true">work:</span>
+                <span>{home.hero.lead}<span class="caret" aria-hidden="true"></span></span>
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* 次の行き先は、窓の外に普通のボタンで置く。窓の中のコードの行に混ぜると、押せると分かりにくい */}
+      <div class="hero-actions">
+        <a class="hero-button primary" href="#works">制作を見る</a>
+        <a class="hero-button" href="#contact">連絡する</a>
       </div>
     </div>
   </div>
@@ -201,6 +191,15 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     padding: clamp(3rem, 10vh, 5.5rem) var(--content-pad);
     /* ぼかした色がヒーローの外（ヘッダーや次の区切り）へにじみ出ないように切る */
     overflow: clip;
+  }
+  /* 窓と、その下のボタンを縦に並べる */
+  .hero-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    width: min(100%, 680px);
   }
 
   /* にじむ色。差し色をぼかしたかたまりを4つ置く。位置と大きさは割合で持ち、画面の幅に追従する。
@@ -330,24 +329,35 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     font-size: 0.92rem;
     color: var(--color-text-soft);
   }
-  .hero-links {
-    list-style: none;
-    margin-top: 0.9rem;
+  /* 窓の下のボタン。高さ48pxは指で押せる大きさ（44px以上）を満たす。リンク共通の下線は外す */
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.875rem;
   }
-  /* 高さ44pxは指で押せる大きさ。リンク共通の下線は外す */
-  .hero-link {
+  .hero-button {
     display: inline-flex;
     align-items: center;
-    gap: 0.5em;
-    min-height: 44px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    min-height: 48px;
+    padding-inline: 1.75rem;
+    border: 1px solid var(--color-text);
+    border-radius: 2px;
+    /* にじむ色の上でも字が読めるよう、枠だけのボタンにも地を敷く */
+    background: var(--color-bg);
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
     text-decoration: none;
+    color: var(--color-text);
   }
-  .hero-link:hover {
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 4px;
+  .hero-button.primary,
+  .hero-button:hover {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+  .hero-button.primary:hover {
+    background: var(--accent-text);
+    border-color: var(--accent-text);
   }
   /* 入力待ちの印。1.1秒の周期で点いたり消えたりする（途中の濃さは作らない） */
   .caret {
@@ -380,10 +390,15 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
   }
+  .hero-actions {
+    opacity: 0;
+    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
+  }
 
   /* reduced-motion: 入場と点滅を止め、最終状態で静止 */
   @media (prefers-reduced-motion: reduce) {
-    .hero-window {
+    .hero-window,
+    .hero-actions {
       opacity: 1;
       animation: none;
     }
