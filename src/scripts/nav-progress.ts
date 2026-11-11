@@ -18,6 +18,6 @@ export function initNavProgress(): void {
     event.signal.addEventListener("abort", () => setNavigating(false));
   });
   // 遷移が成功した場合の消灯は要らない。ページ差し替えで <html> の属性は遷移先の値に
-  // 置き換わり、data-navigating は自動で消える。同じ性質のせいで季節フラグが消えるのを、
+  // 置き換わり、data-navigating は自動で消える。同じ性質のせいで js フラグが消えるのを、
   // BaseLayout の applyDocumentFlags が遷移後の再適用で打ち消している。
 }

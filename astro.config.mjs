@@ -7,7 +7,7 @@ export default defineConfig({
   integrations: [sitemap()],
   // Google Fonts をビルド時に取得してセルフホスト化する（Issue #101）。
   // ここで取得した内容から @font-face と CSS 変数（--font-sans / --font-mono）を
-  // 組み立てて1枚の外部CSSに出すのは src/pages/fonts.css.ts（Issue #147）。
+  // 組み立てて外部CSSに出すのは src/pages/fonts.css.ts と fonts-mono.css.ts（Issue #147・#162）。
   // Astro の Font コンポーネントは使わない（各ページのHTMLへインライン展開されるため）。
   fonts: [
     // 見出しも本文もこの書体で出す（Issue #159）。見出しは 700、本文は 400、

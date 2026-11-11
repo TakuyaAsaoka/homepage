@@ -34,6 +34,8 @@ const { title, description, image, noindex, breadcrumb, article } = Astro.props;
       breadcrumb={breadcrumb}
       article={article}
     />
+    {/* そのページだけが要る <head> の中身（例: Home だけが読む等幅の書体のCSS） */}
+    <slot name="head" />
     <ClientRouter />
     <script is:inline>
       // html に js / reduced-motion フラグを付与する。

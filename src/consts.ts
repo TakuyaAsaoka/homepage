@@ -7,6 +7,7 @@ export const BASE_PATH = import.meta.env.BASE_URL.endsWith("/")
 
 // サイト名・SNSリンク等の文言はCMS管理（src/content/settings/site.yaml）。
 // ここには技術的な定数のみを置く
+
 // このサイトのソースがあるリポジトリ。Homeのヒーローの窓の帯に出す。
 // CMSの保存先（public/admin/config.yml の backend.repo）と同じリポジトリを指す
 export const REPOSITORY_URL = "https://github.com/TakuyaAsaoka/homepage";

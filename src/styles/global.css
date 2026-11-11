@@ -11,13 +11,12 @@
   --color-tag-bg: #f0f0f0;
   --color-muted: #666666;
 
-  /* フォント: --font-sans / --font-mono は fonts.css（src/pages/fonts.css.ts が出す外部CSS）が定義する
-     （書体の指定: astro.config.mjs の fonts / 読み込み: BaseHead.astro の <link>）。
+  /* フォント: --font-sans は fonts.css、--font-mono は fonts-mono.css（どちらも src/pages が出す外部CSS）が定義する
+     （書体の指定: astro.config.mjs の fonts / 読み込み: BaseHead.astro と index.astro の <link>）。
      見出しも本文も --font-sans で、--font-mono は Home のヒーローの窓だけが使う。
      フォールバック（system-ui 等）も astro.config.mjs 側で管理する */
 
   /* アニメーション */
-  --hero-rule-width: 52px;
   --anim-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --anim-duration: 0.7s;
   /* ページ遷移の進行バーを出すまでの待ち時間（単一情報源）。
@@ -122,7 +121,7 @@ img {
   height: auto;
 }
 
-/* ===== エディトリアルリンク（全ページ共通・墨色文字＋季節下線）
+/* ===== エディトリアルリンク（全ページ共通・墨色文字＋差し色の下線）
    ナビゲーション等の例外はコンポーネントのスコープドスタイルで上書きする ===== */
 a {
   color: var(--color-text);

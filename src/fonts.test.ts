@@ -59,13 +59,26 @@ describe("フォント定義の読み込み", () => {
     expect(used).toEqual([]);
   });
 
+  it("等幅の書体のCSSは Home だけが読む", () => {
+    // 読み込みが消えると、ヒーローの窓の字が端末ごとの等幅の書体に落ちる。
+    // それでもビルドも型チェックも通るため、ここで押さえる。
+    expect(read("pages/index.astro")).toMatch(
+      /<link\s+slot="head"\s+rel="stylesheet"\s+href=\{`\$\{BASE_PATH\}fonts-mono\.css`\}/,
+    );
+    // 全ページが読む側（BaseHead）に入れると、使わないページまで定義を読むことになる。
+    expect(read("components/BaseHead.astro")).not.toContain("fonts-mono.css");
+  });
+
   it("出力する書体が astro.config.mjs の設定と一致する", () => {
-    // 設定に書体を足しても fonts.css.ts に足し忘れると、その書体だけ黙って出ない。
+    // 設定に書体を足しても、書体のCSSを出すファイルに足し忘れると、その書体だけ黙って出ない。
     const config = readFileSync(new URL("../astro.config.mjs", import.meta.url), "utf8");
     const configured = [...config.matchAll(/cssVariable:\s*"([^"]+)"/g)].map((m) => m[1]);
+    // 書体のCSSは、全ページ用（fonts.css）と Home 専用（fonts-mono.css）の2枚に分けて出す。
     // 宣言の中だけを見る。ファイル全体から拾うと、コメントに書いた変数名を数えてしまう。
-    const declaration = read("pages/fonts.css.ts").match(/const CSS_VARIABLES = \[([^\]]*)\]/);
-    const emitted = [...(declaration?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    const emitted = ["pages/fonts.css.ts", "pages/fonts-mono.css.ts"].flatMap((file) => {
+      const declaration = read(file).match(/const CSS_VARIABLES = \[([^\]]*)\]/);
+      return [...(declaration?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    });
 
     expect(configured.length).toBeGreaterThan(0);
     // 並び順は見ない。CSSの連結順は表示に影響しない。

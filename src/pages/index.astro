@@ -41,7 +41,10 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 ---
 
 <BaseLayout title="Home" description={site.description}>
-  {/* エディタの窓を模したヒーロー。行番号・記号（# と >）・閉じる印・入力待ちの印は飾りなので、
+  {/* ヒーローの窓だけが使う等幅の書体。全ページが読む fonts.css には入れず、Home だけで読む */}
+  <link slot="head" rel="stylesheet" href={`${BASE_PATH}fonts-mono.css`} />
+
+  {/* エディタの窓を模したヒーロー。行番号・記号（# と >）・項目名（role: と work:）・閉じる印・入力待ちの印は飾りなので、
       読み上げからは隠す。読み上げには、見出し・肩書き・仕事の説明・2つのリンクだけが残る */}
   <div slot="hero" class="hero">
     <div class="hero-blobs" aria-hidden="true">
@@ -67,19 +70,22 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
         <div class="hero-meta">
           <p class="code-line">
             <span class="line-no" aria-hidden="true">{headingLines.length + 1}</span>
-            <span class="code-pair"><span class="code-key">role:</span><span>{home.hero.role}</span></span>
+            <span class="code-pair"><span class="code-key" aria-hidden="true">role:</span><span>{home.hero.role}</span></span>
           </p>
           <p class="code-line">
             <span class="line-no" aria-hidden="true">{headingLines.length + 2}</span>
-            <span class="code-pair"><span class="code-key">work:</span><span>{home.hero.lead}</span></span>
+            <span class="code-pair"><span class="code-key" aria-hidden="true">work:</span><span>{home.hero.lead}</span></span>
           </p>
         </div>
         <ul class="hero-links" role="list">
           <li class="code-line">
             <span class="line-no" aria-hidden="true">{headingLines.length + 3}</span>
-            <a class="hero-link" href="#works">
-              <span class="code-mark" aria-hidden="true">&gt;</span>制作を見る
-            </a>
+            {/* span で包む。包まないと a が行いっぱいに伸び、押せる範囲とフォーカスの枠が広がる */}
+            <span>
+              <a class="hero-link" href="#works">
+                <span class="code-mark" aria-hidden="true">&gt;</span>制作を見る
+              </a>
+            </span>
           </li>
           <li class="code-line">
             <span class="line-no" aria-hidden="true">{headingLines.length + 4}</span>
@@ -193,11 +199,18 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     display: grid;
     place-items: center;
     padding: clamp(3rem, 10vh, 5.5rem) var(--content-pad);
-    /* にじむ色がはみ出しても、横スクロールを出さない */
+    /* ぼかした色がヒーローの外（ヘッダーや次の区切り）へにじみ出ないように切る */
     overflow: clip;
   }
 
-  /* にじむ色。差し色をぼかしたかたまりを4つ置く。位置と大きさは割合で持ち、画面の幅に追従する */
+  /* にじむ色。差し色をぼかしたかたまりを4つ置く。位置と大きさは割合で持ち、画面の幅に追従する。
+     上下の端は薄くして消す。切ったままだと、ヒーローの上下でぼかしが直線で途切れて見える */
+  .hero-blobs {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  }
   .hero-blobs span {
     position: absolute;
     border-radius: 50%;
@@ -239,6 +252,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     width: min(100%, 680px);
     border: 1px solid var(--color-border);
     border-radius: 6px;
+    /* color-mix() を知らないブラウザでは次の行が無視されるので、透かさない地を先に置く */
+    background: var(--color-bg);
     background: color-mix(in srgb, var(--color-bg) 84%, transparent);
     box-shadow: 0 18px 40px color-mix(in srgb, var(--color-text) 10%, transparent);
     font-family: var(--font-mono);
@@ -251,13 +266,17 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     min-height: 36px;
     padding-inline: 0.875rem;
     border-bottom: 1px solid var(--color-border);
-    font-size: 0.78rem;
+    /* 狭い画面では字を小さくして、住所と外へ出る印（↗）を1行に収める */
+    font-size: clamp(0.68rem, 3vw, 0.78rem);
     color: var(--color-muted);
   }
-  /* 帯のリンクは窓の題として読ませるため、共通の下線は外す（hover のときだけ出す） */
+  /* 帯のリンクは窓の題として読ませるため、共通の下線は外す（hover のときだけ出す）。
+     折り返すと帯が2行になるので折り返さず、それでも入らない幅では末尾を省く */
   .hero-bar a {
     min-width: 0;
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: inherit;
     text-decoration: none;
   }
@@ -287,7 +306,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     user-select: none;
   }
   .hero-heading {
-    font-size: clamp(1.35rem, 5.2vw, 2rem);
+    /* 下限は、幅320pxの画面でも一番長い行が折り返さない大きさ */
+    font-size: clamp(1rem, 5.2vw, 2rem);
     line-height: 1.5;
     letter-spacing: 0.02em;
   }
