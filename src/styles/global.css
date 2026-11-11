@@ -25,11 +25,11 @@
   --nav-progress-delay: 500ms;
 
   /* 差し色（単一情報源）。色値の定義はこの :root と下の @media dark の2か所だけに置く。
-     以前は季節で4色に切り替えていたが、1色に固定した（Issue #162）。
+     以前は季節で4色に切り替えていたが、色みの無い墨の1色に固定した（Issue #162）。
      --accent: 装飾用（下線・区切り記号・進行バー・ヒーローのにじみ）
      --accent-text: 文字用。白地で WCAG AA（4.5:1）を満たす濃色 */
-  --accent: #cf6a2e;
-  --accent-text: #a04e1c;
+  --accent: #8a8a8a;
+  --accent-text: #5a5a5a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,8 +42,8 @@
     --color-muted: #999999;
     /* 差し色のダーク版（暗い地でも沈まない明るさ）。
        暗い地で 4.5:1 以上あるため、文字用も同じ値にする */
-    --accent: #e0904f;
-    --accent-text: #e0904f;
+    --accent: #b0b0b0;
+    --accent-text: #b0b0b0;
   }
 }
 
