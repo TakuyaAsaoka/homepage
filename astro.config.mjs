@@ -11,7 +11,8 @@ export default defineConfig({
   // Astro の Font コンポーネントは使わない（各ページのHTMLへインライン展開されるため）。
   fonts: [
     // 見出しも本文もこの1書体で出す（Issue #159）。見出しは 700、本文は 400、
-    // 英字ラベルは 500 を使う。ここに無い太さをCSSで指定すると、ブラウザが作った太字になる
+    // 英字ラベルは 500 を使う。ここに無い太さをCSSで指定すると、近い太さの字で出る
+    // （600 と書いても 700 の字になる）ので、CSSにはここにある太さだけを書く
     {
       provider: fontProviders.google(),
       name: "Noto Sans JP",
