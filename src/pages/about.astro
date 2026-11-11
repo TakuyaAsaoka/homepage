@@ -1,6 +1,7 @@
 ---
 import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { toParagraphs } from "../paragraphs";
 
 // CMS管理のAbout文言を取得する
 const aboutEntry = await getEntry("about", "about");
@@ -8,14 +9,6 @@ if (!aboutEntry) {
   throw new Error("About文言（src/content/pages/about.yaml）が見つかりません");
 }
 const about = aboutEntry.data;
-
-// 本文を空行区切りで段落に分割する
-function toParagraphs(body: string): string[] {
-  return body
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph !== "");
-}
 ---
 
 <BaseLayout title="About" description="アサオカの自己紹介 — 経歴・仕事観・人となり" breadcrumb={[{ label: "About" }]}>

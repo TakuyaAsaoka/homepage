@@ -2,6 +2,8 @@
 title: "実家の商いをデジタルへ"
 description: "手書きの売上記録をOCRで読み取り、請求書PDFを自動生成するWebアプリ"
 tags: ["TypeScript", "Next.js", "GCP"]
+role: "設計・開発・運用をひとりで"
+outcome: "手書きの明細を打ち直す作業が要らなくなった"
 pubDate: 2026-05-13
 draft: false
 ---

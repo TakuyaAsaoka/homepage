@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import WorkCard from "../../components/WorkCard.astro";
+import WorkGrid from "../../components/WorkGrid.astro";
 import { getPublishedWorks } from "../../works";
 
 const works = await getPublishedWorks();
@@ -13,44 +13,9 @@ const works = await getPublishedWorks();
       <span class="section-label" aria-hidden="true">WORKS</span>
     </h1>
     {works.length > 0 ? (
-      <ul class="work-grid" role="list">
-        {works.map((work) => (
-          <li data-reveal="delayed">
-            <WorkCard
-              title={work.data.title}
-              description={work.data.description}
-              tags={work.data.tags}
-              slug={work.id}
-              pubDate={work.data.pubDate}
-              image={work.data.image}
-            />
-          </li>
-        ))}
-      </ul>
+      <WorkGrid works={works} />
     ) : (
       <p data-reveal="delayed">公開できる制作を準備中です。</p>
     )}
   </section>
 </BaseLayout>
-
-<style>
-  /* デスクトップは2カラム、モバイルは1カラム。
-     実効コンテンツ幅（約736px）では3カラム以上が成立しないため、
-     auto-fit ではなく固定2カラム＋メディアクエリで折返し点を明示する。 */
-  .work-grid {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    padding: 0;
-  }
-  /* li を grid にして内側の article を行の高さまで stretch させ、カード高さを揃える */
-  .work-grid li {
-    display: grid;
-  }
-  @media (max-width: 767px) {
-    .work-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

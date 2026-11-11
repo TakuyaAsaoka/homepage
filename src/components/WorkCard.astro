@@ -11,9 +11,12 @@ interface Props {
   slug: string;
   pubDate: string;
   image?: ImageMetadata;
+  // 担当したことと、作って良くなったこと。値が無い制作では行ごと出さない
+  role?: string;
+  outcome?: string;
 }
 
-const { title, description, tags, slug, pubDate, image } = Astro.props;
+const { title, description, tags, slug, pubDate, image, role, outcome } = Astro.props;
 // 画像なしの制作でもカードの見た目を揃えるため、未設定時はデフォルト画像で埋める
 const thumbnail = image ?? DEFAULT_IMAGE;
 ---
@@ -32,10 +35,17 @@ const thumbnail = image ?? DEFAULT_IMAGE;
     loading="lazy"
     decoding="async"
   />
+  {role && <p class="role">{role}</p>}
   <h3>
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>
   <p>{description}</p>
+  {outcome && (
+    <p class="outcome">
+      <span class="outcome-label">結果</span>
+      {outcome}
+    </p>
+  )}
   <div class="card-meta">
     <time datetime={pubDate}>{formatPubDate(pubDate, SITE_LOCALE)}</time>
     <TagList tags={tags} />
@@ -62,6 +72,23 @@ const thumbnail = image ?? DEFAULT_IMAGE;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     margin: -1rem -1rem 0.75rem;
+  }
+  .role {
+    font-size: 0.78rem;
+    color: var(--color-muted);
+  }
+  /* 説明と結果を罫線で分け、「何を作ったか」と「何が良くなったか」を読み分けられるようにする */
+  .outcome {
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+  }
+  .outcome-label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--season-accent-text);
   }
   .work-card h3 a {
     text-decoration: none;
