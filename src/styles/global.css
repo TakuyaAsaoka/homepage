@@ -11,9 +11,10 @@
   --color-tag-bg: #f0f0f0;
   --color-muted: #666666;
 
-  /* フォント: --font-sans は fonts.css（src/pages/fonts.css.ts が出す外部CSS）が定義する
+  /* フォント: --font-sans / --font-mono は fonts.css（src/pages/fonts.css.ts が出す外部CSS）が定義する
      （書体の指定: astro.config.mjs の fonts / 読み込み: BaseHead.astro の <link>）。
-     見出しも本文もこの1書体で、フォールバック（system-ui 等）も astro.config.mjs 側で管理する */
+     見出しも本文も --font-sans で、--font-mono は Home のヒーローの窓だけが使う。
+     フォールバック（system-ui 等）も astro.config.mjs 側で管理する */
 
   /* アニメーション */
   --hero-rule-width: 52px;
@@ -24,30 +25,12 @@
      値の根拠は下の .nav-progress のコメント */
   --nav-progress-delay: 500ms;
 
-  /* 季節アクセントのトークン（単一情報源）。文字装飾（下線・区切り記号・図形）と
-     SeasonalHero の JS（日輪・夏の波紋）の双方が var(--accent-<season>) で参照する。
-     色値の定義はこの :root と下の @media dark の2ブロックのみに集約する。 */
-  --accent-spring: #e48ca0;
-  --accent-summer: #3a9daa;
-  --accent-autumn: #cf6a2e;
-  --accent-winter: #87a3bc;
-
-  /* --season-accent: 装飾用（html[data-season] に連動。デフォルト: 春）
-     --season-accent-text: 文字用。白地とヒーロー淡地の双方で WCAG AA（4.5:1）を満たす濃色 */
-  --season-accent: var(--accent-spring);
-  --season-accent-text: #a8465e;
-}
-html[data-season="summer"] {
-  --season-accent: var(--accent-summer);
-  --season-accent-text: #26707b;
-}
-html[data-season="autumn"] {
-  --season-accent: var(--accent-autumn);
-  --season-accent-text: #a04e1c;
-}
-html[data-season="winter"] {
-  --season-accent: var(--accent-winter);
-  --season-accent-text: #4c6b86;
+  /* 差し色（単一情報源）。色値の定義はこの :root と下の @media dark の2か所だけに置く。
+     以前は季節で4色に切り替えていたが、1色に固定した（Issue #162）。
+     --accent: 装飾用（下線・区切り記号・進行バー・ヒーローのにじみ）
+     --accent-text: 文字用。白地で WCAG AA（4.5:1）を満たす濃色 */
+  --accent: #cf6a2e;
+  --accent-text: #a04e1c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,24 +41,10 @@ html[data-season="winter"] {
     --color-border: #333333;
     --color-tag-bg: #2a2a2a;
     --color-muted: #999999;
-    /* 季節アクセントのトークンをダーク版（藍墨地でも沈まない明度）に差し替える。
-       html[data-season] の --season-accent は var(--accent-<season>) を参照するため、
-       ここで --season-accent を再定義しなくてもダーク値に自動追従する。 */
-    --accent-spring: #e79aae;
-    --accent-summer: #5cbdca;
-    --accent-autumn: #e0904f;
-    --accent-winter: #a3bdd4;
-    /* ダーク版アクセントは藍墨地で 4.5:1 以上のため、文字用もアクセント同値とする */
-    --season-accent-text: var(--accent-spring);
-  }
-  html[data-season="summer"] {
-    --season-accent-text: var(--accent-summer);
-  }
-  html[data-season="autumn"] {
-    --season-accent-text: var(--accent-autumn);
-  }
-  html[data-season="winter"] {
-    --season-accent-text: var(--accent-winter);
+    /* 差し色のダーク版（暗い地でも沈まない明るさ）。
+       暗い地で 4.5:1 以上あるため、文字用も同じ値にする */
+    --accent: #e0904f;
+    --accent-text: #e0904f;
   }
 }
 
@@ -158,7 +127,7 @@ img {
 a {
   color: var(--color-text);
   text-decoration: underline;
-  text-decoration-color: var(--season-accent);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
@@ -226,7 +195,7 @@ a:hover .arrow {
 }
 .section-more:hover {
   text-decoration: underline;
-  text-decoration-color: var(--season-accent);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 5px;
 }
@@ -274,7 +243,7 @@ html.js:not(.reduced-motion) [data-reveal="delayed"] {
   width: 100%;
   height: 2px;
   z-index: 90; /* 他の固定要素より前に出す必要が無いので .skip-link（100）より下に置く */
-  background-color: var(--season-accent);
+  background-color: var(--accent);
   transform: scaleX(0);
   transform-origin: 0 50%; /* width ではなく scaleX。毎フレームの再レイアウトを起こさない */
   opacity: 0;

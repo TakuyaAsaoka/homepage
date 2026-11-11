@@ -67,7 +67,6 @@ homepage/
 │   │   ├── Breadcrumb.astro         # パンくずナビゲーション
 │   │   ├── Footer.astro             # フッター
 │   │   ├── Header.astro             # ヘッダー
-│   │   ├── SeasonalHero.astro       # 季節ヒーロー背景
 │   │   ├── StructuredData.astro     # JSON-LD構造化データ
 │   │   ├── TableOfContents.astro    # 制作詳細ページの目次
 │   │   ├── TagList.astro            # タグ一覧表示
@@ -91,7 +90,6 @@ homepage/
 │   │   └── rss.xml.ts               # RSSフィード生成
 │   ├── scripts/                     # クライアントサイドスクリプト
 │   │   ├── reveal.ts                # スクロール登場アニメーション
-│   │   ├── seasonal-hero.ts         # ヒーローの季節演出
 │   │   └── nav-progress.ts          # ページ遷移の進行バー
 │   ├── styles/                      # グローバルスタイル
 │   │   └── global.css
