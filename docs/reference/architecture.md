@@ -82,10 +82,9 @@ flowchart TD
 ```yaml
 hero:
   role: SOFTWARE ENGINEER / SRE   # 肩書き
-  tagline: つくることと、動かし続けること。  # キャッチコピー
-skills:
-  - TypeScript
-  - React
+  lead: アサオカです。…            # 見出しの下の説明
+profile:
+  place: 愛知県                    # 活動場所
 ```
 
 ---
@@ -97,7 +96,8 @@ skills:
 | 変えたいもの | 編集する場所（ファイル） | CMSの入口 |
 |-------------|----------------------|-----------|
 | 制作の追加・編集 | `src/content/works/*.md` | 制作 |
-| Homeの文言（肩書き・キャッチコピー・紹介文・スキル） | `src/content/pages/home.yaml` | ページ → Home |
+| Homeの文言（肩書き・見出し・説明・写真・活動場所・できること・連絡先の一文） | `src/content/pages/home.yaml` | ページ → Home |
+| Homeの自己紹介に出る経歴 | `src/content/pages/about.yaml` の英字ラベルが `CAREER` のセクション | ページ → About |
 | Aboutの文言・セクション | `src/content/pages/about.yaml` | ページ → About |
 | サイト名・SNSリンク・メール・note RSS等 | `src/content/settings/site.yaml` | サイト設定 |
 | ページの構造・デザイン | `src/pages/*.astro`, `src/components/*`, `src/styles/global.css` | （コード編集のみ） |

@@ -1,15 +1,36 @@
 hero:
   role: SOFTWARE ENGINEER / SRE
-  tagline: つくることと、動かし続けること。
-intro:
-  text: 自動車業界で、つくって動かし続ける仕事をしています。
-  linkLabel: わたしについて
-skills:
-  - TypeScript
-  - React
-  - Node.js
-  - AWS
-  - Kubernetes
-  - Terraform
-  - Grafana
-  - Prometheus
+  heading: |-
+    現場の困りごとを、
+    動くものにして、
+    動かし続ける。
+  lead: アサオカです。自動車業界で、業務アプリの内製開発と基幹システムのクラウド構築に携わっています。
+profile:
+  photo: ""
+  place: 愛知県
+  linkLabel: 仕事観と人となりを読む
+services:
+  - title: 現場の困りごとを、要件にする
+    body: 業務改善の出身です。現場の言葉を聞き取り、つくるものの形に整理します。
+    tools:
+      - 業務の聞き取り
+      - 要件の整理
+  - title: 業務アプリをつくる
+    body: 販売店向けアプリや社内システムを、内製で開発してきました。
+    tools:
+      - TypeScript
+      - React
+      - Node.js
+  - title: クラウドに載せる
+    body: 基幹システムのクラウド構築に、ベンダーと協業して携わっています。
+    tools:
+      - AWS
+      - Kubernetes
+      - Terraform
+  - title: 動かし続ける
+    body: SREとして、信頼性と運用を見ています。
+    tools:
+      - Grafana
+      - Prometheus
+contact:
+  invite: 業務アプリの内製や、動かし続けるための運用について、ご相談をお受けしています。まずはお気軽にご連絡ください。

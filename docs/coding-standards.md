@@ -71,7 +71,8 @@ homepage/
 │   │   ├── StructuredData.astro     # JSON-LD構造化データ
 │   │   ├── TableOfContents.astro    # 制作詳細ページの目次
 │   │   ├── TagList.astro            # タグ一覧表示
-│   │   └── WorkCard.astro           # 制作記事カード
+│   │   ├── WorkCard.astro           # 制作記事カード
+│   │   └── WorkGrid.astro           # 制作記事カードの並び（Home・Works一覧で共用）
 │   ├── content/                     # コンテンツコレクション
 │   │   ├── pages/                   # ページ文言（YAML）
 │   │   ├── settings/                # サイト設定（YAML）

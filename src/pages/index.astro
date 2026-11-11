@@ -1,8 +1,11 @@
 ---
+import { Image } from "astro:assets";
+import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SeasonalHero from "../components/SeasonalHero.astro";
-import { getEntry } from "astro:content";
+import WorkGrid from "../components/WorkGrid.astro";
 import { BASE_PATH } from "../consts";
+import { toParagraphs } from "../paragraphs";
 import { getSiteSettings } from "../site-settings";
 import { getPublishedWorks } from "../works";
 
@@ -14,47 +17,122 @@ if (!homeEntry) {
 const home = homeEntry.data;
 const site = await getSiteSettings();
 
+// 自己紹介に出す経歴は、Aboutの文言から読む（同じ文章を home.yaml に写さない）。
+// Aboutのセクションは CMS で並び替え・改名できるため、順番ではなく英字ラベルで探す。
+// 見つからないときは黙って空にせず、ビルドを落として気づけるようにする
+const CAREER_LABEL = "CAREER";
+const aboutEntry = await getEntry("about", "about");
+const career = aboutEntry?.data.sections.find((section) => section.label === CAREER_LABEL);
+if (!career) {
+  throw new Error(
+    `Aboutの文言（src/content/pages/about.yaml）に、英字ラベルが ${CAREER_LABEL} のセクションが見つかりません`,
+  );
+}
+
+// 見出しはCMSで改行した位置で行を分ける
+const headingLines = home.hero.heading.split("\n").filter((line) => line.trim() !== "");
+
 // GitHubリンクの表示テキストはURLから導出する（URLだけ変更されて表示が古く残ることを防ぐ）
 const githubLabel = site.social.github.replace(/^https?:\/\//, "");
+
+// 「できること」の番号。セクション番号（壱・弐…）と見分けるため小字の漢数字にする
+const KANJI_NUMERALS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
 
 // 制作セクションに抜粋する最新の制作（draft除外・pubDate降順の先頭2件）
 const recentWorks = (await getPublishedWorks()).slice(0, 2);
 ---
 
 <BaseLayout title="Home" description={site.description}>
-  <SeasonalHero slot="hero" season="auto" height="70vh">
+  {/* 高さは画面の7割。見出し・説明・ボタンが入りきらない低い画面では、中身の高さを下限にする
+      （SeasonalHero は overflow: hidden のため、足りないと上の行が切れる） */}
+  <SeasonalHero slot="hero" season="auto" height="max(70vh, 34rem)">
     <div class="hero-inner">
       <div class="hero-content">
         <p class="hero-role">{home.hero.role}</p>
-        <h1 class="hero-name">{site.author}</h1>
+        <h1 class="hero-heading">
+          {headingLines.map((line) => <span>{line}</span>)}
+        </h1>
         <span class="hero-rule" aria-hidden="true"></span>
-        <p class="hero-copy">{home.hero.tagline}</p>
+        <p class="hero-lead">{home.hero.lead}</p>
+        <div class="hero-actions">
+          <a class="hero-button primary" href="#works">制作を見る</a>
+          <a class="hero-button" href="#contact">連絡する</a>
+        </div>
       </div>
     </div>
   </SeasonalHero>
 
-  <p class="home-intro" data-reveal>
-    {home.intro.text}
-    <a class="home-intro-link" href={`${BASE_PATH}about/`}>{home.intro.linkLabel}<span class="arrow" aria-hidden="true">→</span></a>
-  </p>
+  <section class="home-section" id="about">
+    <h2 class="section-heading" data-reveal>
+      <span class="section-num">壱</span>
+      <span class="section-title">自己紹介</span>
+      <span class="section-label" aria-hidden="true">ABOUT</span>
+    </h2>
+    <div class="profile" data-reveal="delayed">
+      {home.profile.photo && (
+        <Image
+          class="profile-photo"
+          src={home.profile.photo}
+          alt={`${site.author}の写真`}
+          widths={[200, 400, 600]}
+          sizes="200px"
+        />
+      )}
+      <div class="profile-body">
+        <p class="profile-name">{site.author}</p>
+        <p class="profile-role">{home.hero.role}</p>
+        {toParagraphs(career.body).map((paragraph) => <p class="profile-text">{paragraph}</p>)}
+        <dl class="profile-table">
+          <div>
+            <dt>活動場所</dt>
+            <dd>{home.profile.place}</dd>
+          </div>
+          <div>
+            <dt>連絡先</dt>
+            <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+          </div>
+          {site.social.github && (
+            <div>
+              <dt>GitHub</dt>
+              <dd>
+                <a href={site.social.github} target="_blank" rel="noopener noreferrer">{githubLabel}</a>
+              </dd>
+            </div>
+          )}
+        </dl>
+        <a class="section-more" href={`${BASE_PATH}about/`}>
+          {home.profile.linkLabel}<span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <section class="home-section">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">壱</span>
+      <span class="section-num">弐</span>
+      <span class="section-title">できること</span>
+      <span class="section-label" aria-hidden="true">WHAT I DO</span>
+    </h2>
+    <ul class="service-list" role="list" data-reveal="delayed">
+      {home.services.map((service, index) => (
+        <li>
+          <span class="service-num" aria-hidden="true">{KANJI_NUMERALS[index] ?? index + 1}</span>
+          <h3>{service.title}</h3>
+          <p>{service.body}</p>
+          {service.tools.length > 0 && <p class="service-tools">{service.tools.join("・")}</p>}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="home-section" id="works">
+    <h2 class="section-heading" data-reveal>
+      <span class="section-num">参</span>
       <span class="section-title">制作</span>
       <span class="section-label" aria-hidden="true">WORKS</span>
     </h2>
     {recentWorks.length > 0 ? (
-      <ul class="works-list" role="list" data-reveal="delayed">
-        {recentWorks.map((work) => (
-          <li>
-            <a class="works-link" href={`${BASE_PATH}works/${work.id}/`}>
-              <span class="works-title">{work.data.title}</span>
-              <span class="works-desc">{work.data.description}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <WorkGrid works={recentWorks} />
     ) : (
       <p class="works-empty" data-reveal="delayed">公開できる制作を準備中です。</p>
     )}
@@ -63,35 +141,18 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     </a>
   </section>
 
-  <section class="home-section">
+  <section class="home-section" id="contact">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">弐</span>
-      <span class="section-title">技術</span>
-      <span class="section-label" aria-hidden="true">SKILLS</span>
-    </h2>
-    <ul class="skill-list" role="list" data-reveal="delayed">
-      {home.skills.map((skill) => <li>{skill}</li>)}
-    </ul>
-  </section>
-
-  <section class="home-section">
-    <h2 class="section-heading" data-reveal>
-      <span class="section-num">参</span>
+      <span class="section-num">肆</span>
       <span class="section-title">連絡先</span>
       <span class="section-label" aria-hidden="true">CONTACT</span>
     </h2>
-    <ul class="contact-list" role="list" data-reveal="delayed">
-      {site.social.github && (
-        <li>
-          <span class="contact-label">GITHUB</span>
-          <a href={site.social.github} target="_blank" rel="noopener noreferrer">{githubLabel}</a>
-        </li>
-      )}
-      <li>
-        <span class="contact-label">EMAIL</span>
-        <a href={`mailto:${site.email}`}>{site.email}</a>
-      </li>
-    </ul>
+    <div data-reveal="delayed">
+      <p class="contact-invite">{home.contact.invite}</p>
+      <a class="contact-button" href={`mailto:${site.email}`}>
+        {site.email}<span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </section>
 </BaseLayout>
 
@@ -122,10 +183,14 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     color: var(--season-accent-text);
     margin-bottom: 1rem;
   }
-  .hero-name {
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
-    letter-spacing: 0.12em;
-    line-height: 1.25;
+  .hero-heading {
+    font-size: clamp(1.7rem, 5vw, 2.6rem);
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+  }
+  /* 1行ずつ block にして、CMSの改行位置で行を分ける（幅に収まらない行はその中で折り返す） */
+  .hero-heading span {
+    display: block;
   }
   .hero-rule {
     width: 0;
@@ -133,10 +198,37 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     background: var(--color-text);
     margin: 1.25rem 0;
   }
-  .hero-copy {
-    font-family: var(--font-serif);
-    font-size: clamp(0.95rem, 2vw, 1.15rem);
-    letter-spacing: 0.22em;
+  .hero-lead {
+    max-width: 32em;
+    color: var(--color-text-soft);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 1.75rem;
+  }
+  /* 高さ48pxは指で押せる大きさ（44px以上）を満たす。リンク共通の下線は外す */
+  .hero-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding-inline: 1.75rem;
+    border: 1px solid var(--color-text);
+    border-radius: 2px;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .hero-button.primary,
+  .hero-button:hover {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+  .hero-button.primary:hover {
+    background: var(--season-accent-text);
+    border-color: var(--season-accent-text);
   }
 
   /* ===== ヒーロー入場アニメーション（純CSS・JS無効でも再生） ===== */
@@ -162,23 +254,28 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
   }
-  .hero-name {
+  .hero-heading {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
   }
   .hero-rule {
     animation: hero-grow-rule 0.6s var(--anim-ease) 0.7s forwards;
   }
-  .hero-copy {
+  .hero-lead {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.95s forwards;
+  }
+  .hero-actions {
+    opacity: 0;
+    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 1.15s forwards;
   }
 
   /* reduced-motion: ヒーロー入場を無効化し最終状態で静止 */
   @media (prefers-reduced-motion: reduce) {
     .hero-role,
-    .hero-name,
-    .hero-copy {
+    .hero-heading,
+    .hero-lead,
+    .hero-actions {
       opacity: 1;
       animation: none;
     }
@@ -192,93 +289,137 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   .home-section {
     margin-block: 5rem;
   }
+  /* ヒーロー直後だけ詰める。main-inner の padding-top 1rem と合わせ、
+     ヒーロー下端から 3.5rem の間隔にする */
+  .home-section:first-of-type {
+    margin-top: 2.5rem;
+  }
 
-  /* ===== ヒーロー直下の橋渡し（Aboutへの導線） ===== */
-  .home-intro {
-    /* main-inner の padding-top 1rem と合わせ、ヒーロー下端から 3.5rem の間隔を維持する */
-    margin-block: 2.5rem 5rem;
+  /* ===== 自己紹介 ===== */
+  .profile {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 2.5rem;
+  }
+  .profile-photo {
+    width: 200px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  /* 写真の横に置けるだけの幅が無いとき（スマホ）は、写真の下へ折り返す */
+  .profile-body {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+  .profile-name {
     font-family: var(--font-serif);
-    font-size: clamp(0.95rem, 2vw, 1.1rem);
-    line-height: 2;
-    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+  }
+  .profile-role {
+    margin-block: 0.4rem 1rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: var(--color-muted);
+  }
+  .profile-text {
     color: var(--color-text-soft);
   }
-  .home-intro-link {
-    display: inline-block;
-    margin-left: 0.5em;
-    white-space: nowrap;
-    color: var(--color-text);
+  .profile-text + .profile-text {
+    margin-top: 0.75em;
+  }
+  .profile-table {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .profile-table div {
+    display: grid;
+    grid-template-columns: 7em 1fr;
+    gap: 1rem;
+    padding-block: 0.8rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.9rem;
+  }
+  .profile-table dt {
+    padding-top: 0.2em;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: var(--color-muted);
+  }
+  /* 長いメールアドレスやURLが、狭い画面で表の外へはみ出さないようにする */
+  .profile-table dd {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
-  /* ===== 制作（WORKS抜粋） ===== */
-  .works-list {
+  /* ===== できること ===== */
+  .service-list {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 2rem;
   }
-  .works-link {
-    display: block;
-    padding: 1.1rem 0;
+  .service-list li {
+    padding-block: 1.5rem;
     border-top: 1px solid var(--color-border);
-    /* 抜粋はカード見出し的に扱うため、共通の下線は外す */
-    text-decoration: none;
   }
-  .works-title {
-    display: block;
+  .service-num {
     font-family: var(--font-serif);
+    font-size: 0.85rem;
+    color: var(--season-accent-text);
+  }
+  .service-list h3 {
+    margin-block: 0.5rem;
     font-size: 1.1rem;
     letter-spacing: 0.08em;
-    color: var(--color-text);
   }
-  .works-desc {
-    display: block;
-    margin-top: 0.4rem;
+  .service-list p {
     font-size: 0.9rem;
     color: var(--color-text-soft);
   }
-  .works-link:hover .works-title {
-    text-decoration: underline;
-    text-decoration-color: var(--season-accent);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
+  .service-list .service-tools {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
   }
-  /* 罫線を上下対称に閉じる（各項目の上罫線＋最終項目の下罫線） */
-  .works-list li:last-child .works-link {
-    border-bottom: 1px solid var(--color-border);
+  @media (max-width: 767px) {
+    .service-list {
+      grid-template-columns: 1fr;
+    }
   }
+
+  /* ===== 制作 ===== */
   .works-empty {
     color: var(--color-text-soft);
   }
 
-  /* ===== スキル（・区切りの文字組み） ===== */
-  .skill-list {
-    list-style: none;
+  /* ===== 連絡先 ===== */
+  .contact-invite {
+    max-width: 34em;
     color: var(--color-text-soft);
-    line-height: 2.4;
+  }
+  /* メールアドレスそのものを一番大きい押し先にする。高さ64pxは Issue #151 で決めた下限 */
+  .contact-button {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-height: 64px;
+    margin-top: 1.75rem;
+    padding: 0.5rem clamp(1.25rem, 5vw, 2.25rem);
+    border: 1px solid var(--color-text);
+    border-radius: 2px;
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 4vw, 1.25rem);
     letter-spacing: 0.06em;
+    text-decoration: none;
+    overflow-wrap: anywhere;
   }
-  .skill-list li {
-    display: inline;
-  }
-  .skill-list li + li::before {
-    content: "・";
-    color: var(--season-accent);
-    margin: 0 0.5em;
-  }
-
-  /* ===== Contact ===== */
-  .contact-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .contact-label {
-    display: inline-block;
-    width: 5em;
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    color: var(--color-muted);
+  .contact-button:hover {
+    background: var(--color-text);
+    color: var(--color-bg);
   }
 </style>
