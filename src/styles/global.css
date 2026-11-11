@@ -191,10 +191,6 @@ a[target="_blank"]::after {
 h2.section-heading {
   font-size: 1.35rem;
 }
-.section-num {
-  font-size: 0.9em;
-  color: var(--season-accent-text);
-}
 .section-title {
   letter-spacing: 0.25em;
 }

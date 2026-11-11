@@ -35,9 +35,6 @@ const headingLines = home.hero.heading.split("\n").filter((line) => line.trim() 
 // GitHubリンクの表示テキストはURLから導出する（URLだけ変更されて表示が古く残ることを防ぐ）
 const githubLabel = site.social.github.replace(/^https?:\/\//, "");
 
-// 「できること」の番号。セクション番号（壱・弐…）と見分けるため小字の漢数字にする
-const KANJI_NUMERALS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
-
 // 制作セクションに抜粋する最新の制作（draft除外・pubDate降順の先頭2件）
 const recentWorks = (await getPublishedWorks()).slice(0, 2);
 ---
@@ -64,7 +61,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
   <section class="home-section" id="about">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">壱</span>
       <span class="section-title">自己紹介</span>
       <span class="section-label" aria-hidden="true">ABOUT</span>
     </h2>
@@ -109,14 +105,12 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
   <section class="home-section">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">弐</span>
       <span class="section-title">できること</span>
       <span class="section-label" aria-hidden="true">WHAT I DO</span>
     </h2>
     <ul class="service-list" role="list" data-reveal="delayed">
-      {home.services.map((service, index) => (
+      {home.services.map((service) => (
         <li>
-          <span class="service-num" aria-hidden="true">{KANJI_NUMERALS[index] ?? index + 1}</span>
           <h3>{service.title}</h3>
           <p>{service.body}</p>
           {service.tools.length > 0 && <p class="service-tools">{service.tools.join("・")}</p>}
@@ -127,7 +121,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
   <section class="home-section" id="works">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">参</span>
       <span class="section-title">制作</span>
       <span class="section-label" aria-hidden="true">WORKS</span>
     </h2>
@@ -143,7 +136,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
   <section class="home-section" id="contact">
     <h2 class="section-heading" data-reveal>
-      <span class="section-num">肆</span>
       <span class="section-title">連絡先</span>
       <span class="section-label" aria-hidden="true">CONTACT</span>
     </h2>
@@ -366,13 +358,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     padding-block: 1.5rem;
     border-top: 1px solid var(--color-border);
   }
-  .service-num {
-    font-family: var(--font-serif);
-    font-size: 0.85rem;
-    color: var(--season-accent-text);
-  }
   .service-list h3 {
-    margin-block: 0.5rem;
+    margin-bottom: 0.5rem;
     font-size: 1.1rem;
     letter-spacing: 0.08em;
   }
