@@ -65,8 +65,12 @@ describe("フォント定義の読み込み", () => {
     expect(read("pages/index.astro")).toMatch(
       /<link\s+slot="head"\s+rel="stylesheet"\s+href=\{`\$\{BASE_PATH\}fonts-mono\.css`\}/,
     );
-    // 全ページが読む側（BaseHead）に入れると、使わないページまで定義を読むことになる。
-    expect(read("components/BaseHead.astro")).not.toContain("fonts-mono.css");
+    // ほかのページやレイアウトが読むと、等幅を使わないページまで定義を読むことになる。
+    // 1ファイルだけ見ていると別の場所に <link> を足せてしまうため、src の全ソースを見る。
+    const loaders = sources
+      .filter(({ text }) => /href=\{`\$\{BASE_PATH\}fonts-mono\.css`\}/.test(text))
+      .map(({ path }) => path);
+    expect(loaders).toEqual([join(srcDir, "pages/index.astro")]);
   });
 
   it("出力する書体が astro.config.mjs の設定と一致する", () => {
