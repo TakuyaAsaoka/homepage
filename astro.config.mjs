@@ -6,23 +6,16 @@ export default defineConfig({
   base: "/homepage",
   integrations: [sitemap()],
   // Google Fonts をビルド時に取得してセルフホスト化する（Issue #101）。
-  // ここで取得した内容から @font-face と CSS 変数（--font-serif / --font-sans）を
+  // ここで取得した内容から @font-face と CSS 変数（--font-sans）を
   // 組み立てて1枚の外部CSSに出すのは src/pages/fonts.css.ts（Issue #147）。
   // Astro の Font コンポーネントは使わない（各ページのHTMLへインライン展開されるため）。
   fonts: [
+    // 見出しも本文もこの1書体で出す（Issue #159）。見出しは 700、本文は 400、
+    // 英字ラベルは 500 を使う。ここに無い太さをCSSで指定すると、近い太さの字で出る
+    // （600 と書いても 700 の字になる）ので、CSSにはここにある太さだけを書く
     {
       provider: fontProviders.google(),
-      name: "Shippori Mincho",
-      cssVariable: "--font-serif",
-      weights: [500, 600],
-      styles: ["normal"],
-      // "japanese" 単独だとウェイト 600 の取得が欠落する既知の問題があるため latin を併記する
-      subsets: ["latin", "japanese"],
-      fallbacks: ["Hiragino Mincho ProN", "serif"],
-    },
-    {
-      provider: fontProviders.google(),
-      name: "Zen Kaku Gothic New",
+      name: "Noto Sans JP",
       cssVariable: "--font-sans",
       weights: [400, 500, 700],
       styles: ["normal"],

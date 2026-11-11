@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-// フォント定義（@font-face 606個・474KB）を外部CSSに置くか、各ページのHTMLへ
+// フォント定義（@font-face 数百個・数百KB）を外部CSSに置くか、各ページのHTMLへ
 // インライン展開するかは、ここで見張っている書き方だけで決まる。どちらでも型検査も
 // ビルドも通り、違いはページ遷移の転送量にしか出ない。
 //
@@ -49,7 +49,7 @@ describe("フォント定義の読み込み", () => {
 
   it("Astro の Font コンポーネントをどこでも使わない", () => {
     // Font コンポーネントは @font-face をそのページのHTMLへ <style> で展開する。
-    // 1箇所でも戻ると、そのページだけ474KBに膨らみ、ページ間のキャッシュが効かなくなる。
+    // 1箇所でも戻ると、そのページだけ数百KB膨らみ、ページ間のキャッシュが効かなくなる。
     // タグ名だけでなく取り込み元も見る。別名で import すればタグ名は何にでもできる。
     const used = sources
       .filter(

@@ -11,9 +11,9 @@
   --color-tag-bg: #f0f0f0;
   --color-muted: #666666;
 
-  /* フォント: --font-serif / --font-sans は Astro Fonts API が注入する
-     （定義箇所: astro.config.mjs の fonts / 注入箇所: BaseHead.astro の <Font>）。
-     フォールバック（Hiragino Mincho ProN / system-ui 等）も astro.config.mjs 側で管理する */
+  /* フォント: --font-sans は fonts.css（src/pages/fonts.css.ts が出す外部CSS）が定義する
+     （書体の指定: astro.config.mjs の fonts / 読み込み: BaseHead.astro の <link>）。
+     見出しも本文もこの1書体で、フォールバック（system-ui 等）も astro.config.mjs 側で管理する */
 
   /* アニメーション */
   --hero-rule-width: 52px;
@@ -97,8 +97,7 @@ html {
 h1,
 h2,
 h3 {
-  font-family: var(--font-serif);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.12em;
   line-height: 1.4;
 }
@@ -180,7 +179,7 @@ a[target="_blank"]::after {
   font-size: 0.85em;
 }
 
-/* ===== セクション見出し（全ページ共通・明朝＋英字ラベル） ===== */
+/* ===== セクション見出し（全ページ共通・見出し＋英字ラベル） ===== */
 .section-heading {
   display: flex;
   align-items: baseline;
@@ -195,7 +194,6 @@ h2.section-heading {
   letter-spacing: 0.25em;
 }
 .section-label {
-  font-family: var(--font-sans);
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.3em;
