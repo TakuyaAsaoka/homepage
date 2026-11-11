@@ -2,9 +2,8 @@
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SeasonalHero from "../components/SeasonalHero.astro";
 import WorkGrid from "../components/WorkGrid.astro";
-import { BASE_PATH } from "../consts";
+import { BASE_PATH, REPOSITORY_URL } from "../consts";
 import { toParagraphs } from "../paragraphs";
 import { getSiteSettings } from "../site-settings";
 import { getPublishedWorks } from "../works";
@@ -34,30 +33,73 @@ const headingLines = home.hero.heading.split("\n").filter((line) => line.trim() 
 
 // GitHubリンクの表示テキストはURLから導出する（URLだけ変更されて表示が古く残ることを防ぐ）
 const githubLabel = site.social.github.replace(/^https?:\/\//, "");
+// ヒーローの窓の帯に出す、このサイトのリポジトリの住所（同じ理由でURLから導出する）
+const repositoryLabel = REPOSITORY_URL.replace(/^https?:\/\//, "");
 
 // 制作セクションに抜粋する最新の制作（draft除外・pubDate降順の先頭2件）
 const recentWorks = (await getPublishedWorks()).slice(0, 2);
 ---
 
 <BaseLayout title="Home" description={site.description}>
-  {/* 高さは画面の7割。見出し・説明・ボタンが入りきらない低い画面では、中身の高さを下限にする
-      （SeasonalHero は overflow: hidden のため、足りないと上の行が切れる） */}
-  <SeasonalHero slot="hero" season="auto" height="max(70vh, 34rem)">
-    <div class="hero-inner">
-      <div class="hero-content">
-        <p class="hero-role">{home.hero.role}</p>
-        <h1 class="hero-heading">
-          {headingLines.map((line) => <span>{line}</span>)}
-        </h1>
-        <span class="hero-rule" aria-hidden="true"></span>
-        <p class="hero-lead">{home.hero.lead}</p>
-        <div class="hero-actions">
-          <a class="hero-button primary" href="#works">制作を見る</a>
-          <a class="hero-button" href="#contact">連絡する</a>
+  {/* ヒーローの窓だけが使う等幅の書体。全ページが読む fonts.css には入れず、Home だけで読む */}
+  <link slot="head" rel="stylesheet" href={`${BASE_PATH}fonts-mono.css`} />
+
+  {/* エディタの窓を模したヒーロー。行番号・記号（#）・項目名（role: ・ work: ・ freelance:）・閉じる印・入力待ちの印は飾りなので、
+      読み上げからは隠す。読み上げには、見出し・肩書き・仕事と副業の説明と、窓の下の2つのボタンだけが残る */}
+  <div slot="hero" class="hero">
+    <div class="hero-blobs" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="hero-body">
+      <div class="hero-window">
+        <div class="hero-bar">
+          <a href={REPOSITORY_URL} target="_blank" rel="noopener noreferrer">{repositoryLabel}</a>
+          <span aria-hidden="true">×</span>
+        </div>
+        <div class="hero-code">
+          <h1 class="hero-heading">
+            {headingLines.map((line, index) => (
+              <span class="code-line">
+                <span class="line-no" aria-hidden="true">{index + 1}</span>
+                <span class={index === 0 ? undefined : "heading-rest"}>
+                  {index === 0 && <span class="code-mark" aria-hidden="true">{"# "}</span>}
+                  {line}
+                </span>
+              </span>
+            ))}
+          </h1>
+          <div class="hero-meta">
+            <p class="code-line">
+              <span class="line-no" aria-hidden="true">{headingLines.length + 1}</span>
+              <span class="code-pair"><span class="code-key" aria-hidden="true">role:</span><span>{home.hero.role}</span></span>
+            </p>
+            <p class="code-line">
+              <span class="line-no" aria-hidden="true">{headingLines.length + 2}</span>
+              <span class="code-pair">
+                <span class="code-key" aria-hidden="true">work:</span>
+                {/* 入力待ちの印は、窓の最後の行の終わりに置く（副業の行があればそちら） */}
+                <span>{home.hero.lead}{!home.hero.freelance && <span class="caret" aria-hidden="true" />}</span>
+              </span>
+            </p>
+            {home.hero.freelance && (
+              <p class="code-line">
+                <span class="line-no" aria-hidden="true">{headingLines.length + 3}</span>
+                <span class="code-pair">
+                  <span class="code-key" aria-hidden="true">freelance:</span>
+                  <span>{home.hero.freelance}<span class="caret" aria-hidden="true" /></span>
+                </span>
+              </p>
+            )}
+          </div>
         </div>
       </div>
+      {/* 次の行き先は、窓の外に普通のボタンで置く。窓の中のコードの行に混ぜると、押せると分かりにくい */}
+      <div class="hero-actions">
+        <a class="hero-button primary" href="#works">制作を見る</a>
+        <a class="hero-button" href="#contact">連絡する</a>
+      </div>
     </div>
-  </SeasonalHero>
+  </div>
 
   <section class="home-section" id="about">
     <h2 class="section-heading" data-reveal>
@@ -149,58 +191,161 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 </BaseLayout>
 
 <style>
-  /* ===== ヒーロー ===== */
-  /* ヒーロー内テキストを本文（main-inner）と同じ幅制限に載せ、左端ラインを全ページで揃える
-     （背景・季節演出は main の全幅に広がる） */
-  .hero-inner {
-    height: 100%;
-    max-width: var(--content-max-width);
-    margin-inline: auto;
-    padding-inline: var(--content-pad);
+  /* ===== ヒーロー（エディタの窓） ===== */
+  /* 窓を横の中央・縦の中央に置く。高さは決めず、上下の余白で最初の画面に収める
+     （幅1280×高さ720の画面で、ヘッダーと合わせて窓の全体が見える余白にしている） */
+  .hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: clamp(3rem, 10vh, 5.5rem) var(--content-pad);
+    /* ぼかした色がヒーローの外（ヘッダーや次の区切り）へにじみ出ないように切る */
+    overflow: clip;
   }
-  .hero-content {
-    height: 100%;
+  /* 窓と、その下のボタンを縦に並べる */
+  .hero-body {
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    text-align: left;
-    padding-block: 0 clamp(2rem, 6vh, 3.25rem);
-    color: var(--color-text);
+    align-items: center;
+    gap: 1.75rem;
+    width: min(100%, 680px);
   }
-  .hero-role {
-    font-weight: 700;
-    font-size: clamp(0.7rem, 1.6vw, 0.85rem);
-    letter-spacing: 0.35em;
-    color: var(--season-accent-text);
-    margin-bottom: 1rem;
+
+  /* にじむ色。差し色をぼかしたかたまりを4つ置く。位置と大きさは割合で持ち、画面の幅に追従する。
+     上下の端は薄くして消す。切ったままだと、ヒーローの上下でぼかしが直線で途切れて見える */
+  .hero-blobs {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  }
+  .hero-blobs span {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--accent);
+    filter: blur(48px);
+  }
+  .hero-blobs span:nth-child(1) {
+    top: 6%;
+    right: 7%;
+    width: 26%;
+    height: 46%;
+    opacity: 0.34;
+  }
+  .hero-blobs span:nth-child(2) {
+    top: 38%;
+    right: 23%;
+    width: 20%;
+    height: 34%;
+    opacity: 0.2;
+  }
+  .hero-blobs span:nth-child(3) {
+    bottom: 3%;
+    left: 5%;
+    width: 28%;
+    height: 40%;
+    opacity: 0.26;
+  }
+  .hero-blobs span:nth-child(4) {
+    top: 9%;
+    left: 17%;
+    width: 16%;
+    height: 24%;
+    opacity: 0.16;
+  }
+
+  /* 窓。地を少し透かして、後ろのにじむ色をうっすら通す */
+  .hero-window {
+    position: relative;
+    width: min(100%, 680px);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    /* color-mix() を知らないブラウザでは次の行が無視されるので、透かさない地を先に置く */
+    background: var(--color-bg);
+    background: color-mix(in srgb, var(--color-bg) 84%, transparent);
+    box-shadow: 0 18px 40px color-mix(in srgb, var(--color-text) 10%, transparent);
+    font-family: var(--font-mono);
+  }
+  .hero-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    min-height: 36px;
+    padding-inline: 0.875rem;
+    border-bottom: 1px solid var(--color-border);
+    /* 狭い画面では字を小さくして、住所と外へ出る印（↗）を1行に収める */
+    font-size: clamp(0.68rem, 3vw, 0.78rem);
+    color: var(--color-muted);
+  }
+  /* 帯のリンクは窓の題として読ませるため、共通の下線は外す（hover のときだけ出す）。
+     折り返すと帯が2行になるので折り返さず、それでも入らない幅では末尾を省く */
+  .hero-bar a {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: inherit;
+    text-decoration: none;
+  }
+  .hero-bar a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+  .hero-code {
+    padding: 1.6rem 1.75rem 1.9rem 0.875rem;
+  }
+
+  /* 1行 = 行番号 + 中身。長い行は、行番号を増やさずに中身の側で折り返す（エディタの折り返しと同じ） */
+  .code-line {
+    display: grid;
+    /* 行番号の列は rem で持つ。em にすると、字の大きい見出しの行だけ列が広がって頭がずれる */
+    grid-template-columns: 1.9rem minmax(0, 1fr);
+    column-gap: 0.875rem;
+    align-items: baseline;
+  }
+  .line-no {
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--color-muted);
+    text-align: right;
+    user-select: none;
   }
   .hero-heading {
-    font-size: clamp(1.7rem, 5vw, 2.6rem);
-    letter-spacing: 0.1em;
+    /* 下限は、幅320pxの画面でも一番長い行が折り返さない大きさ */
+    font-size: clamp(1rem, 5.2vw, 2rem);
     line-height: 1.5;
+    letter-spacing: 0.02em;
   }
-  /* 1行ずつ block にして、CMSの改行位置で行を分ける（幅に収まらない行はその中で折り返す） */
-  .hero-heading span {
-    display: block;
+  /* 2行目以降は、1行目の「# 」の幅だけ下げて頭をそろえる */
+  .heading-rest {
+    padding-left: 2ch;
   }
-  .hero-rule {
-    width: 0;
-    height: 1px;
-    background: var(--color-text);
-    margin: 1.25rem 0;
+  .code-mark,
+  .code-key {
+    color: var(--accent-text);
   }
-  .hero-lead {
-    max-width: 32em;
+  /* 「項目名: 値」の行。値が折り返したとき、2行目を項目名の下ではなく値の頭にそろえる */
+  .code-pair {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.6em;
+  }
+  .hero-meta {
+    margin-top: 1.1rem;
+    font-size: 0.92rem;
     color: var(--color-text-soft);
   }
+  /* 窓の下のボタン。高さ48pxは指で押せる大きさ（44px以上）を満たす。リンク共通の下線は外す */
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.875rem;
-    margin-top: 1.75rem;
   }
-  /* 高さ48pxは指で押せる大きさ（44px以上）を満たす。リンク共通の下線は外す */
   .hero-button {
     display: inline-flex;
     align-items: center;
@@ -208,6 +353,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     padding-inline: 1.75rem;
     border: 1px solid var(--color-text);
     border-radius: 2px;
+    /* にじむ色の上でも字が読めるよう、枠だけのボタンにも地を敷く */
+    background: var(--color-bg);
     font-size: 0.9rem;
     letter-spacing: 0.12em;
     text-decoration: none;
@@ -219,8 +366,23 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     color: var(--color-bg);
   }
   .hero-button.primary:hover {
-    background: var(--season-accent-text);
-    border-color: var(--season-accent-text);
+    background: var(--accent-text);
+    border-color: var(--accent-text);
+  }
+  /* 入力待ちの印。1.1秒の周期で点いたり消えたりする（途中の濃さは作らない） */
+  .caret {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    margin-left: 0.3rem;
+    background: var(--accent-text);
+    vertical-align: text-bottom;
+    animation: caret-blink 1.1s steps(1) infinite;
+  }
+  @keyframes caret-blink {
+    50% {
+      opacity: 0;
+    }
   }
 
   /* ===== ヒーロー入場アニメーション（純CSS・JS無効でも再生） ===== */
@@ -234,45 +396,23 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
       transform: translateY(0);
     }
   }
-  @keyframes hero-grow-rule {
-    from {
-      width: 0;
-    }
-    to {
-      width: var(--hero-rule-width);
-    }
-  }
-  .hero-role {
+  .hero-window {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
   }
-  .hero-heading {
+  .hero-actions {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
   }
-  .hero-rule {
-    animation: hero-grow-rule 0.6s var(--anim-ease) 0.7s forwards;
-  }
-  .hero-lead {
-    opacity: 0;
-    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.95s forwards;
-  }
-  .hero-actions {
-    opacity: 0;
-    animation: hero-fade-up var(--anim-duration) var(--anim-ease) 1.15s forwards;
-  }
 
-  /* reduced-motion: ヒーロー入場を無効化し最終状態で静止 */
+  /* reduced-motion: 入場と点滅を止め、最終状態で静止 */
   @media (prefers-reduced-motion: reduce) {
-    .hero-role,
-    .hero-heading,
-    .hero-lead,
+    .hero-window,
     .hero-actions {
       opacity: 1;
       animation: none;
     }
-    .hero-rule {
-      width: var(--hero-rule-width);
+    .caret {
       animation: none;
     }
   }

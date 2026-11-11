@@ -89,12 +89,12 @@ describe("ページ遷移の進行バー", () => {
     expect(body).toMatch(/transform-origin:\s*0\s/);
   });
 
-  it("色は季節アクセントのトークンを参照する", () => {
+  it("色は差し色のトークンを参照する", () => {
     // トークン名が変わると var() が不正値になり、バーは transparent になって
     // 画面から消える。それでもビルドも型チェックも通ってしまうため、ここで押さえる。
-    expect(ruleBody(".nav-progress")).toMatch(/background-color:\s*var\(--season-accent\)/);
+    expect(ruleBody(".nav-progress")).toMatch(/background-color:\s*var\(--accent\)/);
     // 参照先の定義が実在すること（コメントを除いた本文で確認する）
-    expect(declarations).toMatch(/--season-accent:\s*[^;]+;/);
+    expect(declarations).toMatch(/--accent:\s*[^;]+;/);
   });
 
   it("視差効果を減らす設定では動きのない表示に切り替える", () => {
