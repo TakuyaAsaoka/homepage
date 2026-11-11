@@ -188,7 +188,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     letter-spacing: 0.1em;
     line-height: 1.5;
   }
-  /* 1行ずつ block にして、CMSで決めた位置以外では行を分けない */
+  /* 1行ずつ block にして、CMSの改行位置で行を分ける（幅に収まらない行はその中で折り返す） */
   .hero-heading span {
     display: block;
   }

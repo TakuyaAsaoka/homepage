@@ -21,7 +21,7 @@ async function renderCard(extra: { role?: string; outcome?: string }) {
 describe("WorkCard", () => {
   it("役割と結果を渡すと、それぞれの行に出る", async () => {
     const html = await renderCard({ role: "設計から運用まで", outcome: "手作業が要らなくなった" });
-    expect(html).toMatch(/class="role"[^>]*>設計から運用まで</);
+    expect(html).toMatch(/class="role"[^>]*>.*役割: .*設計から運用まで/s);
     expect(html).toMatch(/class="outcome"[^>]*>.*手作業が要らなくなった/s);
   });
 
@@ -29,6 +29,7 @@ describe("WorkCard", () => {
     const html = await renderCard({});
     expect(html).not.toContain('class="role"');
     expect(html).not.toContain('class="outcome"');
+    expect(html).not.toContain("役割");
     expect(html).not.toContain("結果");
   });
 });

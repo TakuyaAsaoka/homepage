@@ -6,9 +6,9 @@ backend:
   # OAuthログイン用のsveltia-cms-auth WorkerのURL（docs/cms-oauth-setup.md のStep 4）
   base_url: "https://sveltia-cms-auth.dimas080201.workers.dev"
 
-# 画像欄を持つのは works だけで、works は下で保存先を上書きしている。
-# ここは使われないが、他のコレクションに画像欄を足すときは works と同じく
-# コレクション側で media_folder / public_folder を指定すること
+# 画像欄を持つのは works と Home の写真で、どちらも下で保存先を上書きしている
+# （works はコレクションに、Home の写真は欄に直接書いている）。
+# ここは使われないが、他に画像欄を足すときも同じく media_folder / public_folder を指定すること
 # （public/ 配下に保存するとAstroが画像を読めず、寸法が出せない）
 media_folder: "public/images"
 public_folder: "/homepage/images"
@@ -26,7 +26,7 @@ collections:
             widget: "object"
             fields:
               - { label: "肩書き", name: "role", widget: "string", hint: "見出しの上に英字で表示されます（例: SOFTWARE ENGINEER / SRE）。自己紹介の名前の下にも出ます" }
-              - { label: "見出し", name: "heading", widget: "text", hint: "一番大きく表示される文。改行した位置で行が分かれます" }
+              - { label: "見出し", name: "heading", widget: "text", hint: "一番大きく表示される文。改行した位置で行が分かれます。3行までにしてください（増やすと、背の低い画面で上の行が切れます）" }
               - { label: "説明", name: "lead", widget: "text", hint: "見出しの下に表示される一文" }
           - label: "自己紹介"
             name: "profile"
@@ -41,7 +41,7 @@ collections:
             name: "services"
             widget: "list"
             summary: "{{fields.title}}"
-            hint: "追加・削除・並び替えができます。経歴の文章は About の CAREER のセクションから出ます"
+            hint: "追加・削除・並び替えができます（1件以上）。経歴の文章は About の CAREER のセクションから出ます"
             fields:
               - { label: "見出し", name: "title", widget: "string", hint: "例: 業務アプリをつくる" }
               - { label: "説明", name: "body", widget: "text", hint: "1〜2文で" }

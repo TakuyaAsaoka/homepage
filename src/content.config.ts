@@ -56,14 +56,17 @@ const home = defineCollection({
         place: z.string(),
         linkLabel: z.string(),
       }),
-      // できること。道具の名前（tools）は説明の下に小さく並べる
-      services: z.array(
-        z.object({
-          title: z.string(),
-          body: z.string(),
-          tools: z.array(z.string()).default([]),
-        }),
-      ),
+      // できること。道具の名前（tools）は説明の下に小さく並べる。
+      // 0件だと見出しだけが残るため、1件以上を求める
+      services: z
+        .array(
+          z.object({
+            title: z.string(),
+            body: z.string(),
+            tools: z.array(z.string()).default([]),
+          }),
+        )
+        .min(1),
       contact: z.object({
         invite: z.string(),
       }),

@@ -35,7 +35,14 @@ const thumbnail = image ?? DEFAULT_IMAGE;
     loading="lazy"
     decoding="async"
   />
-  {role && <p class="role">{role}</p>}
+  {/* 役割は題より前に文だけで出るため、読み上げでは何の文か分からない。
+      見た目を変えずに、読み上げにだけ「役割」と伝える */}
+  {role && (
+    <p class="role">
+      <span class="visually-hidden">役割: </span>
+      {role}
+    </p>
+  )}
   <h3>
     <a href={`${BASE_PATH}works/${slug}/`}>{title}</a>
   </h3>
@@ -76,6 +83,15 @@ const thumbnail = image ?? DEFAULT_IMAGE;
   .role {
     font-size: 0.78rem;
     color: var(--color-muted);
+  }
+  /* 画面には出さず、読み上げにだけ渡す文字 */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
   /* 説明と結果を罫線で分け、「何を作ったか」と「何が良くなったか」を読み分けられるようにする */
   .outcome {
