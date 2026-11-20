@@ -61,7 +61,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
             {headingLines.map((line, index) => (
               <span class="code-line">
                 <span class="line-no" aria-hidden="true">{index + 1}</span>
-                <span class={index === 0 ? undefined : "heading-rest"}>
+                <span class="heading-text">
                   {index === 0 && <span class="code-mark" aria-hidden="true">{"# "}</span>}
                   {line}
                 </span>
@@ -315,14 +315,18 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     user-select: none;
   }
   .hero-heading {
-    /* 下限は、幅320pxの画面でも一番長い行が折り返さない大きさ */
     font-size: clamp(1rem, 5.2vw, 2rem);
     line-height: 1.5;
     letter-spacing: 0.02em;
+    /* スマホでは行が折り返す。語の途中ではなく文節の切れ目で折る（対応していないブラウザは普通に折る） */
+    word-break: auto-phrase;
   }
-  /* 2行目以降は、1行目の「# 」の幅だけ下げて頭をそろえる */
-  .heading-rest {
+  /* どの行も「# 」の幅だけ下げて頭をそろえる。1行目は「# 」だけを左へ出し、折り返した分も頭にそろえる */
+  .heading-text {
     padding-left: 2ch;
+  }
+  .code-line:first-child .heading-text {
+    text-indent: -2ch;
   }
   .code-mark,
   .code-key {
