@@ -50,6 +50,8 @@ const home = defineCollection({
         // 一番大きい見出し。改行した位置でそのまま行を分ける
         heading: z.string(),
         lead: z.string(),
+        // 副業のひとこと。窓の「freelance:」の行に出す。書かなければ行ごと出さない
+        freelance: optionalText,
       }),
       profile: z.object({
         photo: optionalImage(image),

@@ -1,6 +1,6 @@
 ---
 title: "このホームページ"
-description: "Astro製の個人サイト。季節連動の和モダンデザインとアニメーション"
+description: "Astro製の個人サイト。エディタの窓を模した最初の画面と、落ち着いた配色"
 tags: ["Astro", "TypeScript", "GitHub Pages"]
 image: "./images/homepage.jpg"
 url: "https://github.com/TakuyaAsaoka/homepage"
@@ -11,8 +11,7 @@ draft: false
 
 いま見ているこのサイトです。Astroで構築し、mainへのマージからGitHub Actionsで自動デプロイされます。
 
-- **和モダンのデザインシステム** — 春夏秋冬で切り替わる季節アクセントカラー
-- **季節のヒーロー演出** — 桜・波紋・落ち葉・雪が舞う背景を、依存ライブラリなしの素のJSで実装
+- **最初の画面** — エディタの窓を模した枠に、何をする人かを一文で置く。依存ライブラリなしのHTMLとCSSで実装
 - **アクセシビリティ** — ダークモード・JS無効・prefers-reduced-motion に対応し、文字色はWCAG AAを担保
 - **コンテンツ管理** — Markdown + Content Collections、記事一覧はnoteのRSSから取得
 
