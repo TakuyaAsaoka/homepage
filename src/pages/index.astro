@@ -155,7 +155,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
         <li>
           <h3>{service.title}</h3>
           <p>{service.body}</p>
-          {service.tools.length > 0 && <p class="service-tools">{service.tools.join("・")}</p>}
         </li>
       ))}
     </ul>
@@ -509,12 +508,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   .service-list p {
     font-size: 0.9rem;
     color: var(--color-text-soft);
-  }
-  .service-list .service-tools {
-    margin-top: 0.6rem;
-    font-size: 0.78rem;
-    letter-spacing: 0.06em;
-    color: var(--color-muted);
   }
   @media (max-width: 767px) {
     .service-list {
