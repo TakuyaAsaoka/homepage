@@ -67,6 +67,7 @@ homepage/
 │   │   ├── Breadcrumb.astro         # パンくずナビゲーション
 │   │   ├── Footer.astro             # フッター
 │   │   ├── Header.astro             # ヘッダー
+│   │   ├── Section.astro            # 章（見出しと中身の置き方。全ページで共用）
 │   │   ├── StructuredData.astro     # JSON-LD構造化データ
 │   │   ├── TableOfContents.astro    # 制作詳細ページの目次
 │   │   ├── TagList.astro            # タグ一覧表示
@@ -267,13 +268,14 @@ const { title } = Astro.props;
 
 ```astro
 ---
+import Section from "../components/Section.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="ホーム" description="個人ホームページ">
-  <section>
-    <h2>ようこそ</h2>
-  </section>
+  <Section title="ようこそ">
+    <p>中身</p>
+  </Section>
 </BaseLayout>
 ```
 
@@ -514,6 +516,15 @@ Sveltia CMS の設定は `public/admin/config.yml` で管理します。
   }
 </style>
 ```
+
+### 章の置き方
+
+- ページの中身は `Section.astro` を並べて書く。`<section>` と見出しをページに直接書かない
+- 見出しはどの章でも中身の上に置く（`Section.astro` が決める。置き方を選ぶ指定は無い）
+- 中身を何列に組むかは、中身に合わせてページが決める。文章と表、文章とボタンのように半分ずつ並べるときは、`global.css` の `.cols-2` を使う（列の境目が全部の章でそろう）
+- 文章だけの短い章が続くページ（About）は、章そのものを `.cols-2` で2つずつ横に並べてよい。1行が長くなりすぎないようにするため。このとき行の間は 0 にする（縦の間隔は章が持つ）
+- 横の線は章の境目にだけ引く（`Section.astro` が引く）。章の中の項目は線ではなく間隔で分ける。枠で囲うカードと、行が並ぶ一覧（記事の一覧など）の行の線は除く
+- 全体の幅・左右の余白・列の間・章どうしの間隔は `global.css` の `:root` の値で決める。ページ側の CSS で章の幅や間隔を決めない（ページごとに決めると、章の形がページの数だけ増える）
 
 ### クラス命名
 

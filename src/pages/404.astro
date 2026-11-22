@@ -1,4 +1,5 @@
 ---
+import Section from "../components/Section.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { BASE_PATH } from "../consts";
 
@@ -12,12 +13,9 @@ const sectionLinks = [
 ---
 
 <BaseLayout title="ページが見つかりません" description="お探しのページは存在しません" noindex>
-  <section class="not-found">
-    <h1 class="section-heading page-heading">
-      <span class="section-title">404</span>
-      <span class="section-label" aria-hidden="true">NOT FOUND</span>
-    </h1>
-    <p>お探しのページは見つかりませんでした。</p>
+  <Section level={1} title="404" label="NOT FOUND">
+    <div data-reveal="delayed">
+    <p class="lead">お探しのページは見つかりませんでした。</p>
     <nav class="section-links" aria-label="主要セクション">
       <ul role="list">
         {sectionLinks.map((item) => (
@@ -34,11 +32,12 @@ const sectionLinks = [
     <p class="back">
       <a href={BASE_PATH}>ホームに戻る<span class="arrow" aria-hidden="true">→</span></a>
     </p>
-  </section>
+    </div>
+  </Section>
 </BaseLayout>
 
 <style>
-  .not-found p {
+  .lead {
     color: var(--color-muted);
   }
   .section-links {
@@ -82,7 +81,7 @@ const sectionLinks = [
   .section-links a:hover .section-link-arrow {
     transform: translateX(3px);
   }
-  .not-found .back {
+  .back {
     margin-top: 2rem;
   }
 

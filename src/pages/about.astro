@@ -1,5 +1,6 @@
 ---
 import { getEntry } from "astro:content";
+import Section from "../components/Section.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { toParagraphs } from "../paragraphs";
 
@@ -12,36 +13,31 @@ const about = aboutEntry.data;
 ---
 
 <BaseLayout title="About" description="アサオカの自己紹介 — 経歴・仕事観・人となり" breadcrumb={[{ label: "About" }]}>
-  <section>
-    <h1 class="section-heading page-heading" data-reveal>
-      <span class="section-title">自己紹介</span>
-      <span class="section-label" aria-hidden="true">ABOUT</span>
-    </h1>
+  <Section level={1} title="自己紹介" label="ABOUT">
     <p class="about-lead" data-reveal="delayed">{about.lead}</p>
-  </section>
+  </Section>
 
-  {about.sections.map((section) => (
-    <section class="about-section">
-      <h2 class="section-heading" data-reveal>
-        <span class="section-title">{section.title}</span>
-        <span class="section-label" aria-hidden="true">{section.label}</span>
-      </h2>
-      {toParagraphs(section.body).map((paragraph) => <p data-reveal="delayed">{paragraph}</p>)}
-    </section>
-  ))}
+  {/* 文章の章は横に2つずつ並べ、1行が長くなりすぎないようにする */}
+  <div class="about-sections cols-2">
+    {about.sections.map((section) => (
+      <Section title={section.title} label={section.label}>
+        <div class="about-body" data-reveal="delayed">
+          {toParagraphs(section.body).map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </Section>
+    ))}
+  </div>
 </BaseLayout>
 
 <style>
   .about-lead {
     color: var(--color-text-soft);
   }
-  .about-section {
-    margin-block: 3rem;
+  /* 縦の間隔は章（Section）が持つので、行の間は空けない */
+  .about-sections {
+    row-gap: 0;
   }
-  .about-section h2 {
-    font-size: 1.15rem;
-  }
-  .about-section p + p {
+  .about-body p + p {
     margin-top: 0.75em;
   }
 </style>

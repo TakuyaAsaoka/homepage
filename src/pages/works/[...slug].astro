@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
 import TagList from "../../components/TagList.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import { render } from "astro:content";
@@ -36,36 +37,60 @@ const pubDateLabel = formatPubDate(work.data.pubDate, SITE_LOCALE);
     image: work.data.image?.src,
   }}
 >
-  <article>
-    <h1>{work.data.title}</h1>
-    {/* 詳細ページは実際の画像があるときだけ出す（デフォルト画像は制作の内容を表さないため）。
-        Image は寸法を属性に出すため、読み込み前から高さが確保され本文が押し出されない。
-        ページ最上部に出る画像なので、既定の遅延読み込み（loading="lazy"）は打ち消す。
-        表示幅はコンテンツ幅いっぱい（最大736px）。widths は等倍と2倍の画面をまかなう */}
-    {work.data.image && (
-      <Image
-        class="hero-image"
-        src={work.data.image}
-        alt={work.data.title}
-        widths={[736, 1472]}
-        sizes="(min-width: 800px) 736px, 100vw"
-        loading="eager"
-        decoding="async"
-      />
-    )}
-    <time datetime={work.data.pubDate}>{pubDateLabel}</time>
-    <TagList tags={work.data.tags} />
-    {work.data.url && (
-      <p><a href={work.data.url} target="_blank" rel="noopener noreferrer">制作を見る</a></p>
-    )}
-    <TableOfContents headings={headings} />
-    <div class="content">
-      <Content />
-    </div>
-  </article>
+
+    <Section level={1} title={work.data.title}>
+      {/* 左の細い列に日付・タグ・目次、右の列に画像と本文を置く */}
+      <div class="detail">
+        {/* 登場の動きは左の列だけに付ける。右の列に付けると、ページ最上部の画像が出るのが遅れる */}
+        <div data-reveal="delayed">
+          <time datetime={work.data.pubDate}>{pubDateLabel}</time>
+          <TagList tags={work.data.tags} />
+          {work.data.url && (
+            <p><a href={work.data.url} target="_blank" rel="noopener noreferrer">制作を見る</a></p>
+          )}
+          <TableOfContents headings={headings} />
+        </div>
+        <div>
+          {/* 詳細ページは実際の画像があるときだけ出す（デフォルト画像は制作の内容を表さないため）。
+              Image は寸法を属性に出すため、読み込み前から高さが確保され本文が押し出されない。
+              ページ最上部に出る画像なので、既定の遅延読み込み（loading="lazy"）は打ち消す。
+              表示幅は右の列いっぱい（最大708px）、959px以下の1列のときはほぼ画面幅。
+              元の画像が 1416px より小さいときは、元の幅までしか出ない */}
+          {work.data.image && (
+            <Image
+              class="hero-image"
+              src={work.data.image}
+              alt={work.data.title}
+              widths={[708, 1416]}
+              sizes="(min-width: 1080px) 708px, (min-width: 960px) calc(100vw - 372px), 100vw"
+              loading="eager"
+              decoding="async"
+            />
+          )}
+          <div class="content">
+            <Content />
+          </div>
+        </div>
+      </div>
+    </Section>
+
 </BaseLayout>
 
 <style>
+  /* 右の列の幅（全体の幅 − 左の列 − 列の間）が、本文の1行の長さの上限になる。狭い画面では1列 */
+  .detail {
+    display: grid;
+    /* minmax(0, …) は、長い語やURLが列を押し広げないようにするため */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem var(--col-gap);
+    align-items: start;
+  }
+  /* 左の列は幅を固定しているので、本文の列が狭くなりすぎない幅から2列にする */
+  @media (min-width: 960px) {
+    .detail {
+      grid-template-columns: 260px minmax(0, 1fr);
+    }
+  }
   time {
     color: var(--color-muted);
     font-size: 0.9rem;
@@ -74,14 +99,15 @@ const pubDateLabel = formatPubDate(work.data.pubDate, SITE_LOCALE);
      小さい画像を引き伸ばさないよう width は指定しない */
   .hero-image {
     display: block;
-    margin-block: 1rem 0.75rem;
+    margin-bottom: 2rem;
     border-radius: 4px;
   }
-  article :global(.tags) {
+  .detail :global(.tags) {
     margin: 0.5rem 0;
   }
-  .content {
-    margin-top: 2rem;
+  /* 本文の最初の段落の上の余白を消し、左の列と上端をそろえる */
+  .content > :global(:first-child) {
+    margin-top: 0;
   }
   /* Markdown本文の縦リズム（グローバルリセットで消えた余白を戻す） */
   .content :global(p) {
