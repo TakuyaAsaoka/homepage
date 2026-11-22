@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
 import WorkGrid from "../components/WorkGrid.astro";
 import { BASE_PATH, REPOSITORY_URL } from "../consts";
 import { toParagraphs } from "../paragraphs";
@@ -101,56 +102,49 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     </div>
   </div>
 
-  <section class="home-section" id="about">
-    <h2 class="section-heading" data-reveal>
-      <span class="section-title">自己紹介</span>
-      <span class="section-label" aria-hidden="true">ABOUT</span>
-    </h2>
-    <div class="profile" data-reveal="delayed">
-      {home.profile.photo && (
-        <Image
-          class="profile-photo"
-          src={home.profile.photo}
-          alt={`${site.author}の写真`}
-          widths={[200, 400, 600]}
-          sizes="200px"
-        />
-      )}
-      <div class="profile-body">
+  <Section id="about" title="自己紹介" label="ABOUT">
+    {/* 左に文章、右に表を置く */}
+    <div class="cols-2" data-reveal="delayed">
+      <div>
+        {home.profile.photo && (
+          <Image
+            class="profile-photo"
+            src={home.profile.photo}
+            alt={`${site.author}の写真`}
+            widths={[200, 400, 600]}
+            sizes="200px"
+          />
+        )}
         <p class="profile-name">{site.author}</p>
         <p class="profile-role">{home.hero.role}</p>
         {toParagraphs(career.body).map((paragraph) => <p class="profile-text">{paragraph}</p>)}
-        <dl class="profile-table">
-          <div>
-            <dt>活動場所</dt>
-            <dd>{home.profile.place}</dd>
-          </div>
-          <div>
-            <dt>連絡先</dt>
-            <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
-          </div>
-          {site.social.github && (
-            <div>
-              <dt>GitHub</dt>
-              <dd>
-                <a href={site.social.github} target="_blank" rel="noopener noreferrer">{githubLabel}</a>
-              </dd>
-            </div>
-          )}
-        </dl>
         <a class="section-more" href={`${BASE_PATH}about/`}>
           {home.profile.linkLabel}<span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
+      <dl class="profile-table">
+        <div>
+          <dt>活動場所</dt>
+          <dd>{home.profile.place}</dd>
+        </div>
+        <div>
+          <dt>連絡先</dt>
+          <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+        </div>
+        {site.social.github && (
+          <div>
+            <dt>GitHub</dt>
+            <dd>
+              <a href={site.social.github} target="_blank" rel="noopener noreferrer">{githubLabel}</a>
+            </dd>
+          </div>
+        )}
+      </dl>
     </div>
-  </section>
+  </Section>
 
-  <section class="home-section">
-    <h2 class="section-heading" data-reveal>
-      <span class="section-title">できること</span>
-      <span class="section-label" aria-hidden="true">WHAT I DO</span>
-    </h2>
-    <ul class="service-list" role="list" data-reveal="delayed">
+  <Section title="できること" label="WHAT I DO">
+    <ul class="service-list cols-2" role="list" data-reveal="delayed">
       {home.services.map((service) => (
         <li>
           <h3>{service.title}</h3>
@@ -158,13 +152,9 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
         </li>
       ))}
     </ul>
-  </section>
+  </Section>
 
-  <section class="home-section" id="works">
-    <h2 class="section-heading" data-reveal>
-      <span class="section-title">制作</span>
-      <span class="section-label" aria-hidden="true">WORKS</span>
-    </h2>
+  <Section id="works" title="制作" label="WORKS">
     {recentWorks.length > 0 ? (
       <WorkGrid works={recentWorks} />
     ) : (
@@ -173,20 +163,17 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     <a class="section-more" href={`${BASE_PATH}works/`} data-reveal="delayed">
       制作をすべて見る<span class="arrow" aria-hidden="true">→</span>
     </a>
-  </section>
+  </Section>
 
-  <section class="home-section" id="contact">
-    <h2 class="section-heading" data-reveal>
-      <span class="section-title">連絡先</span>
-      <span class="section-label" aria-hidden="true">CONTACT</span>
-    </h2>
-    <div data-reveal="delayed">
+  <Section id="contact" title="連絡先" label="CONTACT">
+    {/* 左に誘いの文、右に押し先を置く */}
+    <div class="cols-2" data-reveal="delayed">
       <p class="contact-invite">{home.contact.invite}</p>
       <a class="contact-button" href={`mailto:${site.email}`}>
         {site.email}<span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
-  </section>
+  </Section>
 </BaseLayout>
 
 <style>
@@ -420,33 +407,13 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     }
   }
 
-  /* ===== セクション間隔 ===== */
-  .home-section {
-    margin-block: 5rem;
-  }
-  /* ヒーロー直後だけ詰める。main-inner の padding-top 1rem と合わせ、
-     ヒーロー下端から 3.5rem の間隔にする */
-  .home-section:first-of-type {
-    margin-top: 2.5rem;
-  }
-
   /* ===== 自己紹介 ===== */
-  .profile {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 2.5rem;
-  }
   .profile-photo {
     width: 200px;
     aspect-ratio: 4 / 5;
     object-fit: cover;
     border-radius: 2px;
-  }
-  /* 写真の横に置けるだけの幅が無いとき（スマホ）は、写真の下へ折り返す */
-  .profile-body {
-    flex: 1 1 20rem;
-    min-width: 0;
+    margin-bottom: 1.25rem;
   }
   .profile-name {
     font-weight: 700;
@@ -454,7 +421,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     letter-spacing: 0.12em;
   }
   .profile-role {
-    margin-block: 0.4rem 1rem;
+    margin-block: 0.4rem 1.25rem;
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     color: var(--color-muted);
@@ -465,16 +432,15 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   .profile-text + .profile-text {
     margin-top: 0.75em;
   }
+  /* 行は線で区切らず、間隔で分ける（線は章の境目だけに使う） */
   .profile-table {
-    margin-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    display: grid;
+    row-gap: 0.8rem;
   }
   .profile-table div {
     display: grid;
     grid-template-columns: 7em 1fr;
     gap: 1rem;
-    padding-block: 0.8rem;
-    border-bottom: 1px solid var(--color-border);
     font-size: 0.9rem;
   }
   .profile-table dt {
@@ -490,15 +456,10 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   }
 
   /* ===== できること ===== */
+  /* 列の組み方は .cols-2 が決める。項目は線で区切らず、間隔で分ける */
   .service-list {
     list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 2rem;
-  }
-  .service-list li {
-    padding-block: 1.5rem;
-    border-top: 1px solid var(--color-border);
+    row-gap: 2.25rem;
   }
   .service-list h3 {
     margin-bottom: 0.5rem;
@@ -509,11 +470,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     font-size: 0.9rem;
     color: var(--color-text-soft);
   }
-  @media (max-width: 767px) {
-    .service-list {
-      grid-template-columns: 1fr;
-    }
-  }
 
   /* ===== 制作 ===== */
   .works-empty {
@@ -522,7 +478,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
   /* ===== 連絡先 ===== */
   .contact-invite {
-    max-width: 34em;
     color: var(--color-text-soft);
   }
   /* メールアドレスそのものを一番大きい押し先にする。高さ64pxは Issue #151 で決めた下限 */
@@ -531,7 +486,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     align-items: center;
     max-width: 100%;
     min-height: 64px;
-    margin-top: 1.75rem;
+    justify-self: start;
     padding: 0.5rem clamp(1.25rem, 5vw, 2.25rem);
     border: 1px solid var(--color-text);
     border-radius: 2px;

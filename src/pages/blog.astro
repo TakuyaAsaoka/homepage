@@ -1,4 +1,5 @@
 ---
+import Section from "../components/Section.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_LOCALE } from "../consts";
 import { fetchFeedItems } from "../rss";
@@ -20,11 +21,8 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
 ---
 
 <BaseLayout title="Blog" description="noteに書いた記事の一覧" breadcrumb={[{ label: "Blog" }]}>
-  <section>
-    <h1 class="section-heading page-heading">
-      <span class="section-title">記事</span>
-      <span class="section-label" aria-hidden="true">BLOG</span>
-    </h1>
+  <Section level={1} title="記事" label="BLOG">
+    <div data-reveal="delayed">
     {!hasRssUrl && (
       <p>サイト設定の「note RSS URL」を設定すると記事が表示されます。</p>
     )}
@@ -53,7 +51,8 @@ const { items: feedItems, failed: fetchFailed } = hasRssUrl
     ) : hasRssUrl && (
       <p>まだ記事がありません。</p>
     )}
-  </section>
+    </div>
+  </Section>
 </BaseLayout>
 
 <style>

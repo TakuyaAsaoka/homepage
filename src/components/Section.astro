@@ -1,0 +1,69 @@
+---
+interface Props {
+  /** 見出しの文 */
+  title: string;
+  /** 見出しに添える英字の札（飾りなので読み上げからは隠す） */
+  label?: string;
+  /** 見出しを h1 にするか h2 にするか。ページの題は 1、その下の章は 2 */
+  level?: 1 | 2;
+  id?: string;
+}
+
+const { title, label, level = 2, id } = Astro.props;
+const Heading = level === 1 ? "h1" : "h2";
+---
+
+{/* 章の形（見出しの形と位置・章の境目の線・章どうしの間隔）は、すべてここで決める。
+    見出しはどの章でも中身の上に置く。中身を何列に組むかは、中身に合わせてページが決める */}
+<section class="section" id={id}>
+  <Heading class="heading" data-reveal>
+    <span class="title">{title}</span>
+    {label && <span class="label" aria-hidden="true">{label}</span>}
+  </Heading>
+  <div class="body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  /* 横の線は章の境目にだけ引く。章の中は線ではなく余白で分ける */
+  .section {
+    padding-block: var(--section-gap);
+    border-top: 1px solid var(--color-border);
+  }
+  /* ページの最初の章には線を引かず、上（ヒーローやパンくず）との間を詰める。
+     padding ではなく margin にして、パンくずの下の余白と重ねる（足し合わせない） */
+  :global(.main-inner) > .section:first-of-type {
+    margin-top: 2.5rem;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3em 0.9em;
+    margin-bottom: 1.5rem;
+    font-size: 1.35rem;
+    /* 長い題が折り返すとき、行の長さをそろえ、文節の切れ目で折る
+       （auto-phrase を知らないブラウザでは、どこででも折り返す今までの動きになる） */
+    text-wrap: balance;
+    word-break: auto-phrase;
+  }
+  h1.heading {
+    font-size: 1.65rem;
+  }
+  .title {
+    letter-spacing: 0.25em;
+  }
+  .label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--color-muted);
+  }
+  /* 長い語やURLが列を押し広げないようにする */
+  .body {
+    min-width: 0;
+  }
+</style>

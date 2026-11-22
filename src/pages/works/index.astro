@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Section from "../../components/Section.astro";
 import WorkGrid from "../../components/WorkGrid.astro";
 import { getPublishedWorks } from "../../works";
 
@@ -7,15 +8,11 @@ const works = await getPublishedWorks();
 ---
 
 <BaseLayout title="Works" description="アサオカの制作一覧" breadcrumb={[{ label: "Works" }]}>
-  <section>
-    <h1 class="section-heading page-heading" data-reveal>
-      <span class="section-title">制作</span>
-      <span class="section-label" aria-hidden="true">WORKS</span>
-    </h1>
+  <Section level={1} title="制作" label="WORKS">
     {works.length > 0 ? (
       <WorkGrid works={works} />
     ) : (
       <p data-reveal="delayed">公開できる制作を準備中です。</p>
     )}
-  </section>
+  </Section>
 </BaseLayout>

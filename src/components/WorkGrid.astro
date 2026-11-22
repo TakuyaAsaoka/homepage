@@ -28,13 +28,13 @@ const { works } = Astro.props;
 
 <style>
   /* デスクトップは2カラム、モバイルは1カラム。
-     実効コンテンツ幅（約736px）では3カラム以上が成立しないため、
+     3カラムにするとカードの文章が窮屈になるため、
      auto-fit ではなく固定2カラム＋メディアクエリで折返し点を明示する。 */
   .work-grid {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    gap: var(--col-gap);
     padding: 0;
   }
   /* li を grid にして内側の article を行の高さまで stretch させ、カード高さを揃える */

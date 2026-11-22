@@ -1,9 +1,14 @@
 :root {
   color-scheme: light dark; /* ネイティブUI（フォーム/スクロールバー）をテーマ追従 */
-  --content-max-width: 800px;
+  /* ===== レイアウトの値。章の形は Section.astro がこの値で決める ===== */
+  --content-max-width: 1080px;
   /* コンテンツの左右パディング。Header / main-inner / ヒーロー内テキスト / Footer で共用し、
-     全ページの左端ラインを一直線に揃える */
-  --content-pad: clamp(1.25rem, 5vw, 2rem);
+     全ページの左端ラインを一直線に揃える。640px以下の画面では下の @media で狭める */
+  --content-pad: 32px;
+  /* 中身を2列に組むときの列の間（.cols-2 と制作のカードで共用し、列の境目を全部の章でそろえる） */
+  --col-gap: 3rem;
+  /* 章の境目の線と、その上下の中身との間 */
+  --section-gap: 4rem;
   --color-bg: #ffffff;
   --color-text: #333333;
   --color-text-soft: #4a5560; /* 補助本文（本文よりやや淡い説明テキスト）。既存に無いため新規 */
@@ -44,6 +49,12 @@
        暗い地で 4.5:1 以上あるため、文字用も同じ値にする */
     --accent: #b0b0b0;
     --accent-text: #b0b0b0;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --content-pad: 22px;
   }
 }
 
@@ -147,32 +158,6 @@ a[target="_blank"]::after {
   font-size: 0.85em;
 }
 
-/* ===== セクション見出し（全ページ共通・見出し＋英字ラベル） ===== */
-.section-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 0.9em;
-  margin-bottom: 1.5rem;
-}
-/* 見出しスケール: 下層h1 1.65rem ＞ Home h2 1.35rem ＞ 下層h2 1.15rem の階層 */
-h2.section-heading {
-  font-size: 1.35rem;
-}
-.section-title {
-  letter-spacing: 0.25em;
-}
-.section-label {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  color: var(--color-muted);
-}
-/* 下層ページの h1 に section-heading と併用する */
-.page-heading {
-  font-size: 1.65rem;
-  margin-block: 2.5rem 2rem;
-}
-
 /* 導線リンク共通の矢印（hoverで少し進む） */
 .arrow {
   display: inline-block;
@@ -183,7 +168,21 @@ a:hover .arrow {
   transform: translateX(0.25em);
 }
 
-/* セクション末尾の「すべて見る」導線（現状は制作のみ・汎用命名） */
+/* 章の中身を2列に組む。文章と表、文章とボタンのように、横に並べると1行が長くなりすぎない中身に使う。
+   狭い画面では1列になる */
+.cols-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem var(--col-gap);
+  align-items: start;
+}
+@media (min-width: 768px) {
+  .cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 章の末尾の「〜を見る」導線 */
 .section-more {
   display: inline-block;
   margin-top: 1.5rem;
