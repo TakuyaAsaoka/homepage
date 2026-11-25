@@ -195,6 +195,15 @@ a:hover .arrow {
   }
 }
 
+/* 小さな英字の札（章の見出しに添える「ABOUT」や、Home のヒーローの下端の「SCROLL ↓」）。
+   飾りなので、使う側で読み上げから隠す */
+.en-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-muted);
+}
+
 /* 章の末尾の「〜を見る」導線 */
 .section-more {
   display: inline-block;

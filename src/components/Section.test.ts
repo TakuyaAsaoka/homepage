@@ -23,7 +23,7 @@ describe("Section", () => {
   });
 
   it("英字の札は、渡したときだけ読み上げから隠して出す", async () => {
-    expect(await renderSection({ label: "ABOUT" })).toMatch(/class="label"[^>]*aria-hidden="true"[^>]*>ABOUT</);
-    expect(await renderSection({})).not.toContain('class="label"');
+    expect(await renderSection({ label: "ABOUT" })).toMatch(/class="en-label"[^>]*aria-hidden="true"[^>]*>ABOUT</);
+    expect(await renderSection({})).not.toContain('class="en-label"');
   });
 });

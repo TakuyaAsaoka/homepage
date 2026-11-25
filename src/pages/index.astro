@@ -98,7 +98,7 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
       </div>
     </div>
     {/* 下に続きがあることを知らせる印。読み上げでは次の章がそのまま続くので隠す */}
-    <p class="hero-scroll" aria-hidden="true">SCROLL ↓</p>
+    <p class="hero-scroll en-label" aria-hidden="true">SCROLL ↓</p>
   </div>
 
   <Section id="about" title="自己紹介" label="ABOUT">
@@ -185,6 +185,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     position: relative;
     display: grid;
     place-items: center;
+    /* svh を知らないブラウザでは次の行が無視されるので、vh の高さを先に置く */
+    min-height: calc(100vh - var(--header-h));
     min-height: calc(100svh - var(--header-h));
     padding: clamp(3rem, 10vh, 5.5rem) var(--content-pad);
   }
@@ -320,10 +322,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     left: 0;
     right: 0;
     text-align: center;
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    color: var(--color-muted);
   }
   /* 入力待ちの印。1.1秒の周期で点いたり消えたりする（途中の濃さは作らない） */
   .caret {
@@ -356,7 +354,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
   }
-  .hero-actions {
+  .hero-actions,
+  .hero-scroll {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
   }
@@ -364,7 +363,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   /* reduced-motion: 入場と点滅を止め、最終状態で静止 */
   @media (prefers-reduced-motion: reduce) {
     .hero-window,
-    .hero-actions {
+    .hero-actions,
+    .hero-scroll {
       opacity: 1;
       animation: none;
     }
