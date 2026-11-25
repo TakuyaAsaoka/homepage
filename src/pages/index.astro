@@ -48,9 +48,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   {/* エディタの窓を模したヒーロー。行番号・記号（#）・項目名（role: ・ work: ・ freelance:）・閉じる印・入力待ちの印は飾りなので、
       読み上げからは隠す。読み上げには、見出し・肩書き・仕事と副業の説明と、窓の下の2つのボタンだけが残る */}
   <div slot="hero" class="hero">
-    <div class="hero-blobs" aria-hidden="true">
-      <span></span><span></span><span></span><span></span>
-    </div>
     <div class="hero-body">
       <div class="hero-window">
         <div class="hero-bar">
@@ -100,6 +97,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
         <a class="hero-button" href="#contact">連絡する</a>
       </div>
     </div>
+    {/* 下に続きがあることを知らせる印。読み上げでは次の章がそのまま続くので隠す */}
+    <p class="hero-scroll en-label" aria-hidden="true">SCROLL ↓</p>
   </div>
 
   <Section id="about" title="自己紹介" label="ABOUT">
@@ -178,15 +177,18 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
 
 <style>
   /* ===== ヒーロー（エディタの窓） ===== */
-  /* 窓を横の中央・縦の中央に置く。高さは決めず、上下の余白で最初の画面に収める
-     （幅1280×高さ720の画面で、ヘッダーと合わせて窓の全体が見える余白にしている） */
+  /* ヘッダーと合わせて、開いた画面をちょうど埋める。次の章は最初の画面に入れない。
+     svh はアドレスバーが出ているときの高さで、送ってバーが隠れても高さが変わらない
+     （dvh だと送るたびにヒーローが伸び縮みして、下の章がずれる）。
+     窓とボタンはその中の縦横の中央に置く */
   .hero {
     position: relative;
     display: grid;
     place-items: center;
+    /* svh を知らないブラウザでは次の行が無視されるので、vh の高さを先に置く */
+    min-height: calc(100vh - var(--header-h));
+    min-height: calc(100svh - var(--header-h));
     padding: clamp(3rem, 10vh, 5.5rem) var(--content-pad);
-    /* ぼかした色がヒーローの外（ヘッダーや次の区切り）へにじみ出ないように切る */
-    overflow: clip;
   }
   /* 窓と、その下のボタンを縦に並べる */
   .hero-body {
@@ -198,58 +200,13 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     width: min(100%, 680px);
   }
 
-  /* にじむ色。差し色をぼかしたかたまりを4つ置く。位置と大きさは割合で持ち、画面の幅に追従する。
-     上下の端は薄くして消す。切ったままだと、ヒーローの上下でぼかしが直線で途切れて見える */
-  .hero-blobs {
-    position: absolute;
-    inset: 0;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-  }
-  .hero-blobs span {
-    position: absolute;
-    border-radius: 50%;
-    background: var(--accent);
-    filter: blur(48px);
-  }
-  .hero-blobs span:nth-child(1) {
-    top: 6%;
-    right: 7%;
-    width: 26%;
-    height: 46%;
-    opacity: 0.34;
-  }
-  .hero-blobs span:nth-child(2) {
-    top: 38%;
-    right: 23%;
-    width: 20%;
-    height: 34%;
-    opacity: 0.2;
-  }
-  .hero-blobs span:nth-child(3) {
-    bottom: 3%;
-    left: 5%;
-    width: 28%;
-    height: 40%;
-    opacity: 0.26;
-  }
-  .hero-blobs span:nth-child(4) {
-    top: 9%;
-    left: 17%;
-    width: 16%;
-    height: 24%;
-    opacity: 0.16;
-  }
-
-  /* 窓。地を少し透かして、後ろのにじむ色をうっすら通す */
+  /* 窓。背景は無地なので、枠と影だけで地から浮かせる */
   .hero-window {
     position: relative;
     width: min(100%, 680px);
     border: 1px solid var(--color-border);
     border-radius: 6px;
-    /* color-mix() を知らないブラウザでは次の行が無視されるので、透かさない地を先に置く */
     background: var(--color-bg);
-    background: color-mix(in srgb, var(--color-bg) 84%, transparent);
     box-shadow: 0 18px 40px color-mix(in srgb, var(--color-text) 10%, transparent);
     font-family: var(--font-mono);
   }
@@ -343,8 +300,6 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     padding-inline: 1.75rem;
     border: 1px solid var(--color-text);
     border-radius: 2px;
-    /* にじむ色の上でも字が読めるよう、枠だけのボタンにも地を敷く */
-    background: var(--color-bg);
     font-size: 0.9rem;
     letter-spacing: 0.12em;
     text-decoration: none;
@@ -358,6 +313,15 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   .hero-button.primary:hover {
     background: var(--accent-text);
     border-color: var(--accent-text);
+  }
+  /* 下に続きがあることを知らせる印。ヒーローの下端の中央に置く。
+     ヒーローの下の余白（最小 3rem）の中に収まるので、窓やボタンには重ならない */
+  .hero-scroll {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 0;
+    right: 0;
+    text-align: center;
   }
   /* 入力待ちの印。1.1秒の周期で点いたり消えたりする（途中の濃さは作らない） */
   .caret {
@@ -390,7 +354,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.1s forwards;
   }
-  .hero-actions {
+  .hero-actions,
+  .hero-scroll {
     opacity: 0;
     animation: hero-fade-up var(--anim-duration) var(--anim-ease) 0.35s forwards;
   }
@@ -398,7 +363,8 @@ const recentWorks = (await getPublishedWorks()).slice(0, 2);
   /* reduced-motion: 入場と点滅を止め、最終状態で静止 */
   @media (prefers-reduced-motion: reduce) {
     .hero-window,
-    .hero-actions {
+    .hero-actions,
+    .hero-scroll {
       opacity: 1;
       animation: none;
     }

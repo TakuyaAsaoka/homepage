@@ -18,7 +18,7 @@ const Heading = level === 1 ? "h1" : "h2";
 <section class="section" id={id}>
   <Heading class="heading" data-reveal>
     <span class="title">{title}</span>
-    {label && <span class="label" aria-hidden="true">{label}</span>}
+    {label && <span class="en-label" aria-hidden="true">{label}</span>}
   </Heading>
   <div class="body">
     <slot />
@@ -55,12 +55,6 @@ const Heading = level === 1 ? "h1" : "h2";
   }
   .title {
     letter-spacing: 0.25em;
-  }
-  .label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    color: var(--color-muted);
   }
   /* 長い語やURLが列を押し広げないようにする */
   .body {
